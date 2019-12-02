@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include finbyzerp *.css
+recursive-include finbyzerp *.csv
+recursive-include finbyzerp *.html
+recursive-include finbyzerp *.ico
+recursive-include finbyzerp *.js
+recursive-include finbyzerp *.json
+recursive-include finbyzerp *.md
+recursive-include finbyzerp *.png
+recursive-include finbyzerp *.py
+recursive-include finbyzerp *.svg
+recursive-include finbyzerp *.txt
+recursive-exclude finbyzerp *.pyc
