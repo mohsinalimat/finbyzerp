@@ -1,5 +1,8 @@
 {
 	"js/about.min.js": [
 		"public/js/frappe/ui/toolbar/about.js"
-	]
+    ],
+    "js/toolbar.min.js": [
+		"public/js/frappe/ui/toolbar/toolbar.js"
+    ]
 }

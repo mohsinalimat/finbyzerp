@@ -6,6 +6,7 @@ frappe.ui.toolbar.Toolbar = Class.extend({
 		$('header').append(frappe.render_template("navbar", {
 			avatar: frappe.avatar(frappe.session.user)
 		}));
+		$('.navbar-home').html('<i class="fa fa-home"style="font-size: 25px !important;" aria-hidden="true"></i>');
 		$('.dropdown-toggle').dropdown();
 
 		let awesome_bar = new frappe.search.AwesomeBar();

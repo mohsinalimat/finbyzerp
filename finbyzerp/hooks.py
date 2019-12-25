@@ -17,7 +17,11 @@ app_license = "GPL 3.0"
 # include js, css files in header of desk.html
 # app_include_css = "/assets/finbyzerp/css/finbyzerp.css"
 # app_include_js = "/assets/finbyzerp/js/finbyzerp.js"
-app_include_js = "assets/js/about.min.js"
+
+app_include_js = [
+    "assets/js/about.min.js",
+    "assets/js/toolbar.min.js",
+]
 
 # include js, css files in header of web template
 # web_include_css = "/assets/finbyzerp/css/finbyzerp.css"
