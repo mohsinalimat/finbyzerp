@@ -19,8 +19,7 @@ app_license = "GPL 3.0"
 # app_include_js = "/assets/finbyzerp/js/finbyzerp.js"
 
 app_include_js = [
-    "assets/js/about.min.js",
-    "assets/js/toolbar.min.js",
+    "assets/js/custom.min.js",
 ]
 
 # include js, css files in header of web template

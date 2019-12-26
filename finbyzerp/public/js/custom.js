@@ -1,14 +1,80 @@
+
+frappe.provide('frappe.ui.misc');
+
 frappe.provide("frappe.ui.toolbar");
 frappe.provide('frappe.search');
 
-frappe.ui.toolbar.Toolbar = Class.extend({
+// Extending(Overiding) about.js
+frappe.ui.misc.about = function() {
+
+	if(!frappe.ui.misc.about_dialog) {
+		var d = new frappe.ui.Dialog({title: __('<img src="https://finbyz.tech/files/finbyz-tech.svg" width="180">')});
+
+		$(d.body).html(repl("<div>\
+		<p>"+__("At Finbyz Tech, we are passionate about revolutionizing businesses through the latest technology.")+"</p>  \
+		<p><i class='fa fa-globe fa-fw'></i>\
+			Website: <a href=' https://finbyz.tech' target='_blank'> https://finbyz.tech</a></p>\
+		<p><i class='fa fa-github fa-fw'></i>\
+			Support: <a href='support@finbyz.tech' target='_blank'>support@finbyz.tech</a></p>\
+		<hr>\
+		<h4>Installed Apps</h4>\
+		<div id='about-app-versions'>Loading versions...</div>\
+		<hr>\
+		<p class='text-muted'>&copy; Finbyz Erp is powered by opensource technologies </p> \
+		</div>", frappe.app));
+
+		frappe.ui.misc.about_dialog = d;
+		frappe.ui.misc.about_dialog.on_page_show = function() {
+			
+			if(!frappe.versions) {
+				frappe.call({
+					method: "frappe.utils.change_log.get_versions",
+					callback: function(r) {
+						show_versions(r.message);
+					}
+				})
+			} else {
+				show_versions(frappe.versions);
+			}
+		};
+
+		var show_versions = function(versions) {
+			var $wrap = $("#about-app-versions").empty();
+			$.each(Object.keys(versions).sort(), function(i, key) {
+				var v = versions[key];
+				if(v.branch) {
+					var text = $.format('<p><b>{0}:</b> v{1} ({2})<br></p>',
+						[v.title, v.branch_version || v.version, v.branch])
+				} else {
+					var text = $.format('<p><b>{0}:</b> v{1}<br></p>',
+						[v.title, v.version])
+				}
+				$(text).appendTo($wrap);
+			});
+
+			frappe.versions = versions;
+		}
+
+	}
+
+	frappe.ui.misc.about_dialog.show();
+
+}
+// Extending(Overriding) toolbar.js
+
+frappe.ui.toolbar.Toolbar = Class.extend({ 
+	
 	init: function() {
+		
+		
 		$('header').append(frappe.render_template("navbar", {
 			avatar: frappe.avatar(frappe.session.user)
 		}));
 		$('.navbar-home').html('<i class="fa fa-home"style="font-size: 25px !important;" aria-hidden="true"></i>');
+		$('.navbar-home').css("padding","6px 15px");
+		
 		$('.dropdown-toggle').dropdown();
-
+		
 		let awesome_bar = new frappe.search.AwesomeBar();
 		awesome_bar.setup("#navbar-search");
 		awesome_bar.setup("#modal-search");
@@ -20,7 +86,7 @@ frappe.ui.toolbar.Toolbar = Class.extend({
 	make: function() {
 		this.setup_sidebar();
 		this.setup_help();
-
+		
 		this.bind_events();
 
 		$(document).trigger('toolbar_setup');
@@ -144,8 +210,24 @@ frappe.ui.toolbar.Toolbar = Class.extend({
 		function show_results(e) {
 			//edit links
 			var href = e.target.href;
+			if(href === "https://github.com/frappe/erpnext/issues"){
+				// var project_name = "";
+				frappe.call({
+					method:  "frappe.client.get_value",
+					args: {
+						"doctype":"Global Defaults",
+						"filters":"Global Defaults",
+						"fieldname":"project_name",
+					},
+					async : false,
+					callback: function(r) {
+						e.target.href = `issue-form?new=1&project=${r.message.project_name}&raised_by=${frappe.session.user_email}&contact_person=${frappe.session.user_fullname}`;
+					}
+				});
+			}
 			if(href.indexOf('blob') > 0) {
-				window.open(href, '_blank');
+				
+				window.open(href,'_blank');
 			}
 			var path = $(e.target).attr("data-path");
 			if(path) {
