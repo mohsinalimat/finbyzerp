@@ -222,7 +222,7 @@ frappe.ui.toolbar.Toolbar = Class.extend({
 					},
 					async : false,
 					callback: function(r) {
-						e.target.href = `issue-form?new=1&project=${r.message.project_name}&raised_by=${frappe.session.user_email}&contact_person=${frappe.session.user_fullname}`;
+						e.target.href = `https://finbyz.tech/issue-form?new=1&project=${r.message.project_name}&raised_by=${frappe.session.user_email}&contact_person=${frappe.session.user_fullname}`;
 					}
 				});
 			}

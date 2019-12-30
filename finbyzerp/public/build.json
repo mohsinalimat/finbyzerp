@@ -1,5 +1,5 @@
 {
-	"js/about.min.js": [
+	"js/custom.min.js": [
 		"public/js/custom.js"
     ]
 }
