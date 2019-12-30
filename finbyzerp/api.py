@@ -3,8 +3,7 @@ import frappe
 
 @frappe.whitelist()
 def get_project_name():
-    doc = frappe.get_doc("Global Defaults", "Global Defaults")
     
-    doc.flags.ignore_permissions = True
-
-    return {"project_name":doc.project_name}
+    project_name = frappe.db.get_value("Global Defaults", "Global Defaults","project_name")
+    
+    return {"project_name":project_name}
