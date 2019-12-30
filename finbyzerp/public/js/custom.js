@@ -212,17 +212,12 @@ frappe.ui.toolbar.Toolbar = Class.extend({
 			var href = e.target.href;
 			
 			if(href === "https://github.com/frappe/erpnext/issues"){
-				// var project_name = "";
+				var project_name = "";
 				frappe.call({
-					method:  "frappe.client.get_value",
-					args: {
-						"doctype":"Global Defaults",
-						"filters":"Global Defaults",
-						"fieldname":"project_name",
-					},
-					async : false,
+					method:  "finbyzerp.api.get_project_name",
 					callback: function(r) {
-						e.target.href = `https://finbyz.tech/issue-form?new=1&project=${r.message.project_name}&raised_by=${frappe.session.user_email}&contact_person=${frappe.session.user_fullname}`;
+						console.log(r);
+						e.target.href = `https://finbyz.tech/issue-form?new=1&project=${r.message.project_name}&raised_by=${frappe.session.user_email}&contact_person=${frappe.session.user_fullname}`;	
 					}
 				});
 			}
