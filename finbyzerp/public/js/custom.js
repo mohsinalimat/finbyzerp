@@ -215,6 +215,7 @@ frappe.ui.toolbar.Toolbar = Class.extend({
 				var project_name = "";
 				frappe.call({
 					method:  "finbyzerp.api.get_project_name",
+					async: false,
 					callback: function(r) {
 						console.log(r);
 						e.target.href = `https://finbyz.tech/issue-form?new=1&project=${r.message.project_name}&raised_by=${frappe.session.user_email}&contact_person=${frappe.session.user_fullname}`;	
