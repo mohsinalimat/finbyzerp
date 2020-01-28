@@ -1,6 +1,7 @@
 frappe.provide('frappe.ui.misc');
 
 // Extending(Overiding) about.js
+$("div.footer-powered").html(`<a href="https://finbyz.tech/" target="_blank" class="text-muted">Powered by FinbyzERP -  ERP Software for Distribution Companies</a>`)
 frappe.ui.misc.about = function() {
 
 	if(!frappe.ui.misc.about_dialog) {

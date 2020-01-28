@@ -10,6 +10,7 @@ app_icon = "octicon octicon-diff-ignored"
 app_color = "blue"
 app_email = "info@finbyz.com"
 app_license = "GPL 3.0"
+app_version = "1.0.0"
 
 # Includes in <head>
 # ------------------
