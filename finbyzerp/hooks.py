@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from . import __version__ as app_version
 
 app_name = "finbyzerp"
-app_title = "Finbyzerp"
+app_title = "FinbyzErp"
 app_publisher = "Finbyz Tech Pvt Ltd"
 app_description = "FinByz ERP"
 app_icon = "octicon octicon-diff-ignored"
