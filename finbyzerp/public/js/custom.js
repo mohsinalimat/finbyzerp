@@ -58,6 +58,21 @@ frappe.ui.misc.about = function() {
 
 }
 
+$(window).load(function () {
+	$('.app-logo').hide();
+	$('a.navbar-home').append('<i class="fa fa-2x fa-home " aria-hidden="true"></i>');
+});
+// frappe.provide("frappe.ui.toolbar");
+// frappe.provide('frappe.search');
+
+// frappe.ui.toolbar.Toolbar = Class.extend({
+// 	make: function(){
+// 		$('.app-logo').hide();
+// 	$('a.navbar-home').append('<i class="fa fa-2x fa-home " aria-hidden="true"></i>');
+
+// 	}
+// });
+
 //Extending(Overiding) toolbar.js
 // frappe.provide("frappe.ui.toolbar");
 // frappe.provide('frappe.search');
