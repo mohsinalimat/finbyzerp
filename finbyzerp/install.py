@@ -5,7 +5,7 @@ def before_install():
 	""" Function to set docperm for Local Admin """
 	if not frappe.db.exists("Role", "Local Admin"):
 		role_doc = frappe.new_doc("Role")
-		role_doc.name = "Local Admin"
+		role_doc.role_name = "Local Admin"
 		role_doc.desk_access = 1
 		role_doc.save()
 		frappe.db.commit()
