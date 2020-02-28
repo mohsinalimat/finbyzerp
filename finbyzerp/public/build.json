@@ -1,5 +1,6 @@
 {
-	"js/custom.min.js": [
-		"public/js/custom.js"
+	"js/finbyzerp.min.js": [
+		"public/js/finbyzerp/ui/toolbar/about.js",
+		"public/js/finbyzerp/ui/toolbar/navbar.html"
     ]
 }
