@@ -11,10 +11,16 @@ app_color = "blue"
 app_email = "info@finbyz.com"
 app_license = "GPL 3.0"
 app_version = app_version
+# app_logo_url = '/assets/erpnext/images/erp-icon.svg'
 
 app_include_js = "assets/js/finbyzerp.min.js"
 
 after_install = "finbyzerp.install.after_install"
+
+website_context = {
+	"favicon": 	"/assets/finbyzerp/images/favicon.ico",
+	"splash_image": "/assets/finbyzerp/images/FinbyzLogo.svg"
+}
 
 override_whitelisted_methods = {
 	"frappe.core.page.permission_manager.permission_manager.get_roles_and_doctypes": "finbyzerp.permission.get_roles_and_doctypes",
