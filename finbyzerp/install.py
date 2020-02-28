@@ -41,3 +41,4 @@ def after_install():
 		doc1.db_insert()
 	
 	frappe.db.commit()
+
