@@ -7,7 +7,7 @@ def after_install():
 		role_doc = frappe.new_doc("Role")
 
 		role_doc.desk_access = 1
-		role.save()
+		role_doc.save()
 		frappe.db.commit()
 	
 	count = frappe.db.sql("select count(*) from tabDocPerm where idx = 2 and role = 'Local Admin' And parent = 'Custom DocPerm'")
