@@ -1,6 +1,6 @@
 {
 	"css/finbyzerp.min.css": [
-		"public/css/finbyzerp/finbyzerp.min.css"
+		"public/css/permission.css"
 	],
 	"js/finbyzerp.min.js": [
 		"public/js/finbyzerp/ui/toolbar/about.js",
