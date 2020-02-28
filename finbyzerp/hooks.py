@@ -15,7 +15,7 @@ app_version = app_version
 
 app_include_js = "assets/js/finbyzerp.min.js"
 
-after_install = "finbyzerp.install.after_install"
+before_install = "finbyzerp.install.before_install"
 
 website_context = {
 	"favicon": 	"/assets/finbyzerp/images/favicon.ico",
