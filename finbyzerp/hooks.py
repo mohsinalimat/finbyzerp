@@ -14,6 +14,7 @@ app_version = app_version
 # app_logo_url = '/assets/erpnext/images/erp-icon.svg'
 
 app_include_js = "assets/js/finbyzerp.min.js"
+app_include_css = "assets/js/finbyzerp.min.css"
 
 before_install = "finbyzerp.install.before_install"
 
