@@ -1,5 +1,9 @@
 {
-	"js/custom.min.js": [
-		"public/js/custom.js"
+	"css/finbyzerp.min.css": [
+		"public/css/permission.css"
+	],
+	"js/finbyzerp.min.js": [
+		"public/js/finbyzerp/ui/toolbar/about.js",
+		"public/js/finbyzerp/ui/toolbar/navbar.html"
     ]
 }

@@ -3,132 +3,33 @@ from __future__ import unicode_literals
 from . import __version__ as app_version
 
 app_name = "finbyzerp"
-app_title = "FinbyzErp"
+app_title = "FinByz ERP"
 app_publisher = "Finbyz Tech Pvt Ltd"
 app_description = "FinByz ERP"
 app_icon = "octicon octicon-diff-ignored"
 app_color = "blue"
 app_email = "info@finbyz.com"
 app_license = "GPL 3.0"
-app_version = "1.0.0"
+app_version = app_version
+# app_logo_url = '/assets/erpnext/images/erp-icon.svg'
 
-# Includes in <head>
-# ------------------
+app_include_css = "assets/css/finbyzerp.min.css"
+app_include_js = "assets/js/finbyzerp.min.js"
 
-# include js, css files in header of desk.html
-# app_include_css = "/assets/finbyzerp/css/finbyzerp.css"
-# app_include_js = "/assets/finbyzerp/js/finbyzerp.js"
+before_install = "finbyzerp.install.before_install"
 
-app_include_js = [
-    "assets/js/custom.min.js",
-]
+website_context = {
+	"favicon": 	"/assets/finbyzerp/images/favicon.ico",
+	"splash_image": "/assets/finbyzerp/images/FinbyzLogo.svg"
+}
 
-# include js, css files in header of web template
-# web_include_css = "/assets/finbyzerp/css/finbyzerp.css"
-# web_include_js = "/assets/finbyzerp/public/js/about.js"
-
-# include js in page
-# page_js = {"page" : "public/js/file.js"}
-
-# include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
-# doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
-# doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
-# doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
-
-# Home Pages
-# ----------
-
-# application home page (will override Website Settings)
-# home_page = "login"
-
-# website user home page (by Role)
-# role_home_page = {
-#	"Role": "home_page"
-# }
-
-# Website user home page (by function)
-# get_website_user_home_page = "finbyzerp.utils.get_home_page"
-
-# Generators
-# ----------
-
-# automatically create page for each record of this doctype
-# website_generators = ["Web Page"]
-
-# Installation
-# ------------
-
-# before_install = "finbyzerp.install.before_install"
-# after_install = "finbyzerp.install.after_install"
-
-# Desk Notifications
-# ------------------
-# See frappe.core.notifications.get_notification_config
-
-# notification_config = "finbyzerp.notifications.get_notification_config"
-
-# Permissions
-# -----------
-# Permissions evaluated in scripted ways
-
-# permission_query_conditions = {
-# 	"Event": "frappe.desk.doctype.event.event.get_permission_query_conditions",
-# }
-#
-# has_permission = {
-# 	"Event": "frappe.desk.doctype.event.event.has_permission",
-# }
-
-# Document Events
-# ---------------
-# Hook on document methods and events
-
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-#	}
-# }
-
-# Scheduled Tasks
-# ---------------
-
-# scheduler_events = {
-# 	"all": [
-# 		"finbyzerp.tasks.all"
-# 	],
-# 	"daily": [
-# 		"finbyzerp.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"finbyzerp.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"finbyzerp.tasks.weekly"
-# 	]
-# 	"monthly": [
-# 		"finbyzerp.tasks.monthly"
-# 	]
-# }
-
-# Testing
-# -------
-
-# before_tests = "finbyzerp.install.before_tests"
-
-# Overriding Methods
-# ------------------------------
-#
-# override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "finbyzerp.event.get_events"
-# }
-#
-# each overriding function accepts a `data` argument;
-# generated from the base implementation of the doctype dashboard,
-# along with any modifications made in other Frappe apps
-# override_doctype_dashboards = {
-# 	"Task": "finbyzerp.task.get_dashboard_data"
-# }
-
+override_whitelisted_methods = {
+	"frappe.core.page.permission_manager.permission_manager.get_roles_and_doctypes": "finbyzerp.permission.get_roles_and_doctypes",
+	"frappe.core.page.permission_manager.permission_manager.get_permissions": "finbyzerp.permission.get_permissions",
+	"frappe.core.page.permission_manager.permission_manager.add": "finbyzerp.permission.add",
+	"frappe.core.page.permission_manager.permission_manager.update": "finbyzerp.permission.update",
+	"frappe.core.page.permission_manager.permission_manager.remove": "finbyzerp.permission.remove",
+	"frappe.core.page.permission_manager.permission_manager.reset": "finbyzerp.permission.reset",
+	"frappe.core.page.permission_manager.permission_manager.get_users_with_role": "finbyzerp.permission.get_users_with_role",
+	"frappe.core.page.permission_manager.permission_manager.get_standard_permissions": "finbyzerp.permission.get_standard_permissions",
+}
