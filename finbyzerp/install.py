@@ -1,13 +1,13 @@
 import frappe
 
 @frappe.whitelist()
-def after_install():
+def before_install():
 	""" Function to set docperm for Local Admin """
 	if not frappe.db.exists("Role", "Local Admin"):
 		role_doc = frappe.new_doc("Role")
-
+		role_doc.role_name = "Local Admin"
 		role_doc.desk_access = 1
-		role.save()
+		role_doc.save()
 		frappe.db.commit()
 	
 	count = frappe.db.sql("select count(*) from tabDocPerm where idx = 2 and role = 'Local Admin' And parent = 'Custom DocPerm'")
@@ -41,3 +41,4 @@ def after_install():
 		doc1.db_insert()
 	
 	frappe.db.commit()
+
