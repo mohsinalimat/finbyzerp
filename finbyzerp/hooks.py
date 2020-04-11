@@ -25,5 +25,4 @@ override_whitelisted_methods = {
 	"frappe.core.page.permission_manager.permission_manager.reset": "finbyzerp.permission.reset",
 	"frappe.core.page.permission_manager.permission_manager.get_users_with_role": "finbyzerp.permission.get_users_with_role",
 	"frappe.core.page.permission_manager.permission_manager.get_standard_permissions": "finbyzerp.permission.get_standard_permissions",
-	"frappe.desk.notifications.get_open_count": "finbyzerp.api.get_open_count",
 }

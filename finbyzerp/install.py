@@ -2,7 +2,7 @@ import frappe
 
 @frappe.whitelist()
 def after_install():
-    """ Function to set docperm for Local Admin """
+	""" Function to set docperm for Local Admin """
 	if not frappe.db.exists("Role", "Local Admin"):
 		role_doc = frappe.new_doc("Role")
 
