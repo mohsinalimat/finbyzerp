@@ -13,9 +13,10 @@ app_license = "GPL 3.0"
 app_version = app_version
 # app_logo_url = '/assets/erpnext/images/erp-icon.svg'
 
+app_include_css = "assets/css/finbyzerp.min.css"
 app_include_js = "assets/js/finbyzerp.min.js"
 
-after_install = "finbyzerp.install.after_install"
+before_install = "finbyzerp.install.before_install"
 
 website_context = {
 	"favicon": 	"/assets/finbyzerp/images/favicon.ico",
