@@ -17,7 +17,9 @@ app_include_css = "assets/css/finbyzerp.min.css"
 app_include_js = "assets/js/finbyzerp.min.js"
 
 before_install = "finbyzerp.install.before_install"
-
+doctype_js = {
+	"Role Profile": "public/js/role_profile.js",
+}
 website_context = {
 	"favicon": 	"/assets/finbyzerp/images/favicon.ico",
 	"splash_image": "/assets/finbyzerp/images/FinbyzLogo.svg"
