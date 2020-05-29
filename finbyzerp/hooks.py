@@ -17,6 +17,12 @@ app_include_js = "assets/js/finbyzerp.min.js"
 
 after_install = "finbyzerp.install.after_install"
 
+page_js = {
+	"newsletter-editor" : "public/js/grapes.min.js",
+}
+
+
+
 website_context = {
 	"favicon": 	"/assets/finbyzerp/images/favicon.ico",
 	"splash_image": "/assets/finbyzerp/images/FinbyzLogo.svg"

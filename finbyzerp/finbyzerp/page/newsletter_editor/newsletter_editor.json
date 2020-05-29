@@ -1,0 +1,23 @@
+{
+ "content": null,
+ "creation": "2020-05-25 15:10:56.952701",
+ "docstatus": 0,
+ "doctype": "Page",
+ "idx": 0,
+ "modified": "2020-05-27 19:05:23.520293",
+ "modified_by": "Administrator",
+ "module": "Finbyzerp",
+ "name": "newsletter-editor",
+ "owner": "Administrator",
+ "page_name": "newsletter-editor",
+ "roles": [
+  {
+   "role": "Newsletter Manager"
+  }
+ ],
+ "script": null,
+ "standard": "Yes",
+ "style": null,
+ "system_page": 0,
+ "title": "Newsletter Editor"
+}
