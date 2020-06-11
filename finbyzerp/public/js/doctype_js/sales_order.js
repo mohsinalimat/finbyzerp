@@ -8,7 +8,7 @@ frappe.ui.form.on('Sales Order', {
 	naming_series: function (frm) {
 		if (frm.doc.__islocal && frm.doc.company && !frm.doc.amended_from) {
 			frappe.call({
-				method: "ceramic.api.check_counter_series",
+				method: "finbyzerp.api.check_counter_series",
 				args: {
 					'name': frm.doc.naming_series,
 					'date': frm.doc.transaction_date,
