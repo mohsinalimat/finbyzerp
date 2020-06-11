@@ -30,7 +30,7 @@ def prepare_data(self, doctype, tax_details, supply_type, supply_category, gst_c
 					self.report_dict[supply_type][supply_category][account_map.get(account_type)] += \
 						flt(tax_details.get((account_name, gst_category), {}).get("amount"), 2)
 	# Finby Changes
-	if supply_category != "osup_zero" or (supply_category != 'isup_rev' and reverse_charge == "Y"):
+	if supply_category != "osup_zero" or (supply_category == 'isup_rev' and reverse_charge == "Y"):
 		for k, v in iteritems(account_map):
 			txval -= self.report_dict.get(supply_type, {}).get(supply_category, {}).get(v, 0)
 	
