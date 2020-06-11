@@ -31,9 +31,9 @@ def before_naming(self, method):
 				if check == 0:
 					pass
 				elif not check:
-					frappe.db.sql(f"insert into tabSeries (name, current) values ('{name}', 0)")
+					frappe.db.sql("insert into tabSeries (name, current) values ('{}', 0)".format(name))
 				
-				frappe.db.sql(f"update `tabSeries` set current = {int(self.series_value) - 1} where name = '{name}'")
+				frappe.db.sql("update `tabSeries` set current = {} where name = '{}'".format(int(self.series_value) - 1), name)
 
 def naming_series_name(name, fiscal, company_series=None):
 	if company_series:
@@ -41,8 +41,8 @@ def naming_series_name(name, fiscal, company_series=None):
 	
 	name = name.replace('YYYY', str(datetime.date.today().year))
 	name = name.replace('YY', str(datetime.date.today().year)[2:])
-	name = name.replace('MM', f'{datetime.date.today().month:02d}')
-	name = name.replace('DD', f'{datetime.date.today().day:02d}')
+	name = name.replace('MM', '{0:0=2d}'.format(datetime.date.today().month))
+	name = name.replace('DD', '{0:0=2d}'.format(datetime.date.today().day))
 	name = name.replace('fiscal', str(fiscal))
 	name = name.replace('#', '')
 	name = name.replace('.', '')
