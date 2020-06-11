@@ -9,6 +9,7 @@ from erpnext.regional.india import state_numbers
 
 def prepare_data(self, doctype, tax_details, supply_type, supply_category, gst_category_list, reverse_charge="N"):
 	
+	# Finbyz Changes
 	if supply_category == "isup_rev":
 		gst_category_list.append("Unregistered")
 
@@ -28,12 +29,15 @@ def prepare_data(self, doctype, tax_details, supply_type, supply_category, gst_c
 				if account_map.get(account_type) in self.report_dict.get(supply_type).get(supply_category):
 					self.report_dict[supply_type][supply_category][account_map.get(account_type)] += \
 						flt(tax_details.get((account_name, gst_category), {}).get("amount"), 2)
-	if supply_category != "osup_zero":
+	# Finby Changes
+	if supply_category != "osup_zero" or (supply_category != 'isup_rev' and reverse_charge = "Y"):
 		for k, v in iteritems(account_map):
 			txval -= self.report_dict.get(supply_type, {}).get(supply_category, {}).get(v, 0)
+	
 	self.report_dict[supply_type][supply_category]["txval"] += flt(txval, 2)
 
 def get_itc_details(self, reverse_charge='N'):
+	# tax_amount changed to base_tax_amount
 	itc_amount = frappe.db.sql("""
 		select s.gst_category, sum(t.base_tax_amount) as tax_amount, t.account_head, s.eligibility_for_itc, s.reverse_charge
 		from `tabPurchase Invoice` s , `tabPurchase Taxes and Charges` t
@@ -58,7 +62,7 @@ def get_inter_state_supplies(self, state_number):
 		from `tabSales Invoice` s where s.docstatus = 1 and month(s.posting_date) = %s and year(s.posting_date) = %s
 		and s.company = %s and s.company_gstin = %s and s.gst_category in ('Unregistered', 'Registered Composition', 'UIN Holders')
 		group by s.gst_category, s.place_of_supply""", (self.month_no, self.year, self.company, self.gst_details.get("gstin")), as_dict=1)
-
+	# tax_amount changed to base_tax_amount
 	inter_state_supply_tax = frappe.db.sql(""" select sum(t.base_tax_amount) as tax_amount, s.place_of_supply, s.gst_category
 		from `tabSales Invoice` s, `tabSales Taxes and Charges` t
 		where t.parent = s.name and s.docstatus = 1 and month(s.posting_date) = %s and year(s.posting_date) = %s
@@ -96,7 +100,8 @@ def get_tax_amounts(self, doctype, reverse_charge="N"):
 		tax_template = 'Sales Taxes and Charges'
 	elif doctype == "Purchase Invoice":
 		tax_template = 'Purchase Taxes and Charges'
-
+	
+	# tax_amount changed to base_tax_amount
 	tax_amounts = frappe.db.sql("""
 		select s.gst_category, sum(t.base_tax_amount) as tax_amount, t.account_head
 		from `tab{doctype}` s , `tab{template}` t
