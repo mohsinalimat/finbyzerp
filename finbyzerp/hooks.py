@@ -13,7 +13,14 @@ app_license = "GPL 3.0"
 app_version = app_version
 # app_logo_url = '/assets/erpnext/images/erp-icon.svg'
 
-app_include_css = "assets/css/finbyzerp.min.css"
+from erpnext.regional.doctype.gstr_3b_report.gstr_3b_report import GSTR3BReport
+from finbyzerp.finbyzerp.override.gstr_3b_report import prepare_data, get_itc_details, get_inter_state_supplies, get_tax_amounts
+GSTR3BReport.prepare_data = prepare_data
+GSTR3BReport.get_itc_details = get_itc_details
+GSTR3BReport.get_inter_state_supplies = get_inter_state_supplies
+GSTR3BReport.get_tax_amounts = get_tax_amounts
+
+app_include_css = "assets/finbyzerp/css/permission.css"
 app_include_js = "assets/js/finbyzerp.min.js"
 
 before_install = "finbyzerp.install.before_install"
