@@ -65,7 +65,7 @@ def check_counter_series(name, company_series = None, date = None):
 	if check == 0:
 		return 1
 	elif check == None:
-		frappe.db.sql("insert into tabSeries (name, current) values ('{}', 0)".format(name))
+		frappe.db.sql("insert into tabSeries (name, current) values ('{}', 0)".format)
 		return 1
 	else:
 		return int(frappe.db.get_value('Series', name, 'current', order_by="name")) + 1
