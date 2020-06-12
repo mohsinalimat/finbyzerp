@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 import frappe
 from erpnext.accounts.utils import get_fiscal_year
 import datetime
+from frappe.utils import cint
 
 @frappe.whitelist()
 def get_project_name():
@@ -33,7 +34,7 @@ def before_naming(self, method):
 				elif not check:
 					frappe.db.sql("insert into tabSeries (name, current) values ('{}', 0)".format(name))
 				
-				frappe.db.sql("update `tabSeries` set current = {} where name = '{}'".format(int(self.series_value) - 1), name))
+				frappe.db.sql("update `tabSeries` set current = {} where name = '{}'".format(cint(self.series_value) - 1, name))
 
 def naming_series_name(name, fiscal, company_series=None):
 	if company_series:
