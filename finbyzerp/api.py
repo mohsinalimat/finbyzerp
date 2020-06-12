@@ -48,3 +48,24 @@ def naming_series_name(name, fiscal, company_series=None):
 	name = name.replace('.', '')
 	
 	return name
+
+@frappe.whitelist()
+def check_counter_series(name, company_series = None, date = None):
+	
+	if not date:
+		date = datetime.date.today()
+	
+	
+	fiscal = get_fiscal(date)
+	
+	name = naming_series_name(name, fiscal, company_series)
+	
+	check = frappe.db.get_value('Series', name, 'current', order_by="name")
+	
+	if check == 0:
+		return 1
+	elif check == None:
+		frappe.db.sql("insert into tabSeries (name, current) values ('{}', 0)".format(name))
+		return 1
+	else:
+		return int(frappe.db.get_value('Series', name, 'current', order_by="name")) + 1

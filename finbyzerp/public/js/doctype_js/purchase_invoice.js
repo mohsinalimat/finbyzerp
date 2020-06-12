@@ -15,8 +15,7 @@ frappe.ui.form.on('Purchase Invoice', {
 					'company_series': frm.doc.company_series || null,
 				},
 				callback: function (e) {
-					console.log(e.message)
-					frm.set_value("series_value", e.message);
+					frm.doc.series_value = e.message;
 				}
 			});
 		}
