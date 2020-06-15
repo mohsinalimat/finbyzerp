@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 import frappe
 from erpnext.accounts.utils import get_fiscal_year
 import datetime
-from frappe.utils import cint
+from frappe.utils import cint, getdate
 
 @frappe.whitelist()
 def get_project_name():
