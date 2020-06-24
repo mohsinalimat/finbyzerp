@@ -36,7 +36,9 @@ def before_naming(self, method):
 
 				frappe.db.sql("update `tabSeries` set current = {} where name = '{}'".format(cint(self.series_value) - 1, name))
 
-def naming_series_name(name, fiscal, company_series=None):
+def naming_series_name(name, fiscal = None, company_series=None):
+	if fiscal == None:
+		fiscal = ''
 	if company_series:
 		name = name.replace('company_series', str(company_series))
 	
