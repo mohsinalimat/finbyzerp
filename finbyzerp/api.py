@@ -34,7 +34,7 @@ def sales_invoice_on_submit(self, method):
 		
 		for item in self.items:
 			if not item.gst_hsn_code and not item.is_non_gst:
-				frappe.throw(f"Row: {item.idx} HSN/SAC is reuired for item {item.item_code}")
+				frappe.throw("Row: {} HSN/SAC is reuired for item {}".format(item.idx, item.item_code))
 def get_fiscal(date):
 	fy = get_fiscal_year(date)[0]
 	fiscal = frappe.db.get_value("Fiscal Year", fy, 'fiscal')
