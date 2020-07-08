@@ -11,6 +11,30 @@ def get_project_name():
 	
 	return {"project_name":project_name}
 
+def sales_invoice_on_submit(self, method):
+	if self.get('eway_bill_json_required'):
+		if not self.billing_address_gstin:
+			frappe.throw("Billing Address GSTIN is required.")
+		
+		if not self.customer_gstin:
+			frappe.throw("Customer GSTIN is required.")
+		
+		if not self.distance:
+			frappe.throw("Distance (in km) is required.")
+		
+		if self.distance > 4000:
+			frappe.throw("Distance cannot be greater than 4000 kms")
+		
+		if not self.customer_address:
+			frappe.throw("Customer Address is required.")
+
+		if self.customer_address:
+			if not frappe.db.get_value("Address", self.customer_address, 'pincode'):
+				frappe.throw("Customer Postal Code is required.")
+		
+		for item in self.items:
+			if not item.gst_hsn_code and not item.is_non_gst:
+				frappe.throw("Row: {} HSN/SAC is reuired for item {}".format(item.idx, item.item_code))
 def get_fiscal(date):
 	fy = get_fiscal_year(date)[0]
 	fiscal = frappe.db.get_value("Fiscal Year", fy, 'fiscal')
@@ -36,7 +60,9 @@ def before_naming(self, method):
 
 				frappe.db.sql("update `tabSeries` set current = {} where name = '{}'".format(cint(self.series_value) - 1, name))
 
-def naming_series_name(name, fiscal, company_series=None):
+def naming_series_name(name, fiscal = None, company_series=None):
+	if fiscal == None:
+		fiscal = ''
 	if company_series:
 		name = name.replace('company_series', str(company_series))
 	
