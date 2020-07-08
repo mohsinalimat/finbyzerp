@@ -56,7 +56,7 @@ frappe.query_reports["New GSTR-1"] = {
 			var filters = report.get_values();
 
 			frappe.call({
-				method: 'erpnext.regional.report.gstr_1.gstr_1.get_json',
+				method: 'finbyzerp.finbyzerp.report.new_gstr_1.new_gstr_1.get_json',
 				args: {
 					data: report.data,
 					report_name: report.report_name,
