@@ -4,6 +4,9 @@ from erpnext.accounts.utils import get_fiscal_year
 import datetime
 from frappe.utils import cint, getdate
 
+def before_insert(self, method):
+	opening_naming_series(self)
+
 @frappe.whitelist()
 def get_project_name():
 	frappe.flags.ignore_account_permission = True
@@ -96,3 +99,7 @@ def check_counter_series(name, company_series = None, date = None):
 		return 1
 	else:
 		return int(frappe.db.get_value('Series', name, 'current', order_by="name")) + 1
+
+def opening_naming_series(self):
+	if not self.name and self.is_opening == "Yes":
+		self.naming_series = 'O' + self.naming_series
