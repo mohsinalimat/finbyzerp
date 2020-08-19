@@ -55,6 +55,9 @@ override_whitelisted_methods = {
 }
 
 doc_events = {
+	"Sales Invoice": {
+		'on_submit': "finbyzerp.api.sales_invoice_on_submit"
+	},
 	("Pick List", "Sales Invoice", "Purchase Invoice", "Payment Request", "Payment Entry", "Journal Entry", "Material Request", "Purchase Order", "Work Order", "Production Plan", "Stock Entry", "Quotation", "Sales Order", "Delivery Note", "Purchase Receipt", "Packing Slip"): {
 		"before_naming": "finbyzerp.api.before_naming",
 	},

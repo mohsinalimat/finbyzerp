@@ -616,7 +616,8 @@ def get_b2b_json(res, gstin):
 					frappe.bold(invoice[0]['invoice_number'])))
 
 			inv_item = get_basic_invoice_detail(invoice[0])
-			inv_item["pos"] = "%02d" % int(invoice[0]["place_of_supply"].split('-')[0])
+			if invoice[0]["place_of_supply"]:
+				inv_item["pos"] = "%02d" % int(invoice[0]["place_of_supply"].split('-')[0])
 			inv_item["rchrg"] = invoice[0]["reverse_charge"]
 			inv_item["inv_typ"] = inv_type.get(invoice[0].get("gst_category", ""),"")
 

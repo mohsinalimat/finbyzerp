@@ -4,6 +4,9 @@ from erpnext.accounts.utils import get_fiscal_year
 import datetime
 from frappe.utils import cint, getdate
 
+def before_insert(self, method):
+	opening_naming_series(self)
+
 @frappe.whitelist()
 def get_project_name():
 	frappe.flags.ignore_account_permission = True
@@ -11,6 +14,30 @@ def get_project_name():
 	
 	return {"project_name":project_name}
 
+def sales_invoice_on_submit(self, method):
+	if self.get('eway_bill_json_required'):
+		if not self.billing_address_gstin:
+			frappe.throw("Billing Address GSTIN is required.")
+		
+		if not self.customer_gstin:
+			frappe.throw("Customer GSTIN is required.")
+		
+		if not self.distance:
+			frappe.throw("Distance (in km) is required.")
+		
+		if self.distance > 4000:
+			frappe.throw("Distance cannot be greater than 4000 kms")
+		
+		if not self.customer_address:
+			frappe.throw("Customer Address is required.")
+
+		if self.customer_address:
+			if not frappe.db.get_value("Address", self.customer_address, 'pincode'):
+				frappe.throw("Customer Postal Code is required.")
+		
+		for item in self.items:
+			if not item.gst_hsn_code and not item.is_non_gst:
+				frappe.throw("Row: {} HSN/SAC is reuired for item {}".format(item.idx, item.item_code))
 def get_fiscal(date):
 	fy = get_fiscal_year(date)[0]
 	fiscal = frappe.db.get_value("Fiscal Year", fy, 'fiscal')
@@ -72,3 +99,7 @@ def check_counter_series(name, company_series = None, date = None):
 		return 1
 	else:
 		return int(frappe.db.get_value('Series', name, 'current', order_by="name")) + 1
+
+def opening_naming_series(self):
+	if not self.name and self.is_opening == "Yes":
+		self.naming_series = 'O' + self.naming_series
