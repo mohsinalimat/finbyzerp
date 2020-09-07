@@ -4,12 +4,16 @@ from erpnext.accounts.utils import get_fiscal_year
 import datetime
 from frappe.utils import cint, getdate
 
+def before_insert(self, method):
+	opening_naming_series(self)
+
 @frappe.whitelist()
 def get_project_name():
 	frappe.flags.ignore_account_permission = True
 	project_name = frappe.db.get_value("Global Defaults", "Global Defaults","project_name")
 	
 	return {"project_name":project_name}
+
 
 def sales_invoice_on_submit(self, method):
 	if self.get('eway_bill_json_required'):
@@ -51,7 +55,6 @@ def before_naming(self, method):
 		if self.get('series_value'):
 			if self.series_value > 0:
 				name = naming_series_name(self.naming_series, fiscal, self.company_series)
-				
 				check = frappe.db.get_value('Series', name, 'current', order_by="name")
 				if check == 0:
 					pass
@@ -96,3 +99,7 @@ def check_counter_series(name, company_series = None, date = None):
 		return 1
 	else:
 		return int(frappe.db.get_value('Series', name, 'current', order_by="name")) + 1
+
+def opening_naming_series(self):
+	if not self.name and self.is_opening == "Yes":
+		self.naming_series = 'O' + self.naming_series

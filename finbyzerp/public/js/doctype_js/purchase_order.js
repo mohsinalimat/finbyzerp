@@ -9,6 +9,7 @@ frappe.ui.form.on('Purchase Order', {
 		frm.trigger('naming_series');
 	},
 	naming_series: function (frm) {
+<<<<<<< HEAD
 		if (frm.doc.__islocal && frm.doc.company && !frm.doc.amended_from) {
 			frappe.call({
 				method: "finbyzerp.api.check_counter_series",
@@ -21,6 +22,23 @@ frappe.ui.form.on('Purchase Order', {
 					frm.doc.series_value = e.message;
 				}
 			});
+=======
+		if (frappe.meta.get_docfield("Sales Order", "series_value", frm.doc.name)){
+			if (frm.doc.__islocal && frm.doc.company && !frm.doc.amended_from) {
+				console.log('test')
+				frappe.call({
+					method: "finbyzerp.api.check_counter_series",
+					args: {
+						'name': frm.doc.naming_series,
+						'date': frm.doc.transaction_date,
+						'company_series': frm.doc.company_series || null,
+					},
+					callback: function (e) {
+						frm.doc.series_value = e.message;
+					}
+				});
+			}
+>>>>>>> edf9a7b4e9064e451b9a26c09d4bf8b0c16d5441
 		}
 	},
 	company: function (frm) {
