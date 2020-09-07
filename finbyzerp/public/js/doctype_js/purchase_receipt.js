@@ -23,7 +23,7 @@ frappe.ui.form.on('Purchase Receipt', {
 	company: function (frm) {
 		frm.trigger('naming_series');
 	},
-	posting_date: function (frm) {
-		frm.trigger('naming_series');
-	},
+	// posting_date: function (frm) {
+	// 	frm.trigger('naming_series');
+	// },
 });

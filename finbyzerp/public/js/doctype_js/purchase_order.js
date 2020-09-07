@@ -16,6 +16,7 @@ frappe.ui.form.on('Purchase Order', {
 				},
 				callback: function (e) {
 					frm.doc.series_value = e.message;
+					frm.refresh_field('series_value')
 				}
 			});
 		}
