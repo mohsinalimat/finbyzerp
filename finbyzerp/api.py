@@ -14,6 +14,7 @@ def get_project_name():
 	
 	return {"project_name":project_name}
 
+
 def sales_invoice_on_submit(self, method):
 	if self.get('eway_bill_json_required'):
 		if not self.billing_address_gstin:
@@ -54,7 +55,6 @@ def before_naming(self, method):
 		if self.get('series_value'):
 			if self.series_value > 0:
 				name = naming_series_name(self.naming_series, fiscal, self.company_series)
-				
 				check = frappe.db.get_value('Series', name, 'current', order_by="name")
 				if check == 0:
 					pass
