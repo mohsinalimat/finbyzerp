@@ -11,10 +11,7 @@ from erpnext.accounts.general_ledger import make_gl_entries, delete_gl_entries
 
 	
 def patch():
-	#data = get_data()
-	data =[{'voucher_type': 'Delivery Note', 'voucher_no': 'DN20212100416', 'company': 'Millennium Vitrified Tiles Pvt. Ltd. Testing', 'gl_value': -965770.0, 'value_diff': -869193.0},
-	{'voucher_type': 'Stock Entry', 'voucher_no': 'SE20212101584', 'company': 'Millennium Vitrified Tiles Pvt. Ltd. Testing', 'gl_value': -965770.0, 'value_diff': -869193.0}]
-	print(data)
+	data = get_data()	
 	for row in data:
 		if row['voucher_type'] in ["Stock Entry","Stock Reconciliation"]:
 			se_doc = frappe.get_doc("Stock Entry",row['voucher_no'])
