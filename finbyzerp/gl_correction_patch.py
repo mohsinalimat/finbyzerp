@@ -11,28 +11,29 @@ from erpnext.accounts.general_ledger import make_gl_entries, delete_gl_entries
 
 	
 def patch():
-	data = get_data()	
+	data = get_data()
 	for row in data:
-		if row['voucher_type'] in ["Stock Entry","Stock Reconciliation"]:
-			se_doc = frappe.get_doc("Stock Entry",row['voucher_no'])
-			print(se_doc.name)
-			delete_gl_entries(voucher_type=row['voucher_type'],voucher_no=row['voucher_no'])
-			se_doc.make_gl_entries(repost_future_gle=False, from_repost=False)
-		if row['voucher_type'] == "Payment Entry":
-			pe_doc = frappe.get_doc("Payment Entry",row['voucher_no'])
-			print(pe_doc.name)
-			pe_doc.make_gl_entries(cancel=1)
-			pe_doc.make_gl_entries(cancel=0)
-		if row['voucher_type'] == "Delivery Note":
-			dn_doc = frappe.get_doc("Delivery Note",row['voucher_no'])
-			print(dn_doc.name)
-			delete_gl_entries(voucher_type=row['voucher_type'],voucher_no=row['voucher_no'])
-			dn_doc.make_gl_entries(repost_future_gle=False, from_repost=False)
-		if row['voucher_type'] == "Purchase Receipt":
-			pr_doc = frappe.get_doc("Purchase Receipt",row['voucher_no'])
-			print(pr_doc.name)
-			delete_gl_entries(voucher_type=row['voucher_type'],voucher_no=row['voucher_no'])
-			pr_doc.make_gl_entries()
+			if row['voucher_type'] in ["Stock Entry","Stock Reconciliation"]:
+				se_doc = frappe.get_doc(row['voucher_type'],row['voucher_no'])
+				print(se_doc.name)
+				delete_gl_entries(voucher_type=row['voucher_type'],voucher_no=row['voucher_no'])
+				se_doc.make_gl_entries(repost_future_gle=False, from_repost=False)
+			if row['voucher_type'] == "Payment Entry":
+				pe_doc = frappe.get_doc("Payment Entry",row['voucher_no'])
+				print(pe_doc.name)
+				pe_doc.make_gl_entries(cancel=1)
+				pe_doc.make_gl_entries(cancel=0)
+			if row['voucher_type'] == "Delivery Note":
+				dn_doc = frappe.get_doc("Delivery Note",row['voucher_no'])
+				print(dn_doc.name)
+				delete_gl_entries(voucher_type=row['voucher_type'],voucher_no=row['voucher_no'])
+				dn_doc.make_gl_entries(repost_future_gle=False, from_repost=False)
+			if row['voucher_type'] == "Purchase Receipt":
+				pr_doc = frappe.get_doc("Purchase Receipt",row['voucher_no'])
+				print(pr_doc.name)
+				delete_gl_entries(voucher_type=row['voucher_type'],voucher_no=row['voucher_no'])
+				pr_doc.make_gl_entries()
+
 			
 def get_data():
 	sle_data = get_sle_value()
@@ -60,7 +61,7 @@ def get_sle_value():
 				`tabStock Ledger Entry` sle
 			where sle.docstatus < 2 and sle.stock_value_difference<>0
 			group by sle.voucher_no
-			order by sle.posting_date""", as_dict=1)
+			order by sle.posting_date""" , as_dict=1)
 
 
 def get_gl_value():
