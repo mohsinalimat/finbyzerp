@@ -1,0 +1,25 @@
+{
+ "add_total_row": 1,
+ "creation": "2020-07-08 19:07:32.386048",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "idx": 0,
+ "is_standard": "Yes",
+ "letter_head": "EIE wihout ISO",
+ "modified": "2020-07-09 10:55:57.351513",
+ "modified_by": "Administrator",
+ "module": "Finbyzerp",
+ "name": "Accounts Payable with GL",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "Purchase Invoice",
+ "report_name": "Accounts Payable with GL",
+ "report_type": "Script Report",
+ "roles": [
+  {
+   "role": "System Manager"
+  }
+ ]
+}

@@ -52,6 +52,7 @@ override_whitelisted_methods = {
 	"frappe.core.page.permission_manager.permission_manager.reset": "finbyzerp.permission.reset",
 	"frappe.core.page.permission_manager.permission_manager.get_users_with_role": "finbyzerp.permission.get_users_with_role",
 	"frappe.core.page.permission_manager.permission_manager.get_standard_permissions": "finbyzerp.permission.get_standard_permissions",
+	"erpnext.setup.doctype.company.delete_company_transactions.delete_company_transactions": "finbyzerp.finbyzerp.override.delete_company_transactions.delete_company_transactions",
 }
 
 doc_events = {
