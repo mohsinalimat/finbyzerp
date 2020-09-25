@@ -1,9 +1,13 @@
 frappe.ui.form.on('Sales Order', {
 	refresh: (frm) => {
+		if (frm.doc.__islocal){
 		frm.set_df_property("company", "read_only", (!frm.doc.__islocal || frm.doc.amended_from) ? 1 : 0);
+		}
 	},
 	onload: (frm) => {
+		if (frm.doc.__islocal){
 		frm.trigger('naming_series');
+		}
 	},
 	naming_series: function (frm) {
 		if (frappe.meta.get_docfield("Sales Order", "series_value", frm.doc.name)){
@@ -20,6 +24,7 @@ frappe.ui.form.on('Sales Order', {
 						frm.doc.series_value = e.message;
 					}
 				});
+				frm.refresh_field('series_value')
 			}
 		}
 	},
