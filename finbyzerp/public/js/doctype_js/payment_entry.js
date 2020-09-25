@@ -24,6 +24,7 @@ frappe.ui.form.on('Payment Entry', {
 						frm.doc.series_value = e.message;
 					}
 				});
+				frm.refresh_field('series_value')
 			}
 		}
 	},

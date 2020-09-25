@@ -24,6 +24,7 @@ frappe.ui.form.on('Sales Invoice', {
 						frm.doc.series_value = e.message;
 					}
 				});
+				frm.refresh_field('series_value')
 			}
 		}
 	},
