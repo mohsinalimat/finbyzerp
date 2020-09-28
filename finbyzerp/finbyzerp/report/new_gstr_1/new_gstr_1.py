@@ -1,4 +1,4 @@
-# Copyright (c) 2013, Frappe Technologies Pvt. Ltd. and contributors
+# Copyright (c) 2020, Finbyz Tech Pvt. Ltd.
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
@@ -50,12 +50,17 @@ class Gstr1Report(object):
 			self.get_items_based_on_tax_rate()
 			self.invoice_fields = [d["fieldname"] for d in self.invoice_columns]
 			self.get_data()
+		if self.filters.type_of_business == "CDNR":
+			for item in self.data:
+				item[2] =  formatdate(frappe.db.get_value("Sales Invoice", item[3], 'posting_date'), 'dd-MMM-YY')
 
 		return self.columns, self.data
 
 	def get_data(self):
-		if self.filters.get("type_of_business") in  ("B2C Small", "B2C Large"):
-			self.get_b2c_data()
+		if self.filters.get("type_of_business") == "B2C Small":
+			self.get_b2c_data("B2C Small")
+		elif self.filters.get("type_of_business") == "B2C Large":
+			self.get_b2c_data("B2C Large")
 		else:
 			for inv, items_based_on_rate in self.items_based_on_tax_rate.items():
 				invoice_details = self.invoices.get(inv)
@@ -69,35 +74,51 @@ class Gstr1Report(object):
 					if taxable_value:
 						self.data.append(row)
 
-	def get_b2c_data(self):
+	def get_b2c_data(self,type_of_business):
 		b2cs_output = {}
-
 		for inv, items_based_on_rate in self.items_based_on_tax_rate.items():
 			invoice_details = self.invoices.get(inv)
 			for rate, items in items_based_on_rate.items():
 				place_of_supply = invoice_details.get("place_of_supply")
 				ecommerce_gstin =  invoice_details.get("ecommerce_gstin")
 
-				b2cs_output.setdefault((rate, place_of_supply, ecommerce_gstin),{
-					"place_of_supply": "",
-					"ecommerce_gstin": "",
-					"rate": "",
-					"taxable_value": 0,
-					"cess_amount": 0,
-					"type": "",
-					"invoice_number": invoice_details.get("invoice_number"),
-					"posting_date": invoice_details.get("posting_date"),
-					"invoice_value": invoice_details.get("base_grand_total"),
-				})
+				if type_of_business == "B2C Large":
+					b2cs_output.setdefault((invoice_details.get("invoice_number"),rate, place_of_supply, ecommerce_gstin),{
+						"place_of_supply": "",
+						"ecommerce_gstin": "",
+						"rate": "",
+						"taxable_value": 0,
+						"cess_amount": 0,
+						"type": "",
+						"invoice_number": invoice_details.get("invoice_number"),
+						"posting_date": invoice_details.get("posting_date"),
+						"invoice_value": invoice_details.get("base_grand_total"),
+					})
 
-				row = b2cs_output.get((rate, place_of_supply, ecommerce_gstin))
+					row = b2cs_output.get((invoice_details.get("invoice_number"),rate, place_of_supply, ecommerce_gstin))
+				
+				else:
+					b2cs_output.setdefault((rate, place_of_supply, ecommerce_gstin),{
+						"place_of_supply": "",
+						"ecommerce_gstin": "",
+						"rate": "",
+						"taxable_value": 0,
+						"cess_amount": 0,
+						"type": "",
+						"invoice_number": invoice_details.get("invoice_number"),
+						"posting_date": invoice_details.get("posting_date"),
+						"invoice_value": invoice_details.get("base_grand_total"),
+					})
+
+					row = b2cs_output.get((rate, place_of_supply, ecommerce_gstin))
+								
 				row["place_of_supply"] = place_of_supply
 				row["ecommerce_gstin"] = ecommerce_gstin
 				row["rate"] = rate
-				row["taxable_value"] += sum([abs(net_amount)
-					for item_code, net_amount in self.invoice_items.get(inv).items() if item_code in items])
+				row["taxable_value"] += self.get_row_data_for_invoice(inv, invoice_details, rate, items)[1]
 				row["cess_amount"] += flt(self.invoice_cess.get(inv), 2)
 				row["type"] = "E" if ecommerce_gstin else "OE"
+				row['return_posting_date'] = frappe.db.get_value("Sales Invoice", row.get('return_against'), 'posting_date')
 
 		for key, value in iteritems(b2cs_output):
 			self.data.append(value)
@@ -134,7 +155,7 @@ class Gstr1Report(object):
 				for taxes in frappe.get_list("Sales Taxes and Charges", {'parent': invoice}, '*'):
 					if taxes.account_head.find('GST') == -1:
 						iwtd = json.loads(taxes.item_wise_tax_detail)
-						taxable_value += iwtd[item_code][1]
+						taxable_value += abs(iwtd[item_code][1])
 
 		row += [tax_rate or 0, taxable_value]
 
@@ -421,6 +442,12 @@ class Gstr1Report(object):
 				{
 					"fieldname": "customer_name",
 					"label": "Receiver Name",
+					"fieldtype": "Data",
+					"width": 120
+				},
+				{
+					"fieldname": "return_posting_date",
+					"label": "Invoice/Advance Receipt date",
 					"fieldtype": "Data",
 					"width": 120
 				},
