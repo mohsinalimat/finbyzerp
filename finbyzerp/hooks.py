@@ -24,8 +24,15 @@ from erpnext.setup.doctype.naming_series.naming_series import NamingSeries
 from finbyzerp.finbyzerp.override.naming_series import get_transactions
 NamingSeries.get_transactions = get_transactions
 
-app_include_css = ["assets/css/finbyzerp.min.css", "assets/finbyzerp/css/permission.css"]
-app_include_js = "assets/js/finbyzerp.min.js"
+app_include_css = ["assets/css/finbyzerp.min.css", "assets/finbyzerp/css/permission.css","/assets/finbyzerp/css/finbyz-theme.css"]
+app_include_js = [
+	"assets/js/finbyzerp.min.js" 
+	#"assets/finbyzerp/js/frappe/ui/page.js"
+]
+
+doctype_list_js = {
+	"Batch" : "public/js/doctype_js/batch_list.js"
+}
 
 before_install = "finbyzerp.install.before_install"
 doctype_js = {
@@ -54,6 +61,8 @@ override_whitelisted_methods = {
 	"frappe.core.page.permission_manager.permission_manager.get_users_with_role": "finbyzerp.permission.get_users_with_role",
 	"frappe.core.page.permission_manager.permission_manager.get_standard_permissions": "finbyzerp.permission.get_standard_permissions",
 	"erpnext.setup.doctype.company.delete_company_transactions.delete_company_transactions": "finbyzerp.finbyzerp.override.delete_company_transactions.delete_company_transactions",
+	"frappe.desk.moduleview.get_desktop_settings": "finbyzerp.api.get_desktop_settings",
+	"frappe.desk.moduleview.get_options_for_global_modules": "finbyzerp.api.get_options_for_global_modules"
 }
 
 doc_events = {
