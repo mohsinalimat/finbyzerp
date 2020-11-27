@@ -362,6 +362,27 @@ h4, .h4 {
 .finbyz-non-profit{
 	background: url(/assets/finbyzerp/images/non-profit.svg)}
 
+.finbyz-website{
+   background: url(/assets/finbyzerp/images/website.svg)}
+
+.finbyz-settings{
+   background: url(/assets/finbyzerp/images/settings.png)}
+
+.finbyz-customization{
+   background: url(/assets/finbyzerp/images/customization.svg)}
+
+.finbyz-healthcare{
+   background: url(/assets/finbyzerp/images/healthcare.svg)}
+
+.finbyz-retail{
+   background: url(/assets/finbyzerp/images/retail.svg)}
+
+.finbyz-education{
+   background: url(/assets/finbyzerp/images/education.svg)}
+
+.finbyz-marketplace{
+   background: url(/assets/finbyzerp/images/market_place.svg)}
+
 
 .layout-main-section{
 	background-color: #ffffff !important}
