@@ -111,7 +111,7 @@ def get_desktop_settings():
 	all_modules = get_modules_from_all_apps_for_user()
 	home_settings = get_home_settings()
 	# module_map = {'Desk':'/files/desk_icon.png','Users and Permissions':'/files/desk_icon.png','Accounts':'icon finbyz-accounting','Getting Started':'icon finbyz-getting_started'}
-	module_map = {'Desk':'icon finbyz-desk','Users and Permissions':'icon finbyz-users-and-permissions','Accounts':'icon finbyz-accounting','Getting Started':'icon finbyz-getting_started', 'Learn': 'icon finbyz-learn','Tools': 'icon finbyz-tools',  'Social': 'icon finbyz-social',  'Leaderboard': 'icon finbyz-leaderboard','dashboard': 'icon finbyz-dashboard', 'Selling': 'icon finbyz-selling', 'Buying': 'icon finbyz-buying','Stock': 'icon finbyz-stock','Assets': 'icon finbyz-assets','Projects': 'icon finbyz-projects','CRM': 'icon finbyz-crm', 'Support': 'icon finbyz-support','HR': 'icon finbyz-hr', 'Quality Management': 'icon finbyz-quality-management', 'Manufacturing': 'icon finbyz-manufacturing', 'Help': 'icon finbyz-help', 'Chemical': 'icon finbyz-chemical', 'Exim': 'icon finbyz-exim', 'Settings' : 'icon finbyz-settings', 'Website' : 'icon finbyz-website', 'Customization' : 'icon finbyz-customization'}
+	module_map = {'Desk':'icon finbyz-desk','Users and Permissions':'icon finbyz-users-and-permissions','Accounts':'icon finbyz-accounting','Getting Started':'icon finbyz-getting_started', 'Learn': 'icon finbyz-learn','Tools': 'icon finbyz-tools',  'Social': 'icon finbyz-social',  'Leaderboard': 'icon finbyz-leaderboard','dashboard': 'icon finbyz-dashboard', 'Selling': 'icon finbyz-selling', 'Buying': 'icon finbyz-buying','Stock': 'icon finbyz-stock','Assets': 'icon finbyz-assets','Projects': 'icon finbyz-projects','CRM': 'icon finbyz-crm', 'Support': 'icon finbyz-support','HR': 'icon finbyz-hr', 'Quality Management': 'icon finbyz-quality-management', 'Manufacturing': 'icon finbyz-manufacturing', 'Help': 'icon finbyz-help', 'Chemical': 'icon finbyz-chemical', 'Exim': 'icon finbyz-exim', 'Settings' : 'icon finbyz-settings', 'Website' : 'icon finbyz-website', 'Customization' : 'icon finbyz-customization','Marketplace': 'icon finbyz-marketplace','Integrations':'icon finbyz-integrations','Developer':'icon finbyz-developer'}
 	modules_by_name = {}
 	for m in all_modules:
 		if m['module_name'] in module_map.keys():
@@ -175,3 +175,38 @@ def get_options_for_global_modules():
 		})
 
 	return options
+
+def daily_entry_summary_mail():
+	doc = frappe.get_doc("Daily Entry Summary","DES-001")
+	header = body = ''
+	for dtype in doc.doctypes:
+		total = 0
+		header += """<tr>
+						<th>{dtype}</th>
+					</tr>
+		""".format(dtype=dtype.document_type)
+
+		query = frappe.db.sql("select owner,count(name) as no_of_entries from `tab{dtype}` where CAST(creation AS DATE) = CURDATE() GROUP BY owner".format(dtype=dtype.document_type),as_dict=1)
+		if query:
+			for data in query:
+				total += data.no_of_entries
+				body +="""<tr>
+							<td>{owner}: <b>{no_of_entries}</b></td>
+						</tr>""".format(owner = data.owner,no_of_entries=data.no_of_entries)
+
+			body += """<tr>
+						<td>Total : <h4><b>{total}</b></h4></td>
+						</tr>
+			""".format(total=total)
+
+	message = """<h3><b>Today Entry List</b></h3></br></br>
+				<table class="table table-bordered" style="margin: 0; font-size:80%;">
+				<thead>{header}</thead>
+				<tbody>{body}</tbody>
+				</table>
+	""".format(header=header,body=body)
+
+	frappe.sendmail(recipients=['milan.pethani@finbyz.tech'],
+		sender="milanpethani592@gmail.com",
+		reference_doctype='User', reference_name="Administrator",
+		subject='Daily Entry Summary', message=message, now=True)
