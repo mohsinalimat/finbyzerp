@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 import frappe
 from erpnext.accounts.utils import get_fiscal_year
 import datetime
-from frappe.utils import cint, getdate
+from frappe.utils import cint, getdate, get_fullname, get_url_to_form
 
 def before_insert(self, method):
 	opening_naming_series(self)
@@ -178,35 +178,95 @@ def get_options_for_global_modules():
 
 def daily_entry_summary_mail():
 	doc = frappe.get_doc("Daily Entry Summary","DES-001")
-	header = body = ''
-	for dtype in doc.doctypes:
-		total = 0
-		header += """<tr>
-						<th>{dtype}</th>
-					</tr>
-		""".format(dtype=dtype.document_type)
 
-		query = frappe.db.sql("select owner,count(name) as no_of_entries from `tab{dtype}` where CAST(creation AS DATE) = CURDATE() GROUP BY owner".format(dtype=dtype.document_type),as_dict=1)
-		if query:
-			for data in query:
-				total += data.no_of_entries
-				body +="""<tr>
-							<td>{owner}: <b>{no_of_entries}</b></td>
-						</tr>""".format(owner = data.owner,no_of_entries=data.no_of_entries)
+	recipients = doc.recipient.split(",") if doc.recipient.find(",") > 0 else doc.recipient
+	print(recipients)
+	if doc.daily_entry_summary:
+		message = ""
+		for dtype in doc.doctypes:
+			body = ''
+			total = 0
 
-			body += """<tr>
-						<td>Total : <h4><b>{total}</b></h4></td>
+			table_data = """
+				<table class="table table-bordered " style="font-size:100%; float: left;  width:110px; margin:10px 10px 10px 0;">
+				<thead><tr><th colspan="2"><b><center>{dtype}</center></b></th></tr></thead>
+			""".format(dtype=dtype.document_type)
+
+			query = frappe.db.sql("select owner,count(name) as no_of_entries from `tab{dtype}` where docstatus=1 and CAST(creation AS DATE) = CURDATE() GROUP BY owner".format(dtype=dtype.document_type),as_dict=1)
+
+			if query:
+				for data in query:
+					total += data.no_of_entries
+					user = get_fullname(data.owner)
+					body +="""<tr>
+								<td><center>{user}</center></td> <td><center><b>{no_of_entries}</b></center></td>
+							</tr>
+					""".format(user = user,no_of_entries=data.no_of_entries)
+
+				body += """<tr>
+							<td><center><b>Total</h5></b><center></td> <td><center><b>{total}</h5></b><center></td>
 						</tr>
-			""".format(total=total)
+				""".format(total=total)
+			else:
+				body += """<tr><td><b><center>0</center></b></td></tr>"""
 
-	message = """<h3><b>Today Entry List</b></h3></br></br>
-				<table class="table table-bordered" style="margin: 0; font-size:80%;">
-				<thead>{header}</thead>
-				<tbody>{body}</tbody>
+			table_data += """
+						<tbody>{body}</tbody>
 				</table>
-	""".format(header=header,body=body)
+			""".format(body=body)
 
-	frappe.sendmail(recipients=['milan.pethani@finbyz.tech'],
-		sender="milanpethani592@gmail.com",
-		reference_doctype='User', reference_name="Administrator",
-		subject='Daily Entry Summary', message=message, now=True)
+			message += """&nbsp;{table_data}&nbsp;
+			""".format(table_data=table_data)
+
+		frappe.sendmail(recipients=recipients,
+			reference_doctype='User', reference_name="Administrator",
+			subject='Daily Entry Summary', message="""<div style="max-width:80%;">""" + message + """</div>""", now=True)
+
+
+	if doc.daily_transaction_summary:
+		message = ""
+		for dtype in doc.doctypes:
+			query_col = body = thead = table_data = ''
+			total = 0
+
+			query_columns = frappe.db.sql("""select fieldname,label from `tabDocField` where parent='{}' and in_list_view=1 ORDER BY idx""".format(dtype.document_type),as_dict=1)
+			thead += """<th><center>Name</center></th>"""
+
+			for lview in query_columns:
+				query_col += "name,"
+				query_col += "{col},".format(col=lview.fieldname)
+				thead += """<th><center>{col}</center></th>""".format(col=lview.label)
+
+			query_columns = query_col[:-1]
+
+			table_data = """<p><h4><b>{dtype}:</b></h4></p></br></br>
+				<table class="table table-bordered" style="font-size:100%;width:auto;">
+				<thead><tr>{thead}</tr></thead>
+			""".format(dtype=dtype.document_type,thead=thead)
+			
+			# select_date = 'transaction_date' if dtype.document_type in ['Purchase Order','Sales Order'] else 'posting_date'
+			query = frappe.db.sql("""select {query_columns} from `tab{dtype}` where docstatus = 1 and CAST(creation AS DATE) = CURDATE()""".format(query_columns=query_columns,dtype=dtype.document_type),as_dict=1)
+			
+			if query:
+				for data in query:
+					body += "<tr>"
+					for key in data:
+						if key == "name":
+							url = get_url_to_form(dtype.document_type, data[f'{key}'])
+							body+= f"""<td><center><a href={url}>{data[f'{key}']}</a></center></td>"""
+						else:
+							body += f"""<td><center>{data[f'{key}']}</center></td>
+						"""
+					body += "</tr>"
+
+			table_data += """
+						<tbody>{body}</tbody>
+				</table>
+			""".format(body=body)
+
+			message += """<br>{table_data}</br>
+			""".format(table_data=table_data)
+		
+		frappe.sendmail(recipients=recipients,
+			reference_doctype='User', reference_name="Administrator",
+			subject='Daily Transaction Summary', message=message, now=True)

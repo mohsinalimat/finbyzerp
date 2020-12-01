@@ -73,3 +73,9 @@ doc_events = {
 		"before_naming": "finbyzerp.api.before_naming",
 	},
 }
+
+scheduler_events = {
+	"daily":[
+		"finbyzerp.api.daily_entry_summary_mail"
+	]
+}
