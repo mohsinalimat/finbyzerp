@@ -253,10 +253,10 @@ def daily_entry_summary_mail():
 					for key in data:
 						if key == "name":
 							url = get_url_to_form(dtype.document_type, data[f'{key}'])
-							body+= f"""<td><center><a href={url}>{data[f'{key}']}</a></center></td>"""
+							body+= """<td><center><a href={}>{}</a></center></td>""".format(url,data['{key}'.format(key=key)])
 						else:
-							body += f"""<td><center>{data[f'{key}']}</center></td>
-						"""
+							body += """<td><center>{}</center></td>
+						""".format(data['{key}'.format(key=key)])
 					body += "</tr>"
 
 			table_data += """
