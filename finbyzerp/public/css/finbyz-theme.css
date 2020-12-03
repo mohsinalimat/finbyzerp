@@ -259,6 +259,9 @@ div[data-page-route='query-report'] .dt-row{
 	body[data-route=""] .toggle-sidebar, body[data-route="desktop"] .toggle-sidebar {
 		display: none !important;
 	}
+	body[data-route*="modules/"] .toggle-sidebar {
+		display: none !important;
+	}
 }
 
 @media (min-width: 992px){
@@ -268,7 +271,7 @@ div[data-page-route='query-report'] .dt-row{
 		margin-left: auto !important;
 		clear: left;
 		float: none;
-		
+		margin-bottom: 125px;
 	}
 }
 
