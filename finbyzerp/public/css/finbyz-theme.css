@@ -270,9 +270,6 @@ div[data-page-route='query-report'] .dt-row{
 		float: none;
 		
 	}
-	.col-md-10{
-		float:none!important;
-	}
 }
 
 @media screen and (min-width: 1199px){
