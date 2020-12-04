@@ -247,7 +247,7 @@ def daily_transaction_summary_mail():
 			""".format(dtype=dtype.document_type,thead=thead)
 			
 			# select_date = 'transaction_date' if dtype.document_type in ['Purchase Order','Sales Order'] else 'posting_date'
-			query = frappe.db.sql("""select {query_columns} from `tab{dtype}` where docstatus = 1 and CAST(creation AS DATE) = '2020-12-03'""".format(query_columns=query_columns,dtype=dtype.document_type),as_dict=1)
+			query = frappe.db.sql("""select {query_columns} from `tab{dtype}` where docstatus = 1 and CAST(creation AS DATE) = CURDATE()""".format(query_columns=query_columns,dtype=dtype.document_type),as_dict=1)
 			
 			if query:
 				for data in query:
