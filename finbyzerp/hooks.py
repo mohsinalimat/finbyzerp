@@ -76,6 +76,7 @@ doc_events = {
 
 scheduler_events = {
 	"daily":[
-		"finbyzerp.api.daily_entry_summary_mail"
+		"finbyzerp.api.daily_entry_summary_mail",
+		"finbyzerp.api.daily_transaction_summary_mail"
 	]
 }

@@ -180,7 +180,6 @@ def daily_entry_summary_mail():
 	doc = frappe.get_doc("Daily Entry Summary","DES-001")
 
 	recipients = doc.recipient.split(",") if doc.recipient.find(",") > 0 else doc.recipient
-	print(recipients)
 	if doc.daily_entry_summary:
 		message = ""
 		for dtype in doc.doctypes:
@@ -188,7 +187,7 @@ def daily_entry_summary_mail():
 			total = 0
 
 			table_data = """
-				<table class="table table-bordered " style="font-size:100%; float: left;  width:110px; margin:10px 10px 10px 0;">
+				<table class="table table-bordered " style="font-size:100%; float: left;  width:auto; margin:10px 10px 10px 0;">
 				<thead><tr><th colspan="2"><b><center>{dtype}</center></b></th></tr></thead>
 			""".format(dtype=dtype.document_type)
 
@@ -220,9 +219,12 @@ def daily_entry_summary_mail():
 
 		frappe.sendmail(recipients=recipients,
 			reference_doctype='User', reference_name="Administrator",
-			subject='Daily Entry Summary', message="""<div style="max-width:80%;">""" + message + """</div>""", now=True)
+			subject='Daily Entry Summary', message="""<div style="width:100%;">""" + message + """</div>""", now=True)
 
+def daily_transaction_summary_mail():
+	doc = frappe.get_doc("Daily Entry Summary","DES-001")
 
+	recipients = doc.recipient.split(",") if doc.recipient.find(",") > 0 else doc.recipient
 	if doc.daily_transaction_summary:
 		message = ""
 		for dtype in doc.doctypes:
