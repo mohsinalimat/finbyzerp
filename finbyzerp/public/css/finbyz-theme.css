@@ -94,9 +94,9 @@ body.no-breadcrumbs .navbar .navbar-home:active:before, body.no-breadcrumbs .nav
 		margin-top: 56px;
 	}
   }
-div[data-page-route='query-report'] .form-inner-toolbar{
+/* div[data-page-route='query-report'] .form-inner-toolbar{
     display: none;
-}
+} */
 div[data-page-route='query-report'] .dt-row{
     height: 30px!important;
 }
