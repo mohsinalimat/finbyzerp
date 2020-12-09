@@ -234,8 +234,8 @@ def daily_transaction_summary_mail():
 			query_columns = frappe.db.sql("""select fieldname,label from `tabDocField` where parent='{}' and in_list_view=1 ORDER BY idx""".format(dtype.document_type),as_dict=1)
 			thead += """<th><center>Name</center></th>"""
 
+			query_col = "name,"
 			for lview in query_columns:
-				query_col += "name,"
 				query_col += "{col},".format(col=lview.fieldname)
 				thead += """<th><center>{col}</center></th>""".format(col=lview.label)
 
