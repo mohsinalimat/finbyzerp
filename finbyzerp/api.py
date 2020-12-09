@@ -242,7 +242,7 @@ def daily_transaction_summary_mail():
 			query_columns = query_col[:-1]
 
 			table_data = """<p><h4><b>{dtype}:</b></h4></p></br></br>
-				<table class="table table-bordered" style="font-size:100%;width:auto;">
+				<table class="table table-bordered" style="width:100%;">
 				<thead><tr>{thead}</tr></thead>
 			""".format(dtype=dtype.document_type,thead=thead)
 			
@@ -252,7 +252,7 @@ def daily_transaction_summary_mail():
 			if query:
 				for data in query:
 					body += "<tr>"
-					for key in data:
+					for key in query_columns.split(","):
 						if key == "name":
 							url = get_url_to_form(dtype.document_type, data['{key}'.format(key=key)])
 							body+= """<td><center><a href={}>{}</a></center></td>""".format(url,data['{key}'.format(key=key)])
@@ -269,6 +269,6 @@ def daily_transaction_summary_mail():
 			message += """<br>{table_data}</br>
 			""".format(table_data=table_data)
 		
-		frappe.sendmail(recipients=recipients,
+		frappe.sendmail(recipients=recipients,sender = 'milanpethani592@gmail.com',
 			reference_doctype='User', reference_name="Administrator",
 			subject='Daily Transaction Summary', message=message, now=True)
