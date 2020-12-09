@@ -242,7 +242,7 @@ def daily_transaction_summary_mail():
 			query_columns = query_col[:-1]
 
 			table_data = """<p><h4><b>{dtype}:</b></h4></p></br></br>
-				<table class="table table-bordered" style="width:100%;">
+				<table class="table table-bordered" style="width:auto;">
 				<thead><tr>{thead}</tr></thead>
 			""".format(dtype=dtype.document_type,thead=thead)
 			
