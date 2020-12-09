@@ -269,6 +269,6 @@ def daily_transaction_summary_mail():
 			message += """<br>{table_data}</br>
 			""".format(table_data=table_data)
 		
-		frappe.sendmail(recipients=recipients,sender = 'milanpethani592@gmail.com',
+		frappe.sendmail(recipients=recipients
 			reference_doctype='User', reference_name="Administrator",
 			subject='Daily Transaction Summary', message=message, now=True)
