@@ -21,10 +21,11 @@ frappe.ui.form.on('Sales Invoice', {
 						'company_series': frm.doc.company_series || null,
 					},
 					callback: function (e) {
-						frm.doc.series_value = e.message;
+						// frm.doc.series_value = e.message;
+						frm.set_value('series_value', e.message);
 					}
 				});
-				frm.refresh_field('series_value')
+				// frm.refresh_field('series_value')
 			}
 		}
 	},

@@ -1,4 +1,4 @@
-frappe.ui.form.on('Delivery Note', {
+frappe.ui.form.on('Stock Entry', {
 	refresh: (frm) => {
 		if (frm.doc.__islocal){
 		frm.set_df_property("company", "read_only", (!frm.doc.__islocal || frm.doc.amended_from) ? 1 : 0);
@@ -10,7 +10,7 @@ frappe.ui.form.on('Delivery Note', {
 		}
 	},
 	naming_series: function (frm) {
-		if (frappe.meta.get_docfield("Delivery Note", "series_value", frm.doc.name)){
+		if (frappe.meta.get_docfield("Stock Entry", "series_value", frm.doc.name)){
 			if (frm.doc.__islocal && frm.doc.company && !frm.doc.amended_from) {
 				console.log('test')
 				frappe.call({
@@ -23,7 +23,6 @@ frappe.ui.form.on('Delivery Note', {
 					callback: function (e) {
 						// frm.doc.series_value = e.message;
 						frm.set_value('series_value', e.message);
-
 					}
 				});
 				// frm.refresh_field('series_value')

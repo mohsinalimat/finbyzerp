@@ -37,6 +37,7 @@ doctype_js = {
 	"Purchase Receipt": "public/js/doctype_js/purchase_receipt.js",
 	"Purchase Invoice": "public/js/doctype_js/purchase_invoice.js",
 	"Payment Entry": "public/js/doctype_js/payment_entry.js",
+	"Stock Entry": "public/js/doctype_js/stock_entry.js",
 }
 website_context = {
 	"favicon": 	"/assets/finbyzerp/images/favicon.ico",
