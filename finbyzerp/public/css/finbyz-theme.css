@@ -194,6 +194,9 @@ div[data-page-route='query-report'] .dt-row{
 .finbyz-website{
    background: url(/assets/finbyzerp/images/website.svg)}
 
+.finbyz-finbyzweb{
+	background: url(/assets/finbyzerp/images/finbyzweb.svg)}
+
 .finbyz-settings{
    background: url(/assets/finbyzerp/images/settings.svg)}
 
@@ -217,6 +220,9 @@ div[data-page-route='query-report'] .dt-row{
 
 .finbyz-developer{
 	background: url(/assets/finbyzerp/images/developer.svg)}
+
+.finbyz-ceramic{
+		background: url(/assets/finbyzerp/images/ceramic.svg)}
 
 .layout-main-section{
 	background-color: #ffffff !important}
