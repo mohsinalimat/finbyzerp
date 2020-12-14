@@ -2,11 +2,27 @@ frappe.ui.form.on('Stock Entry', {
 	refresh: (frm) => {
 		if (frm.doc.__islocal){
 		frm.set_df_property("company", "read_only", (!frm.doc.__islocal || frm.doc.amended_from) ? 1 : 0);
+	
 		}
 	},
 	onload: (frm) => {
 		if (frm.doc.__islocal){
-		frm.trigger('naming_series');
+			if (frm.doc.company){
+				frappe.call({
+					method: 'frappe.client.get_value',
+					args: {
+					  doctype: 'Company',
+					  filters: {
+						'name': frm.doc.company,
+					  },
+					  fieldname: ['company_series']
+					},
+					callback: function (r) {
+						frm.set_value('company_series',r.message.company_series)
+					}
+			})
+			frm.trigger('naming_series');
+			}
 		}
 	},
 	naming_series: function (frm) {
