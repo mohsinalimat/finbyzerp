@@ -224,6 +224,9 @@ div[data-page-route='query-report'] .dt-row{
 .finbyz-ceramic{
 		background: url(/assets/finbyzerp/images/ceramic.svg)}
 
+.finbyz-engineering{
+	background: url(/assets/finbyzerp/images/engineering.svg)}
+
 .layout-main-section{
 	background-color: #ffffff !important}
 .layout-side-section .sidebar-menu{
