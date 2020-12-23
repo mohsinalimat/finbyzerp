@@ -60,11 +60,6 @@ frappe.ui.form.setup_user_image_event = function(frm) {
 	
 }
 
-// $(document).load(
-	
-// 	$(window).bind("resize",'onload', checkPosition)
-// );
-
 frappe.provide("frappe.ui.toolbar");
 frappe.provide('frappe.search');
 
@@ -229,142 +224,40 @@ frappe.ui.toolbar.Toolbar = Class.extend({
 	}
 
 });
-
 $.extend(frappe.ui.toolbar, {
-	add_dropdown_button: function(parent, label, click, icon) {
-		var menu = frappe.ui.toolbar.get_menu(parent);
-		if(menu.find("li:not(.custom-menu)").length && !menu.find(".divider").length) {
-			frappe.ui.toolbar.add_menu_divider(menu);
-		}
-
-		return $('<li class="custom-menu"><a><i class="fa-fw '
-			+icon+'"></i> '+label+'</a></li>')
-			.insertBefore(menu.find(".divider"))
-			.find("a")
-			.click(function() {
-				click.apply(this);
-			});
-	},
-	get_menu: function(label) {
-		return $("#navbar-" + label.toLowerCase());
-	},
-	add_menu_divider: function(menu) {
-		menu = typeof menu == "string" ?
-			frappe.ui.toolbar.get_menu(menu) : menu;
-
-		$('<li class="divider custom-menu"></li>').prependTo(menu);
-	},
-	add_icon_link(route, icon, index, class_name) {
-		let parent_element = $(".navbar-right").get(0);
-		let new_element = $(`<li class="${class_name}">
-			<a class="btn" href="${route}" title="${frappe.utils.to_title_case(class_name, true)}" aria-haspopup="true" aria-expanded="true">
-				<div>
-					<i class="octicon ${icon}"></i>
-				</div>
-			</a>
-		</li>`).get(0);
-
-		parent_element.insertBefore(new_element, parent_element.children[index]);
-	},
-	toggle_full_width() {
-		let fullwidth = JSON.parse(localStorage.container_fullwidth || 'false');
-		fullwidth = !fullwidth;
-		localStorage.container_fullwidth = fullwidth;
-		frappe.ui.toolbar.set_fullwidth_if_enabled();
-	},
-	set_fullwidth_if_enabled() {
-		let fullwidth = JSON.parse(localStorage.container_fullwidth || 'false');
-		$(document.body).toggleClass('full-width', fullwidth);
-	},
-	show_shortcuts (e) {
-		e.preventDefault();
-		frappe.ui.keys.show_keyboard_shortcut_dialog();
-		return false;
-	},
+	navpin: function(){
+		console.log('extented')
+	}
 });
 
-frappe.ui.toolbar.clear_cache = frappe.utils.throttle(function() {
-	frappe.assets.clear_local_storage();
-	frappe.xcall('frappe.sessions.clear').then(message => {
-		frappe.show_alert({
-			message: message,
-			indicator: 'green'
-		});
-		location.reload(true);
-	});
-}, 10000);
-
-frappe.ui.toolbar.show_about = function() {
-	try {
-		frappe.ui.misc.about();
-	} catch(e) {
-		console.log(e);
-	}
-	return false;
-};
-
-frappe.ui.toolbar.setup_session_defaults = function() {
-	let fields = [];
-	frappe.call({
-		method: 'frappe.core.doctype.session_default_settings.session_default_settings.get_session_default_values',
-		callback: function (data) {
-			fields = JSON.parse(data.message);
-			let perms = frappe.perm.get_perm('Session Default Settings');
-			//add settings button only if user is a System Manager or has permission on 'Session Default Settings'
-			if ((in_list(frappe.user_roles, 'System Manager')) || (perms[0].read == 1))  {
-				fields[fields.length] = {
-					'fieldname': 'settings',
-					'fieldtype': 'Button',
-					'label': __('Settings'),
-					'click': () => {
-						frappe.set_route('Form', 'Session Default Settings', 'Session Default Settings');
-					}
-				};
-			}
-			frappe.prompt(fields, function(values) {
-				//if default is not set for a particular field in prompt
-				fields.forEach(function(d) {
-					if (!values[d.fieldname]) {
-						values[d.fieldname] = "";
-					}
-				});
-				frappe.call({
-					method: 'frappe.core.doctype.session_default_settings.session_default_settings.set_session_default_values',
-					args: {
-						default_values: values,
-					},
-					callback: function(data) {
-						if (data.message == "success") {
-							frappe.show_alert({
-								'message': __('Session Defaults Saved'),
-								'indicator': 'green'
-							});
-							frappe.ui.toolbar.clear_cache();
-						}	else {
-							frappe.show_alert({
-								'message': __('An error occurred while setting Session Defaults'),
-								'indicator': 'red'
-							});
-						}
-					}
-				});
-			},
-			__('Session Defaults'),
-			__('Save'),
-			);
-		}
-	});
-};
-
-
 $(document).ready(function() {
-	set_sidebar()
+	sidebar_based_on_image()
  });
-
+ frappe.route.on('change', () => {
+	sidebar_based_on_image()
+ });
+function sidebar_based_on_image(){
+	var doctype = frappe.get_route()[1];
+	if(doctype && frappe.get_route()[0] != "List") {
+		frappe.db.get_value('DocType',doctype,'image_field',function(r){
+			if(r.image_field){
+				$(document.body).removeClass('custom-sidebar');
+			}
+			else{
+				set_sidebar()
+			}
+		});		
+	}
+	else{
+		set_sidebar()
+	}
+}
+//  $(".navbar-pin").on('click', function(){
+// 	frappe.ui.toolbar.navpin()
+//  });
  function set_sidebar(){
 	let sidebar = JSON.parse(localStorage.sidebar || 'false');
 	$(document.body).toggleClass('custom-sidebar', sidebar);
-	
 }
 function checkPosition(){
 	let sidebar = JSON.parse(localStorage.sidebar || 'false');
