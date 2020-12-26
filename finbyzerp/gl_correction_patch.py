@@ -28,8 +28,8 @@ def patch():
 			print(dn_doc.name)
 			delete_gl_entries(voucher_type=row['voucher_type'],voucher_no=row['voucher_no'])
 			dn_doc.make_gl_entries(repost_future_gle=False, from_repost=False)
-		if row['voucher_type'] == "Purchase Receipt":
-			pr_doc = frappe.get_doc("Purchase Receipt",row['voucher_no'])
+		if row['voucher_type'] in ["Purchase Receipt","Purchase Invoice"]:
+			pr_doc = frappe.get_doc(row['voucher_type'],row['voucher_no'])
 			print(pr_doc.name)
 			delete_gl_entries(voucher_type=row['voucher_type'],voucher_no=row['voucher_no'])
 			pr_doc.make_gl_entries()
