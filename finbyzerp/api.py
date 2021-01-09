@@ -121,7 +121,7 @@ def get_desktop_settings():
 		'Manufacturing': 'icon finbyz-manufacturing', 'Help': 'icon finbyz-help', 'Chemical': 'icon finbyz-chemical', \
 		'Exim': 'icon finbyz-exim', 'Settings' : 'icon finbyz-settings', 'Website' : 'icon finbyz-website', \
 		'Customization' : 'icon finbyz-customization','Marketplace': 'icon finbyz-marketplace', \
-		'Integrations':'icon finbyz-integrations','Developer':'icon finbyz-developer', \
+		'Integrations':'icon finbyz-integrations','Core':'icon finbyz-developer', \
 		'Ceramic': 'icon finbyz-ceramic','Finbyzweb': 'icon finbyz-finbyzweb',\
 		'Engineering': 'icon finbyz-engineering','Transport':'icon finbyz-transport'}
 
