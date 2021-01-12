@@ -61,13 +61,8 @@ override_whitelisted_methods = {
 	"frappe.core.page.permission_manager.permission_manager.get_users_with_role": "finbyzerp.permission.get_users_with_role",
 	"frappe.core.page.permission_manager.permission_manager.get_standard_permissions": "finbyzerp.permission.get_standard_permissions",
 	"erpnext.setup.doctype.company.delete_company_transactions.delete_company_transactions": "finbyzerp.finbyzerp.override.delete_company_transactions.delete_company_transactions",
-<<<<<<< HEAD
-	"erpnext.regional.india.utils.generate_ewb_json": "finbyzerp.eway_update.generate_ewb_json",
-	"erpnext.regional.india.utils.download_ewb_json": "finbyzerp.eway_update.download_ewb_json",
-=======
 	"frappe.desk.moduleview.get_desktop_settings": "finbyzerp.api.get_desktop_settings",
 	"frappe.desk.moduleview.get_options_for_global_modules": "finbyzerp.api.get_options_for_global_modules"
->>>>>>> 4d1617b9e2754e9c6f1e33c59a720f7a90100383
 }
 
 doc_events = {
