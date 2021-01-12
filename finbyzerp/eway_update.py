@@ -79,10 +79,10 @@ def get_item_list(data, doc):
 		if not hsn_code:
 			frappe.throw(_('GST HSN Code does not exist for one or more items'))
 		item_data.hsnCode = int(hsn_code)
-		item_data.taxableAmount = taxable_amount
+		item_data.taxableAmount = round(taxable_amount,2)
 		item_data.productName = item_name
 		item_data.productDesc = item_name
-		item_data.quantity = qty
+		item_data.quantity = round(qty,2)
 		item_data.qtyUnit = qtyUnit
 		
 		for attr in item_data_attrs:
@@ -95,8 +95,6 @@ def get_item_list(data, doc):
 					item_data[attrs[0]] = tax_detail.get('tax_rate')
 					data[attrs[1]] += tax_detail.get('tax_amount')
 					break
-			else:
-				data.OthValue += tax_detail.get('tax_amount')
 
 		data.itemList.append(item_data)
 
@@ -146,9 +144,9 @@ def get_ewb_data(dt, dn):
 		data.totalValue = 0
 
 		data = get_item_list(data, doc)
-
 		disable_rounded = frappe.db.get_single_value('Global Defaults', 'disable_rounded_total')
 		data.totInvValue = doc.grand_total if disable_rounded else doc.rounded_total
+		data.OthValue = round(data.totInvValue - (data.totalValue + data.cgstValue + data.sgstValue + data.igstValue + data.cessValue),2)
 
 		data = get_transport_details(data, doc)
 
