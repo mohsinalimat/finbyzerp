@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 import frappe
-from erpnext.accounts.utils import get_fiscal_year
+from erpnext.accounts.utils import get_fiscal_year, flt
 import datetime
 from frappe.utils import cint, getdate, get_fullname, get_url_to_form
 
