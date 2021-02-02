@@ -299,6 +299,7 @@ def daily_transaction_summary_mail():
 
 def stock_entry_validate(self, method):
 	if self._action == "submit":
+		
 		validate_additional_cost(self)
 
 def validate_additional_cost(self):
