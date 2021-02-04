@@ -13,6 +13,9 @@ app_license = "GPL 3.0"
 app_version = app_version
 # app_logo_url = '/assets/erpnext/images/erp-icon.svg'
 
+
+after_install = "finbyzerp.install.after_install"
+
 from erpnext.regional.doctype.gstr_3b_report.gstr_3b_report import GSTR3BReport
 from finbyzerp.finbyzerp.override.gstr_3b_report import prepare_data, get_itc_details, get_inter_state_supplies, get_tax_amounts
 GSTR3BReport.prepare_data = prepare_data
@@ -63,7 +66,8 @@ override_whitelisted_methods = {
 	"frappe.core.page.permission_manager.permission_manager.get_standard_permissions": "finbyzerp.permission.get_standard_permissions",
 	"erpnext.setup.doctype.company.delete_company_transactions.delete_company_transactions": "finbyzerp.finbyzerp.override.delete_company_transactions.delete_company_transactions",
 	"frappe.desk.moduleview.get_desktop_settings": "finbyzerp.api.get_desktop_settings",
-	"frappe.desk.moduleview.get_options_for_global_modules": "finbyzerp.api.get_options_for_global_modules"
+	"frappe.desk.moduleview.get_options_for_global_modules": "finbyzerp.api.get_options_for_global_modules",
+	"frappe.utils.print_format.download_pdf": "finbyzerp.print_format.download_pdf",
 }
 
 doc_events = {
@@ -84,3 +88,8 @@ scheduler_events = {
 		"finbyzerp.api.daily_transaction_summary_mail"
 	]
 }
+
+# BOM Stock Calculated Report Override:
+from finbyzerp.finbyzerp.report.bom_stock_calculated import execute as bsc_execute
+from erpnext.manufacturing.report.bom_stock_calculated import bom_stock_calculated
+bom_stock_calculated.execute = bsc_execute

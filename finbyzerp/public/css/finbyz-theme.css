@@ -340,7 +340,11 @@ div[data-page-route='query-report'] .dt-row{
 }
 
 
-
+@media only screen and (max-width: 600px) {
+	.custom-sidebar .layout-side-section .overlay-sidebar {
+		width: 65%;
+	}
+}
 
 	
 
