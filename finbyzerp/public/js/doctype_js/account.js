@@ -18,11 +18,12 @@ frappe.ui.form.on('Account',{
                     {label:'Interest Amount', fieldtype:'Float', fieldname:'interest_amount','read_only': 1,},
                     {fieldtype: "Section Break"},
                     {
-                        label:'',
-                        fieldtype:'Table',
-                        fieldname:'date_wise_balance',
-                        read_only: 1,
-                        fields:[
+                        "label":'',
+                        "allow_bulk_edit": 1,
+                        "fieldtype":'Table',
+                        "fieldname":'date_wise_balance',
+                        "read_only": 1,
+                        "fields":[
                             {
                                 'label': 'Date',
                                 'fieldtype': 'Date',
@@ -72,10 +73,32 @@ frappe.ui.form.on('Account',{
                         d.fields_dict.date_wise_balance.grid.refresh()
                         var interest_amount = 0.0
                         var val = d.get_values()
-                        val.date_wise_balance.forEach(function (row){
-                            interest_amount += (row.balance * row.days * val.interest_rate / (val.total_days * 100))
-                        })
-                        d.set_value('interest_amount',interest_amount)
+                        if (val.date_wise_balance){
+                            val.date_wise_balance.forEach(function (row){
+                                interest_amount += (row.balance * row.days * val.interest_rate / (val.total_days * 100))
+                            })
+                            d.set_value('interest_amount',interest_amount)
+                        }
+                        let btn = document.createElement('a');
+                        btn.innerText = 'Download';
+                        btn.className = 'grid-download btn btn-xs btn-default';
+                        d.fields_dict.date_wise_balance.grid.wrapper.find('.grid-download').removeClass('hide').parent().append(btn);
+                        btn.addEventListener("click", function(){
+                            var data = [];
+                            var docfields = ["date","balance","days"];
+                            data.push(["date","balance","days"])
+                            data.push([])
+                            val.date_wise_balance.forEach(function (v){
+                                var row = []
+                                docfields.forEach(function(df){
+                                    var value = v[df]
+                                    row.push(value || "")
+                                });
+                                data.push(row)
+                            })
+                            
+                            frappe.tools.downloadify(data, null, "Interest_Calculation");
+                        });
                     }
                 })
             }
