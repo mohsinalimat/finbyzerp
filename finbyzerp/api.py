@@ -15,8 +15,8 @@ import os
 import sys
 import time
 
-from WebWhatsappWrapper.webwhatsapi import WhatsAPIDriver
-from WebWhatsappWrapper.webwhatsapi.objects.message import Message
+# from WebWhatsappWrapper.webwhatsapi import WhatsAPIDriver
+# from WebWhatsappWrapper.webwhatsapi.objects.message import Message
 
 def before_insert(self, method):
 	opening_naming_series(self)
