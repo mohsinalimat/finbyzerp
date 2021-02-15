@@ -137,7 +137,7 @@ def get_desktop_settings():
 		'Customization' : 'icon finbyz-customization','Marketplace': 'icon finbyz-marketplace', \
 		'Integrations':'icon finbyz-integrations','Core':'icon finbyz-developer', \
 		'Ceramic': 'icon finbyz-ceramic','Finbyzweb': 'icon finbyz-finbyzweb',\
-		'Engineering': 'icon finbyz-engineering','Transport':'icon finbyz-transport'}
+		'Engineering': 'icon finbyz-engineering','Transport':'icon finbyz-transport','Education': 'icon finbyz-education'}
 
 	modules_by_name = {}
 	for m in all_modules:
