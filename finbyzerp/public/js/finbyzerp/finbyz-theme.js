@@ -107,6 +107,10 @@ frappe.ui.toolbar.Toolbar = Class.extend({
 		$('.navbar-pin').click(() => {
 			toggle_sidebar()
 		});
+		// frappe.ui.keys.add_shortcut({
+		// 	shortcut: 'Ctrl+K',
+		// 	action: () => toggle_sidebar()
+		// })
 	},
 
 	setup_sidebar: function() {
@@ -266,16 +270,11 @@ function sidebar_based_on_image(){
 
 }
 
-
-//  $(".navbar-pin").on('click', function(){
-// 	frappe.ui.toolbar.navpin()
-//  });
  function set_sidebar(){
 	let sidebar = JSON.parse(localStorage.sidebar || 'false');
 	$(document.body).toggleClass('custom-sidebar', sidebar);
 }
 function toggle_sidebar(){
-
 	var sidebar_dict = JSON.parse(localStorage.getItem("sidebar_dict", sidebar_dict)) || {};
 
 	var route = frappe.get_route();
@@ -310,3 +309,32 @@ function toggle_sidebar(){
 	// localStorage.sidebar = sidebar;
 	// set_sidebar()
  }
+frappe.ui.keys.add_shortcut({
+	description: "Focus on search field",
+	shortcut: 'alt+f',
+	action: () => {
+		let d = document.querySelector("div.page-form.flex > div:nth-child(1)> input")
+		if(d){
+			d.focus()
+		}
+	}
+})
+// frappe.ui.keys.add_shortcut({
+// 	description: "Toggle Sidebar",
+// 	standard: true,
+// 	shortcut: 'Ctrl+k',
+// 	action: (e) => { 
+// 		console.log('hi')
+// 		e.preventDefault();
+// 		$(document.body).toggleClass('custom-sidebar');
+// 		return false; 
+// 	}
+// })
+frappe.ui.keys.add_shortcut({
+	description: "Toggle Sidebar",
+	shortcut: 'ctrl+k',
+	action: () => {
+		toggle_sidebar();
+	}
+})
+
