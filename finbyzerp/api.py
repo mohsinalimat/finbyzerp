@@ -3,6 +3,20 @@ import frappe
 from erpnext.accounts.utils import get_fiscal_year, flt
 import datetime
 from frappe.utils import cint, getdate, get_fullname, get_url_to_form
+from frappe.email.email_body import add_attachment
+from email.mime.multipart import MIMEMultipart
+from six import iteritems, text_type, string_types
+from email.mime.text import MIMEText
+from frappe.utils.pdf import get_pdf
+from frappe.desk.form.utils import get_pdf_link
+
+import json
+import os
+import sys
+import time
+
+# from WebWhatsappWrapper.webwhatsapi import WhatsAPIDriver
+# from WebWhatsappWrapper.webwhatsapi.objects.message import Message
 
 def before_insert(self, method):
 	opening_naming_series(self)
@@ -306,3 +320,90 @@ def validate_additional_cost(self):
 	if self.purpose in ['Material Transfer','Material Transfer for Manufacture','Repack','Manufacture'] and self._action == "submit":
 		if abs(round(flt(self.value_difference,1))) != abs(round(flt(self.total_additional_costs,1))):
 			frappe.throw("ValuationError: Value difference between incoming and outgoing amount is higher than additional cost")
+
+# @frappe.whitelist()
+# def get_pdf_whatsapp(doctype,name,print_format,doc):
+
+# 	file_attachment = frappe.attach_print(doctype=doctype,name=name,print_format=print_format)
+
+# 	maintype, subtype = 'text/html'.split('/')
+# 	fcontent = file_attachment['fcontent']
+# 	msg_related = MIMEMultipart('related')
+# 	html_part = MIMEText(fcontent, 'html', 'utf-8')
+# 	msg_related.attach(html_part)
+# 	add_attachment(fname=file_attachment['fname'],fcontent=fcontent,parent=msg_related)
+	
+# 	send_media_whatsapp()
+# 	# html = frappe.get_print(doctype=doctype, name=name, print_format=print_format, doc=doc)
+# 	# filename = "{name}.pdf".format(name=name.replace(" ", "-").replace("/", "-"))
+# 	# filecontent = get_pdf(html)
+# 	return "Success"
+# 	# frappe.db.commit()
+
+
+# def send_media_whatsapp():
+# 	os.environ["SELENIUM"] = "http://localhost:4444/wd/hub"	
+# 	os.environ["MY_PHONE"] = frappe.db.get_value('User',frappe.session.user,'mobile_no')
+
+# 	##Save session on "/firefox_cache/localStorage.json".
+# 	##Create the directory "/firefox_cache", it's on .gitignore
+# 	##The "app" directory is internal to docker, it corresponds to the root of the project.
+# 	##The profile parameter requires a directory not a file.
+# 	profiledir = os.path.join(".", "firefox_cache")
+# 	if not os.path.exists(profiledir):
+# 		os.makedirs(profiledir)
+
+# 	driver = WhatsAPIDriver(profile=profiledir,client="remote", command_executor=os.environ["SELENIUM"],username=frappe.session.user)
+# 	driver.connect()
+# 	driver.wait_for_login()
+# 	try:
+
+# 		phone_safe = "919909819194"  # Phone number with country code
+# 		phone_whatsapp = "{}@c.us".format(phone_safe)  # WhatsApp Chat ID
+# 		image_path = "/home/finbyz/eie/sites/eie.finbyz.com/private/files/sample.pdf"  # Local path file
+# 		caption = "Testing a media sender from mmm!"  # The caption sent under the image, optional
+
+# 		driver.send_media(
+# 			image_path, phone_whatsapp, caption
+# 		)  # Expected send_media(self, path, chatid, caption)
+# 		frappe.msgprint("Media file was successfully sent to {}".format(phone_safe))
+
+# 	except:
+# 		frappe.msgprint("Error while trying to send the midia file.")
+
+# @frappe.whitelist()
+# def whatsapp_login_check():
+# 	os.environ["SELENIUM"] = "http://localhost:4444/wd/hub"	
+# 	os.environ["MY_PHONE"] = frappe.db.get_value('User',frappe.session.user,'mobile_no')
+
+# 	profiledir = os.path.join(".", "firefox_cache")
+# 	if not os.path.exists(profiledir):
+# 		os.makedirs(profiledir)
+
+# 	driver = WhatsAPIDriver(profile=profiledir,client="remote", command_executor=os.environ["SELENIUM"],username=frappe.session.user)
+# 	driver.connect()
+# 	driver.wait_for_login()
+# 	if not driver.is_logged_in():
+# 		# frappe.msgprint('Please wait QR Code Generation is in Progress')
+# 		path_private_files = frappe.get_site_path('private','files')
+# 		path_private_files += '/{}.png'.format(frappe.session.user)
+
+# 		driver.get_qr(path_private_files)
+# 		doc = frappe.new_doc("File")
+# 		doc.file_name = "{}.png".format(frappe.session.user)
+# 		doc.is_private=1
+# 		doc.file_url = "/private/files/{}.png".format(frappe.session.user)
+# 		doc.save(ignore_permissions=True)
+# 		msg = "<img src={} alt='No Image'>".format(doc.file_url)
+# 		frappe.msgprint(title="Scan below QR Code in Whatsapp Web",msg=msg)
+# 		# frappe.publish_realtime(event='display_qr_code_image', message=msg,user=frappe.session.user)
+# 		timeout = time.time() + 60
+# 		while driver.is_logged_in != True:
+# 			if time.time() > timeout or driver.is_logged_in:
+# 				break
+# 		if driver.is_logged_in:
+# 			driver.save_firefox_profile()
+# 			return "Success"
+# 	elif driver.is_logged_in():
+# 		return "Yes"
+

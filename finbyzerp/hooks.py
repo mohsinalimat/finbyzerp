@@ -27,6 +27,12 @@ from erpnext.setup.doctype.naming_series.naming_series import NamingSeries
 from finbyzerp.finbyzerp.override.naming_series import get_transactions
 NamingSeries.get_transactions = get_transactions
 
+from erpnext.accounts.doctype.opening_invoice_creation_tool.opening_invoice_creation_tool import OpeningInvoiceCreationTool
+from finbyzerp.finbyzerp.doc_events.opening_invoice_creation_tool import get_invoice_dict, make_invoices
+
+OpeningInvoiceCreationTool.get_invoice_dict = get_invoice_dict
+OpeningInvoiceCreationTool.make_invoices = make_invoices
+
 app_include_css = ["assets/css/finbyzerp.min.css", "assets/finbyzerp/css/permission.css","/assets/finbyzerp/css/finbyz-theme.css"]
 app_include_js = [
 	"assets/js/finbyzerp.min.js" 
@@ -48,6 +54,7 @@ doctype_js = {
 	"Purchase Invoice": "public/js/doctype_js/purchase_invoice.js",
 	"Payment Entry": "public/js/doctype_js/payment_entry.js",
 	"Stock Entry": "public/js/doctype_js/stock_entry.js",
+	"Account":"public/js/doctype_js/account.js"
 }
 website_context = {
 	"favicon": 	"/assets/finbyzerp/images/favicon.ico",
