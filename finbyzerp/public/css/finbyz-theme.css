@@ -407,6 +407,6 @@ body{
 	color: #fff;
     background-color: #8d99a6 !important;
 }
-.text-muted ,.form-control,.dt-cell {
+.text-muted ,.form-control{
     color: #384047!important;
 }
