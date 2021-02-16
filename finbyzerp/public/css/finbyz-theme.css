@@ -358,9 +358,9 @@ div[data-page-route='query-report'] .dt-row{
 .graph-svg-tip .title{
 	color: #FFF!important;
 }
-header.list-row, .page-form {
+header.list-row {
 	font-weight: bold !important;
-	color: #000 !important;
+	color: #384047 !important;
 	background: #e8f3fd !important;
 }
 .awesomplete>ul>li:hover, .awesomplete>ul>li[aria-selected=true],header.list-row:hover,.form-message{
@@ -388,9 +388,9 @@ header.list-row, .page-form {
 {
 	background: #f5f9ff !important;
 }
-/* .dt-cell__content{
-	font-weight: 500;
-} */
+.page-form{
+	background: #f1f8ff !important;
+}
 .datatable-wrapper, .report-wrapper{
 	overflow: visible !important;
 }
@@ -403,4 +403,7 @@ header.list-row, .page-form {
 .btn-info{
 	color: #fff;
     background-color: #8d99a6 !important;
+}
+.text-muted ,.form-control,.dt-cell {
+    color: #384047!important;
 }
