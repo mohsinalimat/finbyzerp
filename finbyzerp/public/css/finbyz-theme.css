@@ -383,6 +383,9 @@ header.list-row {
 	--dt-text-color: #000 !important;
 	--dt-header-cell-bg: #e8f3fd !important ;
 }
+body{
+	font-family: Helvetica Neue,Helvetica,Arial,Open Sans,sans-serif !important;
+}
 .chart-wrapper,
 .dt-row-filter .dt-cell
 {
