@@ -46,7 +46,6 @@ a.text-primary:hover {
 .text-primary {
 	color: #21529e;
 }
-
 body {
     background-color:#fafbfc;}
 .page-head{
@@ -104,7 +103,6 @@ body.no-breadcrumbs .navbar .navbar-home:active:before, body.no-breadcrumbs .nav
 div[data-page-route='query-report'] .dt-row{
     height: 30px!important;
 }
-
 .btn.btn-primary {
 	color: #fff;
 	background-color: #1581E1;
@@ -129,7 +127,6 @@ div[data-page-route='query-report'] .dt-row{
     vertical-align: bottom;
 	background-size: contain !important;
 }
-
 .finbyz-getting_started{
 	background: url(/assets/finbyzerp/images/getting_started.svg)}
 
@@ -236,7 +233,7 @@ div[data-page-route='query-report'] .dt-row{
 	background: url(/assets/finbyzerp/images/developer.svg)}
 
 .finbyz-ceramic{
-		background: url(/assets/finbyzerp/images/ceramic.svg)}
+	background: url(/assets/finbyzerp/images/ceramic.svg)}
 
 .finbyz-engineering{
 	background: url(/assets/finbyzerp/images/engineering.svg)}
@@ -361,27 +358,29 @@ div[data-page-route='query-report'] .dt-row{
 header.list-row {
 	font-weight: bold !important;
 	color: #384047 !important;
-	background: #e8f3fd !important;
+	background: #edf3f8 !important;
 }
 .awesomplete>ul>li:hover, .awesomplete>ul>li[aria-selected=true],header.list-row:hover,.form-message{
 	transform: scale(1) !important;
 	box-shadow: none;
-	background: #e8f3fd  !important;
+	background: #edf3f8  !important;
 }
-
 .list-row:hover,.awesomplete > ul > li:hover, .awesomplete > ul > li[aria-selected=true]:hover,
 .list-reset li:hover,.list-item[data-v-882599a2]:hover,
 .dropdown-menu>li>a:focus,.dropdown-menu>li>a:hover{
 	transform: scale(1,1.002);
 	box-shadow: 3px 3px 6px	#DCDCDC;
-	background: #f1f8ff !important;
+	background: #f2f6fa !important;
+}
+.dt-cell--filter .dt-cell__content{
+	background: #f2f6fa !important;
 }
 .list-row-head .list-subject{
 	font-weight: bold;
 }
 .dt-header{
 	--dt-text-color: #000 !important;
-	--dt-header-cell-bg: #e8f3fd !important ;
+	--dt-header-cell-bg: #edf3f8 !important ;
 }
 body{
 	font-family: Helvetica Neue,Helvetica,Arial,Open Sans,sans-serif !important;
@@ -392,7 +391,7 @@ body{
 	background: #f5f9ff !important;
 }
 .page-form{
-	background: #f1f8ff !important;
+	background: #f2f6fa !important;
 }
 .datatable-wrapper, .report-wrapper{
 	overflow: visible !important;
@@ -400,13 +399,13 @@ body{
 .chart-container .frappe-chart{
 	background-color: #fafbfc;
 }
-.btn-secondary,.btn-default{
-	background: #e4e9eb ;
-}
-.btn-info{
-	color: #fff;
-    background-color: #8d99a6 !important;
-}
 .text-muted ,.form-control{
     color: #384047!important;
 }
+/* .btn-info{
+	color: #fff;
+    background-color: #8d99a6 !important;
+} */
+
+/* #f1f8ff blue shade */
+/* #f2f6fa gray lighter shade */
