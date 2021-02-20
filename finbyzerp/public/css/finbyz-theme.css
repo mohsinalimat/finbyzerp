@@ -308,7 +308,7 @@ div[data-page-route='query-report'] .dt-row{
 	z-index: 9999;
 	box-shadow: 5px 0 25px 0 rgba(0,0,0,.3);
 	height: 100%;
-	width: 25%;
+	width: 21%;
 	display: block!important;
 	transition: transform .2s ease-in-out;
 }
@@ -345,11 +345,14 @@ div[data-page-route='query-report'] .dt-row{
 	.navbar>.container-fluid>.navbar-right {
 		float: right;
 	}
+	.layout-side-section .overlay-sidebar .reports-dropdown li:not(.divider){
+		padding: 0!important;
+	}
 }
 
 @media only screen and (max-width: 600px) {
-	.custom-sidebar .layout-side-section .overlay-sidebar {
-		width: 65%;
+	.custom-sidebar .layout-side-section .overlay-sidebar.opened {
+		width: 65%;	
 	}
 }
 .graph-svg-tip .title{

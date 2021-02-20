@@ -122,7 +122,7 @@ frappe.ui.toolbar.Toolbar = Class.extend({
 			overlay_sidebar.addClass('opened');
 			overlay_sidebar.find('.reports-dropdown')
 				.removeClass('dropdown-menu')
-				.addClass('list-unstyled');
+				.addClass('list-unstyled dropdown-menu');
 			overlay_sidebar.find('.dropdown-toggle')
 				.addClass('text-muted').find('.caret')
 				.addClass('hidden-xs hidden-sm');
