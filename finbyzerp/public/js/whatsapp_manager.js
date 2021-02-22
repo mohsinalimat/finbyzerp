@@ -127,7 +127,6 @@ function whatsapp_dialog(frm,save_profile){
                 attach_document_print:v.attach_document_print,
                 print_format:v.select_print_format,
                 selected_attachments:selected_attachments,
-                doc:frm.doc,
                 mobile_number:v.number,
                 description:v.content || '',
                 save_profile:save_profile
