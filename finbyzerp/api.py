@@ -326,16 +326,16 @@ def validate_additional_cost(self):
 client_list = dict()
 
 @frappe.whitelist()
-def get_pdf_whatsapp(doctype,name,attach_document_print,print_format,selected_attachments,doc,mobile_number,description,save_profile):
+def get_pdf_whatsapp(doctype,name,attach_document_print,print_format,selected_attachments,mobile_number,description,save_profile):
 	selected_attachments = json.loads(selected_attachments)
 	attach_document_print = json.loads(attach_document_print)
 	if client_list and not frappe.cache().hget('whatsapp_user',frappe.session.user):
 		json_driver = jsonpickle.encode(client_list[frappe.session.user],make_refs=False)
 		frappe.cache().hset('whatsapp_user',frappe.session.user,json_driver)
 	# background_msg_whatsapp(doctype,name,attach_document_print,print_format,selected_attachments,doc,mobile_number,description,save_profile)
-	enqueue(background_msg_whatsapp,queue= "long", timeout= 1800, job_name= 'Whatsapp Message', doctype= doctype, name= name, attach_document_print=attach_document_print,print_format= print_format,selected_attachments=selected_attachments,doc=doc,mobile_number=mobile_number,description=description,save_profile=save_profile)
+	enqueue(background_msg_whatsapp,queue= "long", timeout= 1800, job_name= 'Whatsapp Message', doctype= doctype, name= name, attach_document_print=attach_document_print,print_format= print_format,selected_attachments=selected_attachments,mobile_number=mobile_number,description=description,save_profile=save_profile)
 
-def background_msg_whatsapp(doctype,name,attach_document_print,print_format,selected_attachments,doc,mobile_number,description,save_profile):
+def background_msg_whatsapp(doctype,name,attach_document_print,print_format,selected_attachments,mobile_number,description,save_profile):
 
 	if attach_document_print==1:
 		html = frappe.get_print(doctype=doctype, name=name, print_format=print_format)
