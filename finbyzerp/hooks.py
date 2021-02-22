@@ -13,6 +13,9 @@ app_license = "GPL 3.0"
 app_version = app_version
 # app_logo_url = '/assets/erpnext/images/erp-icon.svg'
 
+
+after_install = "finbyzerp.install.after_install"
+
 from erpnext.regional.doctype.gstr_3b_report.gstr_3b_report import GSTR3BReport
 from finbyzerp.finbyzerp.override.gstr_3b_report import prepare_data, get_itc_details, get_inter_state_supplies, get_tax_amounts
 GSTR3BReport.prepare_data = prepare_data
@@ -23,6 +26,12 @@ GSTR3BReport.get_tax_amounts = get_tax_amounts
 from erpnext.setup.doctype.naming_series.naming_series import NamingSeries
 from finbyzerp.finbyzerp.override.naming_series import get_transactions
 NamingSeries.get_transactions = get_transactions
+
+from erpnext.accounts.doctype.opening_invoice_creation_tool.opening_invoice_creation_tool import OpeningInvoiceCreationTool
+from finbyzerp.finbyzerp.doc_events.opening_invoice_creation_tool import get_invoice_dict, make_invoices
+
+OpeningInvoiceCreationTool.get_invoice_dict = get_invoice_dict
+OpeningInvoiceCreationTool.make_invoices = make_invoices
 
 app_include_css = ["assets/css/finbyzerp.min.css", "assets/finbyzerp/css/permission.css","/assets/finbyzerp/css/finbyz-theme.css"]
 app_include_js = [
@@ -45,6 +54,7 @@ doctype_js = {
 	"Purchase Invoice": "public/js/doctype_js/purchase_invoice.js",
 	"Payment Entry": "public/js/doctype_js/payment_entry.js",
 	"Stock Entry": "public/js/doctype_js/stock_entry.js",
+	"Account":"public/js/doctype_js/account.js"
 }
 website_context = {
 	"favicon": 	"/assets/finbyzerp/images/favicon.ico",
@@ -62,12 +72,19 @@ override_whitelisted_methods = {
 	"frappe.core.page.permission_manager.permission_manager.get_standard_permissions": "finbyzerp.permission.get_standard_permissions",
 	"erpnext.setup.doctype.company.delete_company_transactions.delete_company_transactions": "finbyzerp.finbyzerp.override.delete_company_transactions.delete_company_transactions",
 	"frappe.desk.moduleview.get_desktop_settings": "finbyzerp.api.get_desktop_settings",
-	"frappe.desk.moduleview.get_options_for_global_modules": "finbyzerp.api.get_options_for_global_modules"
+	"frappe.desk.moduleview.get_options_for_global_modules": "finbyzerp.api.get_options_for_global_modules",
+	"frappe.utils.print_format.download_pdf": "finbyzerp.print_format.download_pdf",
 }
 
 doc_events = {
+	"User": {
+		"validate":"finbyzerp.api.validate_user_mobile_no"
+	},
 	"Sales Invoice": {
 		'on_submit': "finbyzerp.api.sales_invoice_on_submit"
+	},
+	"Stock Entry": {
+		"validate": "finbyzerp.api.stock_entry_validate"
 	},
 	("Pick List","Expense Claim", "Sales Invoice", "Purchase Invoice", "Payment Request", "Payment Entry", "Journal Entry", "Material Request", "Purchase Order", "Work Order", "Production Plan", "Stock Entry", "Quotation", "Sales Order", "Delivery Note", "Purchase Receipt", "Packing Slip"): {
 		"before_naming": "finbyzerp.api.before_naming",
@@ -80,3 +97,8 @@ scheduler_events = {
 		"finbyzerp.api.daily_transaction_summary_mail"
 	]
 }
+
+# BOM Stock Calculated Report Override:
+from finbyzerp.finbyzerp.report.bom_stock_calculated import execute as bsc_execute
+from erpnext.manufacturing.report.bom_stock_calculated import bom_stock_calculated
+bom_stock_calculated.execute = bsc_execute

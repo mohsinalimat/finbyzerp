@@ -1,8 +1,22 @@
 from __future__ import unicode_literals
 import frappe
-from erpnext.accounts.utils import get_fiscal_year
+from erpnext.accounts.utils import get_fiscal_year, flt
 import datetime
+from frappe.utils.background_jobs import enqueue
 from frappe.utils import cint, getdate, get_fullname, get_url_to_form
+from frappe.utils.pdf import get_pdf
+from frappe.utils.file_manager import save_file
+from frappe import _
+
+import jsonpickle
+import json
+import os
+import sys
+import time
+
+
+from WebWhatsappWrapper.webwhatsapi import WhatsAPIDriver
+from WebWhatsappWrapper.webwhatsapi.objects.message import Message
 
 def before_insert(self, method):
 	opening_naming_series(self)
@@ -123,7 +137,7 @@ def get_desktop_settings():
 		'Customization' : 'icon finbyz-customization','Marketplace': 'icon finbyz-marketplace', \
 		'Integrations':'icon finbyz-integrations','Core':'icon finbyz-developer', \
 		'Ceramic': 'icon finbyz-ceramic','Finbyzweb': 'icon finbyz-finbyzweb',\
-		'Engineering': 'icon finbyz-engineering','Transport':'icon finbyz-transport'}
+		'Engineering': 'icon finbyz-engineering','Transport':'icon finbyz-transport','Education': 'icon finbyz-education'}
 
 	modules_by_name = {}
 	for m in all_modules:
@@ -295,3 +309,160 @@ def daily_transaction_summary_mail():
 		frappe.sendmail(recipients=recipients,
 			reference_doctype='User', reference_name="Administrator",
 			subject='Daily Transaction Summary', message=message, now=True)
+
+
+def stock_entry_validate(self, method):
+	if self._action == "submit":
+		
+		validate_additional_cost(self)
+
+def validate_additional_cost(self):
+	if self.purpose in ['Material Transfer','Material Transfer for Manufacture','Repack','Manufacture'] and self._action == "submit":
+		if abs(round(flt(self.value_difference,1))) != abs(round(flt(self.total_additional_costs,1))):
+			frappe.throw("ValuationError: Value difference between incoming and outgoing amount is higher than additional cost")
+
+# Whatsapp Manager: Start
+
+client_list = dict()
+
+@frappe.whitelist()
+def get_pdf_whatsapp(doctype,name,attach_document_print,print_format,selected_attachments,doc,mobile_number,description,save_profile):
+	selected_attachments = json.loads(selected_attachments)
+	attach_document_print = json.loads(attach_document_print)
+	if client_list and not frappe.cache().hget('whatsapp_user',frappe.session.user):
+		json_driver = jsonpickle.encode(client_list[frappe.session.user],make_refs=False)
+		frappe.cache().hset('whatsapp_user',frappe.session.user,json_driver)
+	# background_msg_whatsapp(doctype,name,attach_document_print,print_format,selected_attachments,doc,mobile_number,description,save_profile)
+	enqueue(background_msg_whatsapp,queue= "long", timeout= 1800, job_name= 'Whatsapp Message', doctype= doctype, name= name, attach_document_print=attach_document_print,print_format= print_format,selected_attachments=selected_attachments,doc=doc,mobile_number=mobile_number,description=description,save_profile=save_profile)
+
+def background_msg_whatsapp(doctype,name,attach_document_print,print_format,selected_attachments,doc,mobile_number,description,save_profile):
+
+	if attach_document_print==1:
+		html = frappe.get_print(doctype=doctype, name=name, print_format=print_format)
+		filename = "{name}.pdf".format(name=name.replace(" ", "-").replace("/", "-"))
+		filecontent = get_pdf(html)
+
+		file_data = save_file(filename, filecontent, doctype,name,is_private=1)
+		file_url = file_data.file_url
+		site_path = frappe.get_site_path('private','files') + "/{}".format(filename)
+		send_media_whatsapp(mobile_number,description,save_profile,selected_attachments,site_path)
+		
+		remove_file_from_os(site_path)
+		frappe.db.sql("delete from `tabFile` where file_name='{}'".format(filename))
+		frappe.db.sql("delete from `tabComment` where reference_doctype='{}' and reference_name='{}' and comment_type='Attachment' and comment_email = '{}' and content LIKE '%{}%'".format(doctype,name,frappe.session.user,file_url))
+
+	else:
+		send_media_whatsapp(mobile_number,description,save_profile,selected_attachments)
+
+
+	comment_whatsapp = frappe.new_doc("Comment")
+	comment_whatsapp.comment_type = "WhatsApp"
+	comment_whatsapp.comment_email = frappe.session.user
+	comment_whatsapp.reference_doctype = doctype
+	comment_whatsapp.reference_name = name
+
+	comment_whatsapp.content = "Have Sent the Whatsapp Message to <b>{}</b>".format(mobile_number)
+
+	comment_whatsapp.save()
+
+	qr_path = frappe.get_site_path('private','files') + "/{}.png".format(frappe.session.user)
+	remove_file_from_os(qr_path)
+	frappe.db.sql("delete from `tabFile` where file_name='{}'".format('{}.png'.format(frappe.session.user)))
+
+	if selected_attachments:
+		for f_name in selected_attachments:
+			attach_url = frappe.get_site_path() + str(frappe.db.get_value('File',f_name,'file_url'))
+			remove_file_from_os(attach_url)
+			frappe.db.sql("delete from `tabFile` where name='{}'".format(f_name))
+
+	return "Success"
+
+def remove_file_from_os(path):
+	if os.path.exists(path):
+		os.remove(path)
+	
+def send_media_whatsapp(mobile_number,description,save_profile,selected_attachments,site_path=None):
+	driver_json = frappe.cache().hget('whatsapp_user',frappe.session.user)
+	driver = jsonpickle.decode(driver_json)
+	driver.connect()
+	driver.wait_for_login()
+	attach_list = []
+	if site_path:
+		attach_list.append(site_path)
+	if selected_attachments:
+		for file_name in selected_attachments:
+			attach_url = frappe.get_site_path() + str(frappe.db.get_value('File',file_name,'file_url'))
+			attach_list.append(attach_url)
+
+	if mobile_number.find(" ") != -1:
+		mobile_number = mobile_number.replace(" ","")
+	elif mobile_number.find("+") != -1:
+		mobile_number = mobile_number.replace("+","")
+	elif len(mobile_number) == 10:
+		mobile_number = "91" + mobile_number
+	try:
+		phone_whatsapp = "{}@c.us".format(str(mobile_number))  # WhatsApp Chat ID # mobile_no with country code
+		for path in attach_list:
+			driver.send_media(path, phone_whatsapp, description)
+		driver.chat_send_message(phone_whatsapp,description)
+		frappe.msgprint("Media file was successfully sent to {}".format(mobile_number))
+
+	except:
+		frappe.log_error(frappe.get_traceback(),"Error while trying to send the media file.")
+
+	
+@frappe.whitelist()
+def whatsapp_login_check():
+	if frappe.cache().hget('whatsapp_user',frappe.session.user):
+		driver_json = frappe.cache().hget('whatsapp_user',frappe.session.user)
+		if driver_json:
+			driver = jsonpickle.decode(driver_json)
+			try:
+				if driver.wait_for_login():
+					return "Yes"
+			except:
+				pass
+		frappe.cache().hset('whatsapp_user',frappe.session.user,None)
+	os.environ["SELENIUM"] = "http://localhost:4444/wd/hub"	
+	os.environ["MY_PHONE"] = "91" + frappe.db.get_value('User',frappe.session.user,'mobile_no')
+
+	# profiledir = os.path.join(".", "firefox_cache")
+	# if not os.path.exists(profiledir):
+	# 	os.makedirs(profiledir)
+
+	driver = WhatsAPIDriver(client="remote", command_executor=os.environ["SELENIUM"],username=frappe.session.user)
+	driver.connect()
+	if not driver.wait_for_login():
+		path_private_files = frappe.get_site_path('private','files')
+		path_private_files += '/{}.png'.format(frappe.session.user)
+
+		driver.get_qr(path_private_files)
+
+		doc = frappe.new_doc("File")
+		doc.file_name = "{}.png".format(frappe.session.user)
+		doc.is_private=1
+		doc.file_url = "/private/files/{}.png".format(frappe.session.user)
+		doc.save(ignore_permissions=True)
+
+		file_url = "/private/files/{}.png".format(frappe.session.user)
+		msg = "<img src={} alt='No Image'>".format(file_url)
+		frappe.publish_realtime(event='display_qr_code_image', message=msg,user=frappe.session.user)
+		client_list[frappe.session.user] = driver
+
+	else:
+		return "Yes"
+
+def validate_user_mobile_no(self,method):
+	if self.mobile_no:
+		if not self.mobile_no.isdigit():
+			frappe.throw("Please Enter Digits Only in Mobile Number.")
+		elif len(self.mobile_no) != 10:
+			frappe.throw("Please Enter 10 digit Mobile Number.")
+
+@frappe.whitelist()
+def get_whatsapp_settings():
+	if frappe.db.get_value("System Settings","System Settings","enable_whatsapp"):
+		if frappe.db.get_value('User',frappe.session.user,'mobile_no'):
+			return "True"
+
+# Whatsapp Manager: End
