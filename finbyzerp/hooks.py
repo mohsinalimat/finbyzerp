@@ -71,6 +71,9 @@ override_whitelisted_methods = {
 }
 
 doc_events = {
+	"User": {
+		"validate":"finbyzerp.api.validate_user_mobile_no"
+	},
 	"Sales Invoice": {
 		'on_submit': "finbyzerp.api.sales_invoice_on_submit"
 	},
