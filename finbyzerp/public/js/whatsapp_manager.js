@@ -107,38 +107,40 @@ function whatsapp_dialog(frm,save_profile){
 			{label:"Select Attachments", fieldtype:"HTML",
             fieldname:"select_attachments"},
             {fieldtype: "Section Break"},
-            {label:'Send',fieldtype:'Button',fieldname:'send',
-            'description':" Note : Please ensure that Internet Connection is available on your Whatsapp device."},
-        ]
+            {label:'',fieldtype:'Read Only',default:" Note : Please ensure that Internet Connection is available on your Whatsapp device."},
+        ],
+        primary_action_label: 'Send',
+        primary_action(values) {
+                var v = d.get_values();
+                var selected_attachments =
+                    $.map($(d.wrapper).find("[data-file-name]:checked"), function (element) {
+                        return $(element).attr("data-file-name");
+                });
+                frappe.show_alert({message:__("Sending Whatsapp..."), indicator:'green'})
+                frappe.call({
+                    method:"finbyzerp.api.get_pdf_whatsapp",
+                    args:{
+                        doctype: frm.doc.doctype,
+                        name:frm.doc.name,
+                        attach_document_print:v.attach_document_print,
+                        print_format:v.select_print_format,
+                        selected_attachments:selected_attachments,
+                        mobile_number:v.number,
+                        description:v.content || '',
+                        save_profile:save_profile
+                    },
+                    // freeze:true,
+                    // freeze_message:__("<b><p style='font-size:35px'>Please Wait, File Sending is in Progress!!</p></b>"),
+                    callback: function(r){
+                    }
+                })
+                d.hide()
+    }
     });
-    d.fields_dict.send.input.onclick = function() {
-        var btn = d.fields_dict.send.input;
-        var v = d.get_values();
-        var selected_attachments =
-            $.map($(d.wrapper).find("[data-file-name]:checked"), function (element) {
-                return $(element).attr("data-file-name");
-        });
-        frappe.show_alert({message:__("Sending Whatsapp..."), indicator:'green'})
-        frappe.call({
-            method:"finbyzerp.api.get_pdf_whatsapp",
-            args:{
-                doctype: frm.doc.doctype,
-                name:frm.doc.name,
-                attach_document_print:v.attach_document_print,
-                print_format:v.select_print_format,
-                selected_attachments:selected_attachments,
-                mobile_number:v.number,
-                description:v.content || '',
-                save_profile:save_profile
-            },
-            // freeze:true,
-            // freeze_message:__("<b><p style='font-size:35px'>Please Wait, File Sending is in Progress!!</p></b>"),
-            callback: function(r){
-            }
-        })
-        d.hide()
-
-    },
+    // d.fields_dict.send.$input.addClass("btn-primary");
+    // $("<div style='height:5px;'>").appendTo(d.fields_dict.send.$input)
+    // $("<div style='width:50px;'>").appendTo(d.fields_dict.send.$input)
+    // $("<div style='font-size:30px;'>").appendTo(d.fields_dict.send.$input)
     setup_print_language(d,frm);
     setup_print(d,frm);
     setup_attach(d,frm);
