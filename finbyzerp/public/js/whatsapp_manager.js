@@ -118,7 +118,7 @@ function whatsapp_dialog(frm,save_profile){
             $.map($(d.wrapper).find("[data-file-name]:checked"), function (element) {
                 return $(element).attr("data-file-name");
         });
-        frappe.show_alert({message:__("File Sending..."), indicator:'green'})
+        frappe.show_alert({message:__("Sending Whatsapp..."), indicator:'green'})
         frappe.call({
             method:"finbyzerp.api.get_pdf_whatsapp",
             args:{
