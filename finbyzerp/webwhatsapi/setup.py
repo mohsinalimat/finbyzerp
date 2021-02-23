@@ -16,9 +16,11 @@ from setuptools import setup
 
 PACKAGE_NAME = "webwhatsapi"
 
-path = os.path.join(os.path.dirname(__file__), PACKAGE_NAME, "__init__.py")
+# path = os.path.join(os.path.dirname(__file__), PACKAGE_NAME, "__init__.py")
+path = os.getcwd()
+print(path)
 
-with open(path, "r") as file:
+with open("__init__.py", "r") as file:
     t = compile(file.read(), path, "exec", ast.PyCF_ONLY_AST)
     for node in (n for n in t.body if isinstance(n, ast.Assign)):
         if len(node.targets) != 1:
@@ -47,8 +49,8 @@ with open(path, "r") as file:
             break
 
 # Get the long description from the README file
-with open(os.path.join(os.path.dirname(__file__), "README.md"), encoding="utf-8") as f:
-    long_description = f.read()
+# with open(os.path.join(os.path.dirname(__file__), "README.md"), encoding="utf-8") as f:
+#     long_description = f.read()
 
 setup(
     name="webwhatsapi",
@@ -57,7 +59,6 @@ setup(
     # https://packaging.python.org/en/latest/single_source_version.html
     version=version,
     description="A python interface for Whatsapp Web",
-    long_description=long_description,
     # The project's main homepage.
     url="https://github.com/mukulhase/WhatsAPI",
     download_url="https://github.com/mukulhase/WhatsAPI/archive/{}.tar.gz".format(
