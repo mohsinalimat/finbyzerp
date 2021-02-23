@@ -4,7 +4,7 @@ from subprocess import STDOUT, check_call, CalledProcessError
 
 @click.command('install-whatsapp')
 def install_whatsapp():
-    cur_dir = os.getcwd() + "/../apps/finbyzerp/WebWhatsappWrapper"
+    cur_dir = os.getcwd() + "/../apps/finbyzerp/finbyzerp/webwhatsapi"
     os.chdir(cur_dir)
     # os.system('sudo su')
     # subprocess.call(cmd, universal_newlines=True)
