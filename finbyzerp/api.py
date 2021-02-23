@@ -336,8 +336,6 @@ def get_pdf_whatsapp(doctype,name,attach_document_print,print_format,selected_at
 		mobile_number = mobile_number.replace("+","")
 	if len(mobile_number) != 10:
 		frappe.throw("Please Enter Only 10 Digit Contact Number.")
-	elif len(mobile_number) == 10:
-		mobile_number = "91" + mobile_number
 
 	if client_list and not frappe.cache().hget('whatsapp_user',frappe.session.user):
 		json_driver = jsonpickle.encode(client_list[frappe.session.user],make_refs=False)
@@ -370,8 +368,10 @@ def background_msg_whatsapp(doctype,name,attach_document_print,print_format,sele
 	comment_whatsapp.comment_email = frappe.session.user
 	comment_whatsapp.reference_doctype = doctype
 	comment_whatsapp.reference_name = name
-
-	comment_whatsapp.content = "Have Sent the Whatsapp Message: '{}' to <b>{}</b> with Print <b>'{}'</b>".format(description,mobile_number,print_format)
+	if attach_document_print==1:
+		comment_whatsapp.content = "Have Sent the Whatsapp Message: <b>'{}'</b> to <b>{}</b> with Print <b>'{}'</b>".format(description,mobile_number,print_format)
+	else:
+		comment_whatsapp.content = "Have Sent the Whatsapp Message: <b>'{}'</b> to <b>{}</b>".format(description,mobile_number)
 
 	comment_whatsapp.save()
 
@@ -403,7 +403,8 @@ def send_media_whatsapp(mobile_number,description,save_profile,selected_attachme
 		for file_name in selected_attachments:
 			attach_url = frappe.get_site_path() + str(frappe.db.get_value('File',file_name,'file_url'))
 			attach_list.append(attach_url)
-
+	if len(mobile_number) == 10:
+		mobile_number = "91" + mobile_number
 	try:
 		phone_whatsapp = "{}@c.us".format(str(mobile_number))  # WhatsApp Chat ID # mobile_no with country code
 		for path in attach_list:
