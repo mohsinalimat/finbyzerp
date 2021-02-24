@@ -8,7 +8,6 @@
 		"public/js/finbyzerp/ui/toolbar/navbar.html",
 		"public/js/frappe/list/list_sidebar.html",
 		"public/js/frappe/form/templates/form_sidebar.html",
-		"public/js/finbyzerp/ui/page.html",
-		"public/js/whatsapp_manager.js"
+		"public/js/finbyzerp/ui/page.html"
     ]
 }
