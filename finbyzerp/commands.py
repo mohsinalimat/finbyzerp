@@ -19,13 +19,11 @@ def install_whatsapp():
     os.system('sudo docker run -d -p 4444:4444 -p 5900:5900 --name firefox --network selenium -v /dev/shm:/dev/shm selenium/standalone-firefox-debug:3.14.0-curium')
     os.system('sudo docker build -t webwhatsapi .')
     os.system("sudo docker run --network selenium -it -e SELENIUM='http://firefox:4444/wd/hub' -v $(pwd):/app  webwhatsapi /bin/bash -c 'pip install ./;pip list;'")
-
     
     # os.chdir(os.getcwd() + '/../') # ../lexcru/
     # os.system('. env/bin/activate')
     # # os.system('. deactivate')
     # os.chdir(os.getcwd() + '/apps/finbyzerp/WebWhatsappWrapper')
-    # os.system('pip install -r requirements/development.txt')
 
 
     # subprocess.call("sudo apt-get update", shell=True)
