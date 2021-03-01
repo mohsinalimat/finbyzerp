@@ -67,6 +67,8 @@ def whatsapp_login_check():
 
 	if not loggedin:
 		generate_qr_code(driver,profile.path)
+		enqueue(save_whatsapp_profile,queue= "long", timeout= 1800, job_name= 'Save Whatsapp Profile', command_executor = driver.command_executor._url,session_id = driver.session_id,profile_path=profile.path)
+
 	else:
 		driver.quit()
 
@@ -89,7 +91,6 @@ def generate_qr_code(driver,profile_path):
 	msg = "<img src={} alt='No Image'>".format(file_url)
 	# frappe.publish_realtime(event='display_qr_code_image', message=msg,user=frappe.session.user)
 	frappe.msgprint(msg,title="Scan below QR Code in Whatsapp Web")
-	enqueue(save_whatsapp_profile,queue= "long", timeout= 1800, job_name= 'Save Whatsapp Profile', command_executor = driver.command_executor._url,session_id = driver.session_id,profile_path=profile_path)
 
 def save_whatsapp_profile(command_executor,session_id,profile_path):
 	loggedin = False

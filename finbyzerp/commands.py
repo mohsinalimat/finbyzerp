@@ -14,6 +14,6 @@ def install_whatsapp():
     os.system("tar -xvzf geckodriver-$GECKO_DRIVER_VERSION-linux64.tar.gz")
     os.system("rm geckodriver-$GECKO_DRIVER_VERSION-linux64.tar.gz")
     os.system("chmod +x geckodriver")
-    os.system("cp geckodriver /usr/local/bin/")
+    os.system("sudo cp geckodriver /usr/local/bin/")
 
 commands = [install_whatsapp]
