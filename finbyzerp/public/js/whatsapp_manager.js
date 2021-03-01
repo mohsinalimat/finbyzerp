@@ -47,7 +47,7 @@ function display_qr(frm){
             primary_action:{
                 action(values) {
                     d.hide()
-                    whatsapp_dialog(frm,"Yes")
+                    whatsapp_dialog(frm)
                 }
             }
         });        
@@ -56,12 +56,14 @@ function display_qr(frm){
 
 function create_custom_button(frm){
     frappe.call({
-        method:"finbyzerp.api.get_whatsapp_settings",
+        method:"finbyzerp.whatsapp_manager.get_whatsapp_settings",
         args:{},
         callback: function(r){
             if (r.message == "True"){
                 if(frm.doc.docstatus==1){
-                    frm.page.add_menu_item(__('Send WhatsApp'), function() { check_whatsapp_login(frm) });
+                    frm.page.add_menu_item(__('Send WhatsApp'), function() { 
+                        whatsapp_dialog(frm);
+                    });
                 }
             }
         }
@@ -71,21 +73,19 @@ function create_custom_button(frm){
 
 function check_whatsapp_login(frm){
     frappe.call({
-        method:"finbyzerp.api.whatsapp_login_check",
+        method:"finbyzerp.whatsapp_manager.whatsapp_login_check",
         args:{
             
         },
         freeze:true,
         freeze_message:__("<b><p style='font-size:50px'>Please Wait ....</p></b>"),
         callback: function(r){
-            if(r.message == "Yes"){
-                whatsapp_dialog(frm,"No")
-            }
+
         }
     })
 };
 
-function whatsapp_dialog(frm,save_profile){
+function whatsapp_dialog(frm){
     var d = new frappe.ui.Dialog({
         title: 'Send Whatsapp',
         no_submit_on_enter: true,
@@ -118,7 +118,7 @@ function whatsapp_dialog(frm,save_profile){
                 });
                 frappe.show_alert({message:__("Sending Whatsapp..."), indicator:'green'})
                 frappe.call({
-                    method:"finbyzerp.api.get_pdf_whatsapp",
+                    method:"finbyzerp.whatsapp_manager.get_pdf_whatsapp",
                     args:{
                         doctype: frm.doc.doctype,
                         name:frm.doc.name,
@@ -126,8 +126,7 @@ function whatsapp_dialog(frm,save_profile){
                         print_format:v.select_print_format,
                         selected_attachments:selected_attachments,
                         mobile_number:v.number,
-                        description:v.content || '',
-                        save_profile:save_profile
+                        description:v.content || ''
                     },
                     // freeze:true,
                     // freeze_message:__("<b><p style='font-size:35px'>Please Wait, File Sending is in Progress!!</p></b>"),

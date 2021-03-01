@@ -323,14 +323,3 @@ def validate_user_mobile_no(self,method):
 			frappe.throw("Please Enter Digits Only in Mobile Number.")
 		elif len(self.mobile_no) != 10:
 			frappe.throw("Please Enter 10 digit Mobile Number.")
-
-# Whatsapp Manager: Start
-
-
-@frappe.whitelist()
-def get_whatsapp_settings():
-	if frappe.db.get_value("System Settings","System Settings","enable_whatsapp"):
-		if frappe.db.get_value('User',frappe.session.user,'mobile_no'):
-			return "True"
-
-# Whatsapp Manager: End
