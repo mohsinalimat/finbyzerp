@@ -37,6 +37,13 @@ def whatsapp_login_check():
 	options = Options()
 	options.headless = True
 	options.profile = profile
+	options.add_argument("start-maximized")
+	options.add_argument("disable-infobars")
+	options.add_argument("--disable-extensions")
+	options.add_argument('--no-sandbox')
+	options.add_argument('--disable-application-cache')
+	options.add_argument('--disable-gpu')
+	options.add_argument("--disable-dev-shm-usage")
 
 	driver = webdriver.Firefox(options=options,executable_path="/usr/local/bin/geckodriver")
 	driver.get('https://web.whatsapp.com/')
@@ -56,26 +63,40 @@ def whatsapp_login_check():
 				]
 			))
 		driver.refresh()
-	WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two' + ',' + 'canvas')))
+	try:
+		WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two' + ',' + 'canvas')))
+	except:
+		frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
+		driver.quit()
+		return False
+
 	try:
 		driver.find_element_by_css_selector('.two')
 		loggedin = True
 	except NoSuchElementException:
 		driver.find_element_by_css_selector('canvas')
 	except:
-		pass
+		frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
+		driver.quit()
+		return False
 
 	if not loggedin:
-		generate_qr_code(driver,profile.path)
-		enqueue(save_whatsapp_profile,queue= "long", timeout= 1800, job_name= 'Save Whatsapp Profile', command_executor = driver.command_executor._url,session_id = driver.session_id,profile_path=profile.path)
+		qr_code = generate_qr_code(driver,profile.path)
+		if qr_code == False:
+			return False
+		enqueue(save_whatsapp_profile,queue= "long", timeout= 1800, job_name= 'Save Whatsapp Profile', command_executor = driver.command_executor._url,session_id = driver.session_id,profile_path=profile.path,pid = driver.service.process.pid)
 
 	else:
 		driver.quit()
 
 def generate_qr_code(driver,profile_path):
 	path_private_files = frappe.get_site_path('private','files') + '/{}.png'.format(frappe.session.user)
-
-	WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'canvas')))
+	try:
+		WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'canvas')))
+	except:
+		frappe.log_error(frappe.get_traceback(),"Unable to generate QRCode")
+		driver.quit()
+		return False
 	qr = driver.find_element_by_css_selector('canvas')
 	fd = os.open(path_private_files, os.O_RDWR | os.O_CREAT)
 	fn_png = os.path.abspath(path_private_files)
@@ -92,15 +113,22 @@ def generate_qr_code(driver,profile_path):
 	# frappe.publish_realtime(event='display_qr_code_image', message=msg,user=frappe.session.user)
 	frappe.msgprint(msg,title="Scan below QR Code in Whatsapp Web")
 
-def save_whatsapp_profile(command_executor,session_id,profile_path):
+def save_whatsapp_profile(command_executor,session_id,profile_path,pid):
 	loggedin = False
+	time.sleep(30)
 	driver = create_driver_session(session_id, command_executor)
-	WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two')))
+	try:
+		WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two')))
+	except:
+		frappe.log_error(frappe.get_traceback(),"Unable to Save Profile.")
+		os.system('kill -9 {}'.format(pid))
+		return False
+
 	try:
 		driver.find_element_by_css_selector('.two')
 		loggedin = True
 	except:
-		pass
+		frappe.log_error(frappe.get_traceback(),"Unable to Save Whatsapp Profile.")
 	
 	profiledir = os.path.join(".", "firefox_cache")
 	if loggedin:
@@ -126,6 +154,7 @@ def save_whatsapp_profile(command_executor,session_id,profile_path):
 	else:
 		frappe.log_error("Not LoggedIn")
 
+	time.sleep(10)
 	driver.quit()
 			
 @frappe.whitelist()
@@ -139,7 +168,11 @@ def get_pdf_whatsapp(doctype,name,attach_document_print,print_format,selected_at
 		mobile_number = mobile_number.replace("+","")
 	if len(mobile_number) != 10:
 		frappe.throw("Please Enter Only 10 Digit Contact Number.")
-	whatsapp_login_check()
+
+	login_or_not = whatsapp_login_check()
+	if login_or_not == False:
+		frappe.log_error("Unable to Login Your Whatsapp")
+		return False
 	# background_msg_whatsapp(doctype,name,attach_document_print,print_format,selected_attachments,mobile_number,description)
 	enqueue(background_msg_whatsapp,queue= "long", timeout= 1800, job_name= 'Whatsapp Message', doctype= doctype, name= name, attach_document_print=attach_document_print,print_format= print_format,selected_attachments=selected_attachments,mobile_number=mobile_number,description=description)
 
@@ -198,6 +231,13 @@ def send_media_whatsapp(mobile_number,description,selected_attachments,site_path
 	options = Options()
 	options.headless = True
 	options.profile = profile
+	options.add_argument("start-maximized")
+	options.add_argument("disable-infobars")
+	options.add_argument("--disable-extensions")
+	options.add_argument('--no-sandbox')
+	options.add_argument('--disable-application-cache')
+	options.add_argument('--disable-gpu')
+	options.add_argument("--disable-dev-shm-usage")
 
 	driver = webdriver.Firefox(options=options,executable_path="/usr/local/bin/geckodriver")
 	driver.get('https://web.whatsapp.com/')
@@ -215,8 +255,13 @@ def send_media_whatsapp(mobile_number,description,selected_attachments,site_path
 				]
 			))
 		driver.refresh()
-	WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two')))
-
+	try:
+		WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two')))
+	except:
+		frappe.log_error(frappe.get_traceback(),"Unable to Connect Your whatsapp")
+		driver.quit()
+		return False
+		
 	link = "https://web.whatsapp.com/send?phone='{}'&text&source&data&app_absent".format(mobile_number)
 	driver.get(link)
 	attach_list = []
@@ -229,24 +274,39 @@ def send_media_whatsapp(mobile_number,description,selected_attachments,site_path
 			attach_list.append(attach_url)
 
 	if description:
-		WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="main"]/footer/div[1]/div[2]/div/div[2]')))
+		try:
+			WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="main"]/footer/div[1]/div[2]/div/div[2]')))
+		except:
+			frappe.log_error(frappe.get_traceback(),"Unable to send the whatsapp message")
 		try:
 			input_box = driver.find_element_by_xpath('//*[@id="main"]/footer/div[1]/div[2]/div/div[2]')
 			input_box.send_keys(description)
 			input_box.send_keys(Keys.ENTER)
 		except:
 			frappe.log_error(frappe.get_traceback(),"Error while trying to send the media file.")
- 
+			driver.quit()
+			return False
+
 	if attach_list:
 		try:
 			for path in attach_list:
 				path_url = frappe.utils.get_bench_path() + "/sites" + path[1:]
-				WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'span[data-icon="clip"]')))
+				try:
+					WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'span[data-icon="clip"]')))
+				except:
+					frappe.log_error(frappe.get_traceback(),"Unable to send the whatsapp message")
+					driver.quit()
+					return False
 				driver.find_element_by_css_selector('span[data-icon="clip"]').click()
 				attach=driver.find_element_by_css_selector('input[type="file"]')
 				attach.send_keys(path_url)
+				try:
+					WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="app"]/div/div/div[2]/div[2]/span/div/span/div/div/div[2]/span/div/div')))
+				except:
+					frappe.log_error(frappe.get_traceback(),"Unable to send the whatsapp message")
+					driver.quit()
+					return False
 
-				WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="app"]/div/div/div[2]/div[2]/span/div/span/div/div/div[2]/span/div/div')))
 				whatsapp_send_button = driver.find_element_by_xpath('//*[@id="app"]/div/div/div[2]/div[2]/span/div/span/div/div/div[2]/span/div/div')
 				whatsapp_send_button.click()
 		except:
@@ -259,145 +319,19 @@ def remove_file_from_os(path):
 		os.remove(path)
 
 def create_driver_session(session_id, executor_url):
+	org_command_execute = RemoteWebDriver.execute
 
-    # Save the original function, so we can revert our patch
-    org_command_execute = RemoteWebDriver.execute
+	def new_command_execute(self, command, params=None):
+		if command == "newSession":
+			return {'success': 0, 'value': None, 'sessionId': session_id}
+		else:
+			return org_command_execute(self, command, params)
 
-    def new_command_execute(self, command, params=None):
-        if command == "newSession":
-            # Mock the response
-            return {'success': 0, 'value': None, 'sessionId': session_id}
-        else:
-            return org_command_execute(self, command, params)
+	RemoteWebDriver.execute = new_command_execute
+	new_driver = webdriver.Remote(command_executor=executor_url, desired_capabilities=DesiredCapabilities.FIREFOX.copy())
+	new_driver.session_id = session_id
 
-    # Patch the function before creating the driver object
-    RemoteWebDriver.execute = new_command_execute
+	RemoteWebDriver.execute = org_command_execute
 
-    new_driver = webdriver.Remote(command_executor=executor_url, desired_capabilities=DesiredCapabilities.FIREFOX.copy())
-    new_driver.session_id = session_id
-
-    # Replace the patched function with original function
-    RemoteWebDriver.execute = org_command_execute
-
-    return new_driver
-
-
-# @frappe.whitelist()
-# def send_whatsapp_msg(doctype,name,attach_document_print,print_format,selected_attachments,mobile_number,description):
-# 	selected_attachments = json.loads(selected_attachments)
-# 	attach_document_print = json.loads(attach_document_print)
-
-# 	if mobile_number.find(" ") != -1:
-# 		mobile_number = mobile_number.replace(" ","")
-# 	if mobile_number.find("+") != -1:
-# 		mobile_number = mobile_number.replace("+","")
-# 	if len(mobile_number) != 10:
-# 		frappe.throw("Please Enter Only 10 Digit Contact Number.")
-	
-# 	check_whatsapp_login()
-# 	enqueue(background_msg_whatsapp,queue= "long", timeout= 1800, job_name= 'Whatsapp Message', doctype= doctype, name= name, attach_document_print=attach_document_print,print_format= print_format,selected_attachments=selected_attachments,mobile_number=mobile_number,description=description)
-
-
-# def check_whatsapp_login():
-# 	profiledir = os.path.join(".", "firefox_cache")
-# 	if not os.path.exists(profiledir):
-# 		os.makedirs(profiledir)
-
-# 	if profiledir:
-# 		profile = webdriver.FirefoxProfile(profiledir)
-# 	else:
-# 		profile = webdriver.FirefoxProfile()
-
-# 	options = Options()
-# 	options.headless = True
-# 	options.profile = profile
-
-# 	driver = webdriver.Firefox(options=options,executable_path="/usr/local/bin/geckodriver")
-# 	driver.get('https://web.whatsapp.com/')
-# 	loggedin = False
-
-# 	local_storage_file = os.path.join(profile.path, "{}.json".format(frappe.session.user))
-# 	if os.path.exists(local_storage_file):
-# 		with open(local_storage_file) as f:
-# 			data = json.loads(f.read())
-# 			driver.execute_script(
-# 			"".join(
-# 				[
-# 					"window.localStorage.setItem('{}', '{}');".format(
-# 						k, v.replace("\n", "\\n") if isinstance(v, str) else v
-# 					)
-# 					for k, v in data.items()
-# 				]
-# 			))
-# 		driver.refresh()
-# 	WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two' + ',' + 'canvas')))
-# 	try:
-# 		driver.find_element_by_css_selector('.two')
-# 		loggedin = True
-# 	except NoSuchElementException:
-# 		driver.find_element_by_css_selector('canvas')
-# 	except:
-# 		pass
-
-# 	if not loggedin:
-# 		return generate_qr_code(driver,profile.path)
-# 	else:
-# 		return True
-
-# def generate_qr_code(driver,profile_path):
-# 	path_private_files = frappe.get_site_path('private','files') + '/{}.png'.format(frappe.session.user)
-
-# 	WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'canvas')))
-# 	qr = driver.find_element_by_css_selector('canvas')
-# 	fd = os.open(path_private_files, os.O_RDWR | os.O_CREAT)
-# 	fn_png = os.path.abspath(path_private_files)
-# 	qr.screenshot(fn_png)
-
-# 	doc = frappe.new_doc("File")
-# 	doc.file_name = "{}.png".format(frappe.session.user)
-# 	doc.is_private=1
-# 	doc.file_url = "/private/files/{}.png".format(frappe.session.user)
-# 	doc.save(ignore_permissions=True)
-
-# 	file_url = "/private/files/{}.png".format(frappe.session.user)
-# 	msg = "<img src={} alt='No Image'>".format(file_url)
-# 	# frappe.publish_realtime(event='display_qr_code_image', message=msg,user=frappe.session.user)
-	
-# 	frappe.msgprint(msg,title="Scan below QR Code in Whatsapp Web")
-# 	enqueue(save_whatsapp_profile,queue= "long", timeout= 1800, job_name= 'Save Whatsapp Profile', driver = driver,profile_path=profile_path)
-	
-# def save_whatsapp_profile(driver,profile_path):
-# 	loggedin = False
-# 	WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two')))
-# 	try:
-# 		driver.find_element_by_css_selector('.two')
-# 		loggedin = True
-# 	except:
-# 		pass
-	
-# 	profiledir = os.path.join(".", "firefox_cache")
-# 	if loggedin:
-# 		for item in os.listdir(profile_path):
-# 			if item in ["parent.lock", "lock", ".parentlock"]:
-# 				continue
-# 			s = os.path.join(profile_path, item)
-# 			d = os.path.join(profiledir, item)
-# 			if os.path.isdir(s):
-# 				shutil.copytree(
-# 					s,
-# 					d,
-# 					ignore=shutil.ignore_patterns(
-# 						"parent.lock", "lock", ".parentlock"
-# 					),
-# 				)
-# 			else:
-# 				shutil.copy2(s, d)
-
-# 		with open(os.path.join(profiledir,"{}.json".format(frappe.session.user)), "w") as f:
-# 			f.write(json.dumps(driver.execute_script("return window.localStorage;")))
-
-# 	else:
-# 		frappe.throw("Please try again")
-
-# 	driver.quit()
+	return new_driver
 
