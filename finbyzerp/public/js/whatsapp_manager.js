@@ -119,7 +119,7 @@ function whatsapp_dialog(frm){
                     // freeze:true,
                     // freeze_message:__("<b><p style='font-size:35px'>Please Wait, File Sending is in Progress!!</p></b>"),
                     callback: function(r){
-                        setTimeout(function(){$(".modal.fade.in").modal('hide');},15000)
+                        setTimeout(function(){$(".modal.fade.in").modal('hide');},8000)
                     }
                 })
                 d.hide()

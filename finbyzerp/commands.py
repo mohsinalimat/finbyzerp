@@ -18,16 +18,14 @@ def install_whatsapp():
     os.system('sudo curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add')
     os.system('sudo echo "deb [arch=amd64]  http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list')
     os.system('sudo apt-get -y update')
-    os.system('sudo apt-get -y install google-chrome-stable')
+    os.system('wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb')
+    os.system('sudo apt install ./google-chrome-stable_current_amd64.deb')
     os.system('sudo wget https://chromedriver.storage.googleapis.com/2.41/chromedriver_linux64.zip')
     os.system('sudo unzip chromedriver_linux64.zip')
     os.system("sudo rm chromedriver_linux64.zip")
     os.system('sudo mv chromedriver /usr/local/bin/chromedriver')
     os.system('sudo chown root:root /usr/local/bin/chromedriver')
     os.system('sudo chmod +x /usr/local/bin/chromedriver')
-    os.system("deactivate")
-    # os.system('wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb')
-    # os.system('sudo apt install ./google-chrome-stable_current_amd64.deb')
 
 
 commands = [install_whatsapp]
