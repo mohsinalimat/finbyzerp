@@ -2,40 +2,28 @@
 // License: GNU General Public License v3. See license.txt
 
 frappe.ui.form.on("Sales Invoice", "refresh", function(frm) {
-    if(frm.doc.docstatus==1){
-        display_qr(frm);
-        create_custom_button(frm);
-    }
+    display_qr(frm);
+    create_custom_button(frm);
 })
 frappe.ui.form.on("Sales Order", "refresh", function(frm) {
-    if(frm.doc.docstatus==1){
-        display_qr(frm);
-        create_custom_button(frm);
-    }
+    display_qr(frm);
+    create_custom_button(frm);
 })
 frappe.ui.form.on("Delivery Note", "refresh", function(frm) {
-    if(frm.doc.docstatus==1){
-        display_qr(frm);
-        create_custom_button(frm);
-    }
+    display_qr(frm);
+    create_custom_button(frm);
 })
 frappe.ui.form.on("Purchase Order", "refresh", function(frm) {
-    if(frm.doc.docstatus==1){
-        display_qr(frm);
-        create_custom_button(frm);
-    }
+    display_qr(frm);
+    create_custom_button(frm);
 })
 frappe.ui.form.on("Payment Entry", "refresh", function(frm) {
-    if(frm.doc.docstatus==1){
-        display_qr(frm);
-        create_custom_button(frm);
-    }
+    display_qr(frm);
+    create_custom_button(frm);
 })
 frappe.ui.form.on("Quotation", "refresh", function(frm) {
-    if(frm.doc.docstatus==1){
-        display_qr(frm);
-        create_custom_button(frm);
-    }
+    display_qr(frm);
+    create_custom_button(frm);
 })
 
 
@@ -44,10 +32,10 @@ function display_qr(frm){
         var d = frappe.msgprint({
             title: __('Scan below QR Code in Whatsapp Web'),
             message: data,
+            // "<img src='/private/files/'"+frappe.session.user + "'.png' alt='No Image'>",
             primary_action:{
                 action(values) {
                     d.hide()
-                    whatsapp_dialog(frm)
                 }
             }
         });        
@@ -96,6 +84,7 @@ function whatsapp_dialog(frm){
 				label:__("Message"),
 				fieldtype:"Small Text",
 				fieldname:"content",
+                default:"test"
 			},
 			{fieldtype: "Section Break"},
 			{fieldtype: "Column Break"},
@@ -131,7 +120,7 @@ function whatsapp_dialog(frm){
                     // freeze:true,
                     // freeze_message:__("<b><p style='font-size:35px'>Please Wait, File Sending is in Progress!!</p></b>"),
                     callback: function(r){
-                        setTimeout(function(){$(".modal.fade.in").modal('hide');},30000)
+                        setTimeout(function(){$(".modal.fade.in").modal('hide');},15000)
                     }
                 })
                 d.hide()
