@@ -1,3 +1,8 @@
+$(window).on("load",function() {
+	setTimeout(function(){$('div[data-page-route="Form/User"] span[data-label="Duplicate"]').closest('li').hide();
+},1500);
+
+});
 $(window).on("load resize scroll",function(){
     setTimeout(function(){
 		
