@@ -22,9 +22,9 @@ def install_whatsapp():
     os.system('sudo apt install ./google-chrome-stable_current_amd64.deb')
     os.system('sudo wget https://chromedriver.storage.googleapis.com/2.41/chromedriver_linux64.zip')
     os.system('sudo unzip chromedriver_linux64.zip')
-    os.system("sudo rm chromedriver_linux64.zip")
     os.system('sudo mv chromedriver /usr/local/bin/chromedriver')
     os.system('sudo chown root:root /usr/local/bin/chromedriver')
+    os.system("sudo rm chromedriver_linux64.zip")
     os.system('sudo chmod +x /usr/local/bin/chromedriver')
 
 

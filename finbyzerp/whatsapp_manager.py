@@ -62,7 +62,6 @@ def whatsapp_login_check():
 	try:
 		WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two' + ',' + 'canvas')))
 	except:
-		driver.save_screenshot(frappe.get_site_path('public','files') + '/driver.png')
 		frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
 		driver.quit()
 		return False
@@ -90,6 +89,14 @@ def whatsapp_login_check():
 
 		msg = "<img src='/files/{}.png' alt='No Image'>".format(frappe.session.user)
 		frappe.publish_realtime(event='display_qr_code_image', message=msg,user=frappe.session.user)
+		try:
+			WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two')))
+		except:
+			frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
+			remove_user_profile()
+			remove_qr_code()
+			driver.quit()
+			return False
 		# frappe.msgprint(msg,title="Scan below QR Code in Whatsapp Web")
 		# start_time = time.time() + 60 * 0.15
 		# while True:
@@ -198,14 +205,14 @@ def send_media_whatsapp(driver,mobile_number,description,selected_attachments,do
 	# driver = webdriver.Chrome(options=options,executable_path="/usr/local/bin/chromedriver")
 	# driver.get('https://web.whatsapp.com/')
 
-	try:
-		WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two')))
-	except:
-		frappe.log_error(frappe.get_traceback(),"Unable to Connect Your whatsapp")
-		driver.quit()
-		remove_user_profile()
-		remove_qr_code()
-		return False
+	# try:
+	# 	WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two')))
+	# except:
+	# 	frappe.log_error(frappe.get_traceback(),"Unable to Connect Your whatsapp")
+	# 	driver.quit()
+	# 	remove_user_profile()
+	# 	remove_qr_code()
+	# 	return False
 		
 	link = "https://web.whatsapp.com/send?phone='{}'&text&source&data&app_absent".format(mobile_number)
 	driver.get(link)
