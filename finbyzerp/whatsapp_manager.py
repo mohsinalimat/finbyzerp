@@ -92,6 +92,11 @@ def whatsapp_login_check():
 		try:
 			WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two')))
 		except:
+			driver_ss_dir = os.path.join("./driver_ss/", "{}".format(frappe.session.user))
+			if not os.path.exists(driver_ss_dir):
+				os.makedirs(driver_ss_dir)
+			image_path = frappe.utils.get_bench_path() + '/sites/driver_ss/{}/driver_ss.png'.format(frappe.session.user)
+			driver.save_screenshot(image_path)
 			frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
 			remove_user_profile()
 			remove_qr_code()
