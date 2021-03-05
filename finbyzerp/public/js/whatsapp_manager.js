@@ -84,7 +84,6 @@ function whatsapp_dialog(frm){
 				label:__("Message"),
 				fieldtype:"Small Text",
 				fieldname:"content",
-                default:"test"
 			},
 			{fieldtype: "Section Break"},
 			{fieldtype: "Column Break"},
