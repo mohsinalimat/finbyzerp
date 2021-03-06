@@ -28,10 +28,12 @@ def get_whatsapp_settings():
 
 
 @frappe.whitelist()
-def whatsapp_login_check():
+def whatsapp_login_check(doctype,name):
+	loggedin = False
 	profiledir = os.path.join("./profiles/", "{}".format(frappe.session.user))
 	if not os.path.exists(profiledir):
 		os.makedirs(profiledir)
+		loggedin = True
 	options = webdriver.ChromeOptions()
 	options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36")
 	options.add_argument("--headless")
@@ -57,41 +59,63 @@ def whatsapp_login_check():
 
 	driver = webdriver.Chrome(options=options,executable_path="/usr/local/bin/chromedriver")
 	driver.get('https://web.whatsapp.com/')
-	loggedin = False
+	
+	if loggedin:
+		try:
+			WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.CSS_SELECTOR,'.two' + ',' + 'canvas')))
+		except:
+			frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
+			driver.quit()
+			return False
 
-	try:
-		WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two' + ',' + 'canvas')))
-	except:
-		frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
-		driver.quit()
-		return False
+		try:
+			driver.find_element_by_css_selector('.two')
+			loggedin = True
+		except NoSuchElementException:
+			element = driver.find_element_by_css_selector('canvas')
+			loggedin = False
+		except:
+			frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
+			driver.quit()
+			return False
+	else:
+		try:
+			WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR,'canvas')))
+		except:
+			frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
+			driver.quit()
+			return False
 
-	try:
-		driver.find_element_by_css_selector('.two')
-		loggedin = True
-	except NoSuchElementException:
 		element = driver.find_element_by_css_selector('canvas')
-	except:
-		frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
-		driver.quit()
-		return False
+
 
 	if not loggedin:
 		path_private_files = frappe.get_site_path('public','files') + '/{}.png'.format(frappe.session.user)
-		# try:
-		# 	driver.find_element_by_css_selector("div[data-ref] > span > div").click()
-		# except:
-		# 	pass
+		try:
+			driver.find_element_by_css_selector("div[data-ref] > span > div").click()
+		except:
+			pass
+		
+		data = driver.find_element_by_class_name('_3jid7')
+		f = open('qr_data_ref.txt','a+')
+		f.write( "\n\nFirst Time : \n"+ str(data.get_attribute('data-ref')))
+		f.close()
+
 		png = driver.get_screenshot_as_png()
 		qr = Image.open(BytesIO(png))
 		qr = qr.crop((element.location['x'], element.location['y'], element.location['x'] + element.size['width'], element.location['y'] + element.size['height']))
 		qr.save(path_private_files)
 
 		msg = "<img src='/files/{}.png' alt='No Image'>".format(frappe.session.user)
-		frappe.publish_realtime(event='display_qr_code_image', message=msg,user=frappe.session.user)
+		event = str(doctype + name + "display_qr_code_image" + frappe.session.user)
+		frappe.publish_realtime(event=event, message=msg,user=frappe.session.user)
 		try:
 			WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two')))
 		except:
+			data = driver.find_element_by_class_name('_3jid7')
+			f = open('qr_data_ref.txt','a+')
+			f.write( "\nSecond Time : \n"+ str(data.get_attribute('data-ref')))
+			f.close()
 			driver_ss_dir = os.path.join("./driver_ss/", "{}".format(frappe.session.user))
 			if not os.path.exists(driver_ss_dir):
 				os.makedirs(driver_ss_dir)
@@ -124,7 +148,7 @@ def get_pdf_whatsapp(doctype,name,attach_document_print,print_format,selected_at
 	if len(mobile_number) != 10:
 		frappe.throw("Please Enter Only 10 Digit Contact Number.")
 
-	login_or_not = whatsapp_login_check()
+	login_or_not = whatsapp_login_check(doctype,name)
 	if isinstance(login_or_not,list):
 		driver = login_or_not[0]
 	elif login_or_not == False:

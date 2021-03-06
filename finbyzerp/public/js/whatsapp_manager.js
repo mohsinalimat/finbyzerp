@@ -28,7 +28,8 @@ frappe.ui.form.on("Quotation", "refresh", function(frm) {
 
 
 function display_qr(frm){
-    frappe.realtime.on("display_qr_code_image", function(data) {
+    let event = String(frm.doc.doctype + frm.doc.name + 'display_qr_code_image' + frappe.session.user)
+    frappe.realtime.on(event, function(data) {
         var d = frappe.msgprint({
             title: __('Scan below QR Code in Whatsapp Web'),
             message: data,
@@ -38,7 +39,8 @@ function display_qr(frm){
                     d.hide()
                 }
             }
-        });        
+        });    
+        setTimeout(function(){$(".modal.fade.in").modal('hide');},9000)    
     })
 };
 
@@ -119,7 +121,7 @@ function whatsapp_dialog(frm){
                     // freeze:true,
                     // freeze_message:__("<b><p style='font-size:35px'>Please Wait, File Sending is in Progress!!</p></b>"),
                     callback: function(r){
-                        setTimeout(function(){$(".modal.fade.in").modal('hide');},8000)
+                        // setTimeout(function(){$(".modal.fade.in").modal('hide');},8000)
                     }
                 })
                 d.hide()
