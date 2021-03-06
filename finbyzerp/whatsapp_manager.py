@@ -181,8 +181,8 @@ def background_msg_whatsapp(qr_hash,doctype,name,attach_document_print,print_for
 			attach_url = frappe.get_site_path() + str(frappe.db.get_value('File',f_name,'file_url'))
 			remove_file_from_os(attach_url)
 			frappe.db.sql("delete from `tabFile` where name='{}'".format(f_name))
-	# if qr_hash:
-	# 	remove_qr_code(qr_hash)
+	if qr_hash:
+		remove_qr_code(qr_hash)
 
 	if not send_msg == False:
 		comment_whatsapp = frappe.new_doc("Comment")
