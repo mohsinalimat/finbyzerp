@@ -96,15 +96,15 @@ def whatsapp_login_check(doctype,name):
 		except:
 			pass
 		
-		data = driver.find_element_by_class_name('_3jid7')
-		f = open('qr_data_ref.txt','a+')
-		f.write( "\n\nFirst Time : \n"+ str(data.get_attribute('data-ref')))
-		f.close()
+		# data = driver.find_element_by_class_name('_3jid7')
+		# f = open('qr_data_ref.txt','a+')
+		# f.write( "\n\nFirst Time : \n"+ str(data.get_attribute('data-ref')))
+		# f.close()
 
-		png = driver.get_screenshot_as_png()
-		qr = Image.open(BytesIO(png))
-		qr = qr.crop((element.location['x'], element.location['y'], element.location['x'] + element.size['width'], element.location['y'] + element.size['height']))
-		qr.save(path_private_files)
+		driver.save_screenshot(path_private_files)
+		# qr = Image.open(BytesIO(png))
+		# qr = qr.crop((element.location['x'], element.location['y'], element.location['x'] + element.size['width'], element.location['y'] + element.size['height']))
+		# qr.save(path_private_files)
 
 		msg = "<img src='/files/{}.png' alt='No Image'>".format(frappe.session.user)
 		event = str(doctype + name + "display_qr_code_image" + frappe.session.user)
@@ -112,10 +112,10 @@ def whatsapp_login_check(doctype,name):
 		try:
 			WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two')))
 		except:
-			data = driver.find_element_by_class_name('_3jid7')
-			f = open('qr_data_ref.txt','a+')
-			f.write( "\nSecond Time : \n"+ str(data.get_attribute('data-ref')))
-			f.close()
+			# data = driver.find_element_by_class_name('_3jid7')
+			# f = open('qr_data_ref.txt','a+')
+			# f.write( "\nSecond Time : \n"+ str(data.get_attribute('data-ref')))
+			# f.close()
 			driver_ss_dir = os.path.join("./driver_ss/", "{}".format(frappe.session.user))
 			if not os.path.exists(driver_ss_dir):
 				os.makedirs(driver_ss_dir)
