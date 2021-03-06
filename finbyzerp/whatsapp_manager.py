@@ -97,11 +97,6 @@ def whatsapp_login_check(doctype,name):
 		except:
 			pass
 		
-		# data = driver.find_element_by_class_name('_3jid7')
-		# f = open('qr_data_ref.txt','a+')
-		# f.write( "\n\nFirst Time : \n"+ str(data.get_attribute('data-ref')))
-		# f.close()
-
 		# driver.save_screenshot(path_private_files)
 		png = driver.get_screenshot_as_png()
 		qr = Image.open(BytesIO(png))
@@ -113,18 +108,14 @@ def whatsapp_login_check(doctype,name):
 		try:
 			WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two')))
 		except:
-			# data = driver.find_element_by_class_name('_3jid7')
-			# f = open('qr_data_ref.txt','a+')
-			# f.write( "\nSecond Time : \n"+ str(data.get_attribute('data-ref')))
-			# f.close()
-			driver_ss_dir = os.path.join("./driver_ss/", "{}".format(frappe.session.user))
-			if not os.path.exists(driver_ss_dir):
-				os.makedirs(driver_ss_dir)
-			image_path = frappe.utils.get_bench_path() + '/sites/driver_ss/{}/driver_ss.png'.format(frappe.session.user)
-			driver.save_screenshot(image_path)
+			# driver_ss_dir = os.path.join("./driver_ss/", "{}".format(frappe.session.user))
+			# if not os.path.exists(driver_ss_dir):
+			# 	os.makedirs(driver_ss_dir)
+			# image_path = frappe.utils.get_bench_path() + '/sites/driver_ss/{}/driver_ss.png'.format(frappe.session.user)
+			# driver.save_screenshot(image_path)
 			frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
 			remove_user_profile()
-			remove_qr_code()
+			remove_qr_code(qr_hash)
 			driver.quit()
 			return False
 		# frappe.msgprint(msg,title="Scan below QR Code in Whatsapp Web")
@@ -133,7 +124,7 @@ def whatsapp_login_check(doctype,name):
 		# 	if time.time() > start_time:
 		# 		break
 		# driver.quit()
-		return [driver]
+		return [driver,qr_hash]
 	else:
 		return [driver]
 			
@@ -152,15 +143,18 @@ def get_pdf_whatsapp(doctype,name,attach_document_print,print_format,selected_at
 	login_or_not = whatsapp_login_check(doctype,name)
 	if isinstance(login_or_not,list):
 		driver = login_or_not[0]
+		try:
+			qr_hash = login_or_not[1]
+		except:
+			qr_hash = False
 	elif login_or_not == False:
 		frappe.log_error("Unable to Login Your Whatsapp")
 		remove_user_profile()
-		remove_qr_code()
 		return False
-	background_msg_whatsapp(driver,doctype,name,attach_document_print,print_format,selected_attachments,mobile_number,description)
+	background_msg_whatsapp(qr_hash,driver,doctype,name,attach_document_print,print_format,selected_attachments,mobile_number,description)
 	# enqueue(background_msg_whatsapp,queue= "long", timeout= 1800, job_name= 'Whatsapp Message', doctype= doctype, name= name, attach_document_print=attach_document_print,print_format= print_format,selected_attachments=selected_attachments,mobile_number=mobile_number,description=description)
 
-def background_msg_whatsapp(driver,doctype,name,attach_document_print,print_format,selected_attachments,mobile_number,description):
+def background_msg_whatsapp(qr_hash,driver,doctype,name,attach_document_print,print_format,selected_attachments,mobile_number,description):
 	time.sleep(10)
 	if attach_document_print==1:
 		html = frappe.get_print(doctype=doctype, name=name, print_format=print_format)
@@ -185,7 +179,7 @@ def background_msg_whatsapp(driver,doctype,name,attach_document_print,print_form
 			remove_file_from_os(attach_url)
 			frappe.db.sql("delete from `tabFile` where name='{}'".format(f_name))
 			
-	remove_qr_code()
+	remove_qr_code(qr_hash)
 
 	if not send_msg == False:
 		comment_whatsapp = frappe.new_doc("Comment")
@@ -302,29 +296,11 @@ def remove_file_from_os(path):
 	if os.path.exists(path):
 		os.remove(path)
 	
-def remove_qr_code():
-	qr_path = frappe.get_site_path('public','files') + "/{}.png".format(frappe.session.user)
+def remove_qr_code(qr_hash):
+	qr_path = frappe.get_site_path('public','files') + "/{}.png".format(frappe.session.user + qr_hash)
 	remove_file_from_os(qr_path)
 
 def remove_user_profile():
 	profiledir = os.path.join("./profiles/", "{}".format(frappe.session.user))
 	if os.path.exists(profiledir):
 		shutil.rmtree(profiledir)
-
-def create_driver_session(session_id, executor_url):
-	org_command_execute = RemoteWebDriver.execute
-
-	def new_command_execute(self, command, params=None):
-		if command == "newSession":
-			return {'success': 0, 'value': None, 'sessionId': session_id}
-		else:
-			return org_command_execute(self, command, params)
-
-	RemoteWebDriver.execute = new_command_execute
-	new_driver = webdriver.Remote(command_executor=executor_url, desired_capabilities=DesiredCapabilities.FIREFOX.copy())
-	new_driver.session_id = session_id
-
-	RemoteWebDriver.execute = org_command_execute
-
-	return new_driver
-
