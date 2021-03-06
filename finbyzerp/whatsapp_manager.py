@@ -40,7 +40,7 @@ def whatsapp_login_check(doctype,name):
 	options.add_argument("--disable-extensions")
 	options.add_argument("--disable-default-apps")
 	options.add_experimental_option("excludeSwitches", ["enable-automation"])
-	options.add_experimental_option('excludeSwitches', ['enable-logging'])
+	# options.add_experimental_option('excludeSwitches', ['enable-logging'])
 	options.add_argument("--disable-crash-reporter")
 	options.add_argument("--disable-in-process-stack-traces")
 	options.add_argument("--disable-login-animations")
@@ -61,6 +61,12 @@ def whatsapp_login_check(doctype,name):
 	try:
 		WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two' + ',' + 'canvas')))
 	except:
+		driver_ss_dir = os.path.join("./driver_ss/", "{}".format(frappe.session.user))
+		if not os.path.exists(driver_ss_dir):
+			os.makedirs(driver_ss_dir)
+		image_path = frappe.utils.get_bench_path() + '/sites/driver_ss/{}/driver_first.png'.format(frappe.session.user)
+		driver.save_screenshot(image_path)
+		remove_user_profile()
 		frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
 		driver.quit()
 		return False
@@ -72,6 +78,7 @@ def whatsapp_login_check(doctype,name):
 		element = driver.find_element_by_css_selector('canvas')
 	except:
 		frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
+		remove_user_profile()
 		driver.quit()
 		return False
 
@@ -94,11 +101,11 @@ def whatsapp_login_check(doctype,name):
 		try:
 			WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two')))
 		except:
-			# driver_ss_dir = os.path.join("./driver_ss/", "{}".format(frappe.session.user))
-			# if not os.path.exists(driver_ss_dir):
-			# 	os.makedirs(driver_ss_dir)
-			# image_path = frappe.utils.get_bench_path() + '/sites/driver_ss/{}/driver_ss.png'.format(frappe.session.user)
-			# driver.save_screenshot(image_path)
+			driver_ss_dir = os.path.join("./driver_ss/", "{}".format(frappe.session.user))
+			if not os.path.exists(driver_ss_dir):
+				os.makedirs(driver_ss_dir)
+			image_path = frappe.utils.get_bench_path() + '/sites/driver_ss/{}/driver_second.png'.format(frappe.session.user)
+			driver.save_screenshot(image_path)
 			frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
 			remove_user_profile()
 			remove_qr_code(qr_hash)
