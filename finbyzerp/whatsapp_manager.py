@@ -59,7 +59,7 @@ def whatsapp_login_check(doctype,name):
 	driver.get('https://web.whatsapp.com/')
 	loggedin = False
 	try:
-		WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two' + ',' + 'canvas')))
+		WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two' + ',' + 'canvas')))
 	except:
 		frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
 		driver.quit()
@@ -164,8 +164,8 @@ def background_msg_whatsapp(qr_hash,driver,doctype,name,attach_document_print,pr
 			attach_url = frappe.get_site_path() + str(frappe.db.get_value('File',f_name,'file_url'))
 			remove_file_from_os(attach_url)
 			frappe.db.sql("delete from `tabFile` where name='{}'".format(f_name))
-			
-	remove_qr_code(qr_hash)
+	if qr_hash:
+		remove_qr_code(qr_hash)
 
 	if not send_msg == False:
 		comment_whatsapp = frappe.new_doc("Comment")
