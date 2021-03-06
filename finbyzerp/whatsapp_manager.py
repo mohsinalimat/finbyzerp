@@ -90,7 +90,8 @@ def whatsapp_login_check(doctype,name):
 
 
 	if not loggedin:
-		path_private_files = frappe.get_site_path('public','files') + '/{}.png'.format(frappe.session.user)
+		qr_hash = frappe.generate_hash(length = 15)
+		path_private_files = frappe.get_site_path('public','files') + '/{}.png'.format(frappe.session.user + qr_hash)
 		try:
 			driver.find_element_by_css_selector("div[data-ref] > span > div").click()
 		except:
@@ -101,13 +102,12 @@ def whatsapp_login_check(doctype,name):
 		# f.write( "\n\nFirst Time : \n"+ str(data.get_attribute('data-ref')))
 		# f.close()
 
-		# png = driver.get_screenshot_as_png()
-		driver.save_screenshot(path_private_files)
-		# qr = Image.open(BytesIO(png))
-		# qr = qr.crop((element.location['x'], element.location['y'], element.location['x'] + element.size['width'], element.location['y'] + element.size['height']))
-		# qr.save(path_private_files)
-
-		msg = "<img src='/files/{}.png' alt='No Image'>".format(frappe.session.user)
+		# driver.save_screenshot(path_private_files)
+		png = driver.get_screenshot_as_png()
+		qr = Image.open(BytesIO(png))
+		qr = qr.crop((element.location['x'], element.location['y'], element.location['x'] + element.size['width'], element.location['y'] + element.size['height']))
+		qr.save(path_private_files)
+		msg = "<img src='/files/{}.png' alt='No Image' data-pagespeed-no-transform>".format(frappe.session.user + qr_hash)
 		event = str(doctype + name + "display_qr_code_image" + frappe.session.user)
 		frappe.publish_realtime(event=event, message=msg,user=frappe.session.user)
 		try:
