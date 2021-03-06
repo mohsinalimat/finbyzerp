@@ -29,11 +29,9 @@ def get_whatsapp_settings():
 
 @frappe.whitelist()
 def whatsapp_login_check(doctype,name):
-	loggedin = False
 	profiledir = os.path.join("./profiles/", "{}".format(frappe.session.user))
 	if not os.path.exists(profiledir):
 		os.makedirs(profiledir)
-		loggedin = True
 	options = webdriver.ChromeOptions()
 	options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36")
 	options.add_argument("--headless")
@@ -59,35 +57,23 @@ def whatsapp_login_check(doctype,name):
 
 	driver = webdriver.Chrome(options=options,executable_path="/usr/local/bin/chromedriver")
 	driver.get('https://web.whatsapp.com/')
-	
-	if loggedin:
-		try:
-			WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.CSS_SELECTOR,'.two' + ',' + 'canvas')))
-		except:
-			frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
-			driver.quit()
-			return False
+	loggedin = False
+	try:
+		WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two' + ',' + 'canvas')))
+	except:
+		frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
+		driver.quit()
+		return False
 
-		try:
-			driver.find_element_by_css_selector('.two')
-			loggedin = True
-		except NoSuchElementException:
-			element = driver.find_element_by_css_selector('canvas')
-			loggedin = False
-		except:
-			frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
-			driver.quit()
-			return False
-	else:
-		try:
-			WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.CSS_SELECTOR,'canvas')))
-		except:
-			frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
-			driver.quit()
-			return False
-
+	try:
+		driver.find_element_by_css_selector('.two')
+		loggedin = True
+	except NoSuchElementException:
 		element = driver.find_element_by_css_selector('canvas')
-
+	except:
+		frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
+		driver.quit()
+		return False
 
 	if not loggedin:
 		qr_hash = frappe.generate_hash(length = 15)
