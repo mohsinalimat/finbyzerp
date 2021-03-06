@@ -101,10 +101,11 @@ def whatsapp_login_check(doctype,name):
 		# f.write( "\n\nFirst Time : \n"+ str(data.get_attribute('data-ref')))
 		# f.close()
 
-		png = driver.get_screenshot_as_png()
-		qr = Image.open(BytesIO(png))
-		qr = qr.crop((element.location['x'], element.location['y'], element.location['x'] + element.size['width'], element.location['y'] + element.size['height']))
-		qr.save(path_private_files)
+		# png = driver.get_screenshot_as_png()
+		driver.save_screenshot(path_private_files)
+		# qr = Image.open(BytesIO(png))
+		# qr = qr.crop((element.location['x'], element.location['y'], element.location['x'] + element.size['width'], element.location['y'] + element.size['height']))
+		# qr.save(path_private_files)
 
 		msg = "<img src='/files/{}.png' alt='No Image'>".format(frappe.session.user)
 		event = str(doctype + name + "display_qr_code_image" + frappe.session.user)
