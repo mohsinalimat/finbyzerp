@@ -35,37 +35,37 @@ def whatsapp_login_check(doctype,name):
 	options = webdriver.ChromeOptions()
 	options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36")
 	options.add_argument("--headless")
-	options.add_argument("user-data-dir={}".format(os.path.join("./profiles/", "{}".format(frappe.session.user))))
-	options.add_argument("--disable-infobars")
-	options.add_argument("--disable-extensions")
-	options.add_argument("--disable-default-apps")
-	options.add_experimental_option("excludeSwitches", ["enable-automation"])
-	# options.add_experimental_option('excludeSwitches', ['enable-logging'])
-	options.add_argument("--disable-crash-reporter")
-	options.add_argument("--disable-in-process-stack-traces")
-	options.add_argument("--disable-login-animations")
-	options.add_argument("--log-level=3")
-	options.add_argument('--no-sandbox')
+	options.add_argument("user-data-dir={}".format(profiledir))
+	# options.add_argument("--disable-infobars")
+	# options.add_argument("--disable-extensions")
+	# options.add_argument("--disable-default-apps")
+	# options.add_experimental_option("excludeSwitches", ["enable-automation"])
+	# # options.add_experimental_option('excludeSwitches', ['enable-logging'])
+	# options.add_argument("--disable-crash-reporter")
+	# options.add_argument("--disable-in-process-stack-traces")
+	# options.add_argument("--disable-login-animations")
+	# options.add_argument("--log-level=3")
+	# options.add_argument('--no-sandbox')
 	options.add_argument('--disable-gpu')
 	options.add_argument("--disable-dev-shm-usage")
-	options.add_argument("--disable-notifications")
-	options.add_argument("--ignore-certificate-errors")
-	options.add_argument("--disable-plugins")
-	options.add_argument("--no-default-browser-check")
-	options.add_argument("--disable-webgl")
-	options.add_argument("--disable-setuid-sandbox")
+	# options.add_argument("--disable-notifications")
+	# options.add_argument("--ignore-certificate-errors")
+	# options.add_argument("--disable-plugins")
+	# options.add_argument("--no-default-browser-check")
+	# options.add_argument("--disable-webgl")
+	# options.add_argument("--disable-setuid-sandbox")
 
 	driver = webdriver.Chrome(options=options,executable_path="/usr/local/bin/chromedriver")
 	driver.get('https://web.whatsapp.com/')
 	loggedin = False
 	try:
 		WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two' + ',' + 'canvas')))
-	except:
 		driver_ss_dir = os.path.join("./driver_ss/", "{}".format(frappe.session.user))
 		if not os.path.exists(driver_ss_dir):
 			os.makedirs(driver_ss_dir)
 		image_path = frappe.utils.get_bench_path() + '/sites/driver_ss/{}/driver_first.png'.format(frappe.session.user)
 		driver.save_screenshot(image_path)
+	except:
 		remove_user_profile()
 		frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
 		driver.quit()
@@ -116,10 +116,11 @@ def whatsapp_login_check(doctype,name):
 		# while True:
 		# 	if time.time() > start_time:
 		# 		break
-		# driver.quit()
-		return [driver,qr_hash]
+		driver.quit()
+		# return [driver,qr_hash]
 	else:
-		return [driver]
+		driver.quit()
+		# return [driver]
 			
 @frappe.whitelist()
 def get_pdf_whatsapp(doctype,name,attach_document_print,print_format,selected_attachments,mobile_number,description):
@@ -144,11 +145,10 @@ def get_pdf_whatsapp(doctype,name,attach_document_print,print_format,selected_at
 		frappe.log_error("Unable to Login Your Whatsapp")
 		remove_user_profile()
 		return False
-	background_msg_whatsapp(qr_hash,driver,doctype,name,attach_document_print,print_format,selected_attachments,mobile_number,description)
+	background_msg_whatsapp(doctype,name,attach_document_print,print_format,selected_attachments,mobile_number,description)
 	# enqueue(background_msg_whatsapp,queue= "long", timeout= 1800, job_name= 'Whatsapp Message', doctype= doctype, name= name, attach_document_print=attach_document_print,print_format= print_format,selected_attachments=selected_attachments,mobile_number=mobile_number,description=description)
 
-def background_msg_whatsapp(qr_hash,driver,doctype,name,attach_document_print,print_format,selected_attachments,mobile_number,description):
-	time.sleep(10)
+def background_msg_whatsapp(doctype,name,attach_document_print,print_format,selected_attachments,mobile_number,description):
 	if attach_document_print==1:
 		html = frappe.get_print(doctype=doctype, name=name, print_format=print_format)
 		filename = "{name}.pdf".format(name=name.replace(" ", "-").replace("/", "-"))
@@ -157,22 +157,22 @@ def background_msg_whatsapp(qr_hash,driver,doctype,name,attach_document_print,pr
 		file_data = save_file(filename, filecontent, doctype,name,is_private=1)
 		file_url = file_data.file_url
 		site_path = frappe.get_site_path('private','files') + "/{}".format(filename)
-		send_msg = send_media_whatsapp(driver,mobile_number,description,selected_attachments,doctype,name,print_format,site_path)
+		send_msg = send_media_whatsapp(mobile_number,description,selected_attachments,doctype,name,print_format,site_path)
 		
 		remove_file_from_os(site_path)
 		frappe.db.sql("delete from `tabFile` where file_name='{}'".format(filename))
 		frappe.db.sql("delete from `tabComment` where reference_doctype='{}' and reference_name='{}' and comment_type='Attachment' and comment_email = '{}' and content LIKE '%{}%'".format(doctype,name,frappe.session.user,file_url))
 
 	else:
-		send_msg = send_media_whatsapp(driver,mobile_number,description,selected_attachments,doctype,name,print_format)
+		send_msg = send_media_whatsapp(mobile_number,description,selected_attachments,doctype,name,print_format)
 
 	if selected_attachments:
 		for f_name in selected_attachments:
 			attach_url = frappe.get_site_path() + str(frappe.db.get_value('File',f_name,'file_url'))
 			remove_file_from_os(attach_url)
 			frappe.db.sql("delete from `tabFile` where name='{}'".format(f_name))
-	if qr_hash:
-		remove_qr_code(qr_hash)
+	# if qr_hash:
+	# 	remove_qr_code(qr_hash)
 
 	if not send_msg == False:
 		comment_whatsapp = frappe.new_doc("Comment")
@@ -190,21 +190,20 @@ def background_msg_whatsapp(qr_hash,driver,doctype,name,attach_document_print,pr
 	return "Success"
 
 	
-def send_media_whatsapp(driver,mobile_number,description,selected_attachments,doctype,name,print_format,site_path=None):
+def send_media_whatsapp(mobile_number,description,selected_attachments,doctype,name,print_format,site_path=None):
 
 	if len(mobile_number) == 10:
 		mobile_number = "91" + mobile_number
 
-	# profiledir = os.path.join("./profiles/", "{}".format(frappe.session.user))
-	# options = webdriver.ChromeOptions()
-	# options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36")
-	# options.add_argument("--headless")
-	# options.add_argument("user-data-dir={}".format(profiledir))
+	profiledir = os.path.join("./profiles/", "{}".format(frappe.session.user))
+	options = webdriver.ChromeOptions()
+	options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36")
+	options.add_argument("--headless")
+	options.add_argument("user-data-dir={}".format(profiledir))
 	# options.add_argument("--disable-infobars")
 	# options.add_argument("--disable-extensions")
 	# options.add_argument("--disable-default-apps")
 	# options.add_experimental_option("excludeSwitches", ["enable-automation"])
-	# options.add_experimental_option('excludeSwitches', ['enable-logging'])
 	# options.add_argument("--disable-crash-reporter")
 	# options.add_argument("--disable-in-process-stack-traces")
 	# options.add_argument("--disable-login-animations")
@@ -219,17 +218,17 @@ def send_media_whatsapp(driver,mobile_number,description,selected_attachments,do
 	# options.add_argument("--disable-webgl")
 	# options.add_argument("--disable-setuid-sandbox")
 
-	# driver = webdriver.Chrome(options=options,executable_path="/usr/local/bin/chromedriver")
-	# driver.get('https://web.whatsapp.com/')
+	driver = webdriver.Chrome(options=options,executable_path="/usr/local/bin/chromedriver")
+	driver.get('https://web.whatsapp.com/')
 
-	# try:
-	# 	WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two')))
-	# except:
-	# 	frappe.log_error(frappe.get_traceback(),"Unable to Connect Your whatsapp")
-	# 	driver.quit()
-	# 	remove_user_profile()
-	# 	remove_qr_code()
-	# 	return False
+	try:
+		WebDriverWait(driver, 15).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two')))
+	except:
+		frappe.log_error(frappe.get_traceback(),"Unable to Connect Your whatsapp")
+		driver.quit()
+		remove_user_profile()
+		# remove_qr_code()
+		return False
 		
 	link = "https://web.whatsapp.com/send?phone='{}'&text&source&data&app_absent".format(mobile_number)
 	driver.get(link)
