@@ -23,9 +23,7 @@ from selenium.common.exceptions import NoSuchElementException
 @frappe.whitelist()
 def get_whatsapp_settings():
 	if frappe.db.get_value("System Settings","System Settings","enable_whatsapp"):
-		if frappe.db.get_value('User',frappe.session.user,'mobile_no'):
-			return "True"
-
+		return "True"
 
 @frappe.whitelist()
 def whatsapp_login_check(doctype,name):
@@ -307,7 +305,7 @@ def send_media_whatsapp(driver,qr_hash,mobile_number,description,selected_attach
 		except:
 			frappe.log_error(frappe.get_traceback(),"Error while trying to send the whatsapp message.")
 			return False
-	time.sleep(5)
+	time.sleep(10)
 	driver.quit()
 
 def remove_file_from_os(path):
