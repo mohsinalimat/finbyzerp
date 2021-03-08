@@ -42,6 +42,13 @@ def whatsapp_login_check(doctype,name):
 	options.add_argument('--no-sandbox')
 	options.add_argument('--disable-gpu')
 	options.add_argument("--disable-dev-shm-usage")
+	options.add_argument("--disable-default-apps")
+	options.add_argument("--disable-crash-reporter")
+	options.add_argument("--disable-in-process-stack-traces")
+	options.add_argument("--disable-login-animations")
+	options.add_argument("--log-level=3")
+	options.add_argument("--no-default-browser-check")
+	options.add_argument("--disable-notifications")
 
 	driver = webdriver.Firefox(options=options,executable_path="/usr/local/bin/geckodriver")
 	driver.get('https://web.whatsapp.com/')
@@ -67,7 +74,13 @@ def whatsapp_login_check(doctype,name):
 		frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
 		driver.quit()
 		return False
-
+	# SS start
+	driver_ss_dir = os.path.join("./driver_ss/", "{}".format(frappe.session.user))
+	if not os.path.exists(driver_ss_dir):
+		os.makedirs(driver_ss_dir)
+	image_path = frappe.utils.get_bench_path() + '/sites/driver_ss/{}/driver_first.png'.format(frappe.session.user)
+	driver.save_screenshot(image_path)
+	# SS end
 	try:
 		driver.find_element_by_css_selector('.two')
 		loggedin = True
@@ -102,6 +115,13 @@ def whatsapp_login_check(doctype,name):
 		event = str(doctype + name + "display_qr_code_image" + frappe.session.user)
 		frappe.publish_realtime(event=event, message=msg,user=frappe.session.user)
 		try:
+			# SS start
+			driver_ss_dir = os.path.join("./driver_ss/", "{}".format(frappe.session.user))
+			if not os.path.exists(driver_ss_dir):
+				os.makedirs(driver_ss_dir)
+			image_path = frappe.utils.get_bench_path() + '/sites/driver_ss/{}/driver_second.png'.format(frappe.session.user)
+			driver.save_screenshot(image_path)
+			# SS end
 			WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two')))
 			for item in os.listdir(profile.path):
 				if item in ["parent.lock", "lock", ".parentlock"]:
