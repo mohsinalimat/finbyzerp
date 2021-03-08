@@ -49,7 +49,7 @@ function create_custom_button(frm){
         method:"finbyzerp.whatsapp_manager.get_whatsapp_settings",
         args:{},
         callback: function(r){
-            if (r.message == "True"){
+            if (r.message ==true){
                 if(frm.doc.docstatus==1){
                     frm.page.add_menu_item(__('Send WhatsApp'), function() { 
                         whatsapp_dialog(frm);
