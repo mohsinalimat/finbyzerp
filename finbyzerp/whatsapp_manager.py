@@ -22,7 +22,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 @frappe.whitelist()
 def get_whatsapp_settings():
-	if frappe.db.get_value("System Settings","System Settings","enable_whatsapp"):
+	if frappe.db.get_value("System Settings","System Settings","enable_whatsapp") == '1':
 		return True
 
 @frappe.whitelist()
