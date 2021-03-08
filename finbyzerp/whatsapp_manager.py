@@ -22,7 +22,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 @frappe.whitelist()
 def get_whatsapp_settings():
-	if frappe.db.get_value("System Settings","System Settings","enable_whatsapp"):
+	if frappe.db.get_value("System Settings","System Settings","enable_whatsapp") == '1':
 		return True
 
 @frappe.whitelist()
@@ -110,8 +110,7 @@ def whatsapp_login_check(doctype,name):
 		qr.screenshot(fn_png)
 
 		msg = "<img src='/files/{}.png' alt='No Image' data-pagespeed-no-transform>".format(frappe.session.user + qr_hash)
-		event = str(doctype + name + frappe.session.user)
-		frappe.publish_realtime(event=event, message=msg,user=frappe.session.user)
+		frappe.publish_realtime(event=frappe.session.user, message=msg,user=frappe.session.user,doctype=doctype,docname=name)
 		try:
 			# SS start
 			driver_ss_dir = os.path.join("./driver_ss/", "{}".format(frappe.session.user))
@@ -160,6 +159,8 @@ def get_pdf_whatsapp(doctype,name,attach_document_print,print_format,selected_at
 		mobile_number = mobile_number.replace(" ","")
 	if mobile_number.find("+") != -1:
 		mobile_number = mobile_number.replace("+","")
+	if mobile_number[0] == '9' and mobile_number[1] == '1':
+		mobile_number = mobile_number[2:]
 	if len(mobile_number) != 10:
 		frappe.throw("Please Enter Only 10 Digit Contact Number.")
 
