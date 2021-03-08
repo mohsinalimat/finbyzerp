@@ -112,7 +112,7 @@ def whatsapp_login_check(doctype,name):
 		qr.screenshot(fn_png)
 
 		msg = "<img src='/files/{}.png' alt='No Image' data-pagespeed-no-transform>".format(frappe.session.user + qr_hash)
-		event = str(doctype + name + "display_qr_code_image" + frappe.session.user)
+		event = str(doctype + name + frappe.session.user)
 		frappe.publish_realtime(event=event, message=msg,user=frappe.session.user)
 		try:
 			# SS start

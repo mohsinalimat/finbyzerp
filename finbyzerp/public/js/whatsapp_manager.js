@@ -28,7 +28,7 @@ frappe.ui.form.on("Quotation", "refresh", function(frm) {
 
 
 function display_qr(frm){
-    let event = String(frm.doc.doctype + frm.doc.name + 'display_qr_code_image' + frappe.session.user)
+    let event = String(frm.doc.doctype + frm.doc.name + frappe.session.user)
     frappe.realtime.on(event, function(data) {
         var d = frappe.msgprint({
             title: __('Scan below QR Code in Whatsapp Web'),
