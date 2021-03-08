@@ -33,6 +33,11 @@ from finbyzerp.finbyzerp.doc_events.opening_invoice_creation_tool import get_inv
 OpeningInvoiceCreationTool.get_invoice_dict = get_invoice_dict
 OpeningInvoiceCreationTool.make_invoices = make_invoices
 
+
+from frappe.core.doctype.report.report import Report
+from finbyzerp.api import report_validate
+Report.validate = report_validate
+
 app_include_css = ["assets/css/finbyzerp.min.css", "assets/finbyzerp/css/permission.css","/assets/finbyzerp/css/finbyz-theme.css"]
 app_include_js = [
 	"assets/js/finbyzerp.min.js" 
