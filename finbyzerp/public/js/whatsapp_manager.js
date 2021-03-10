@@ -28,7 +28,8 @@ frappe.ui.form.on("Quotation", "refresh", function(frm) {
 
 
 function display_qr(frm){
-    frappe.realtime.on(frappe.session.user, function(data) {
+    let event = String(frappe.session.user + frm.doc.doctype + frm.doc.name)
+    frappe.realtime.on(event, function(data) {
         var d = frappe.msgprint({
             title: __('Scan below QR Code in Whatsapp Web'),
             message: data,
@@ -49,11 +50,9 @@ function create_custom_button(frm){
         args:{},
         callback: function(r){
             if (r.message ==true){
-                if(frm.doc.docstatus==1){
                     frm.page.add_menu_item(__('Send WhatsApp'), function() { 
                         whatsapp_dialog(frm);
                     });
-                }
             }
         }
         

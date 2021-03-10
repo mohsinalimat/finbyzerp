@@ -72,13 +72,13 @@ def whatsapp_login_check(doctype,name):
 		frappe.log_error(frappe.get_traceback(),"Unable to connect your whatsapp")
 		driver.quit()
 		return False
-	# SS start
-	driver_ss_dir = os.path.join("./driver_ss/", "{}".format(frappe.session.user))
-	if not os.path.exists(driver_ss_dir):
-		os.makedirs(driver_ss_dir)
-	image_path = frappe.utils.get_bench_path() + '/sites/driver_ss/{}/driver_first.png'.format(frappe.session.user)
-	driver.save_screenshot(image_path)
-	# SS end
+	# # SS start
+	# driver_ss_dir = os.path.join("./driver_ss/", "{}".format(frappe.session.user))
+	# if not os.path.exists(driver_ss_dir):
+	# 	os.makedirs(driver_ss_dir)
+	# image_path = frappe.utils.get_bench_path() + '/sites/driver_ss/{}/driver_first.png'.format(frappe.session.user)
+	# driver.save_screenshot(image_path)
+	# # SS end
 	try:
 		driver.find_element_by_css_selector('.two')
 		loggedin = True
@@ -110,15 +110,9 @@ def whatsapp_login_check(doctype,name):
 		qr.screenshot(fn_png)
 
 		msg = "<img src='/files/{}.png' alt='No Image' data-pagespeed-no-transform>".format(frappe.session.user + qr_hash)
-		frappe.publish_realtime(event=frappe.session.user, message=msg,user=frappe.session.user,doctype=doctype,docname=name)
+		event = str(frappe.session.user + doctype + name)
+		frappe.publish_realtime(event=event, message=msg,user=frappe.session.user,doctype=doctype,docname=name)
 		try:
-			# SS start
-			driver_ss_dir = os.path.join("./driver_ss/", "{}".format(frappe.session.user))
-			if not os.path.exists(driver_ss_dir):
-				os.makedirs(driver_ss_dir)
-			image_path = frappe.utils.get_bench_path() + '/sites/driver_ss/{}/driver_second.png'.format(frappe.session.user)
-			driver.save_screenshot(image_path)
-			# SS end
 			WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two')))
 			for item in os.listdir(profile.path):
 				if item in ["parent.lock", "lock", ".parentlock"]:
