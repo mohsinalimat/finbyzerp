@@ -103,7 +103,7 @@ scheduler_events = {
 	]
 }
 
-# BOM Stock Calculated Report Override:
-from finbyzerp.finbyzerp.report.bom_stock_calculated import execute as bsc_execute
-from erpnext.manufacturing.report.bom_stock_calculated import bom_stock_calculated
-bom_stock_calculated.execute = bsc_execute
+# # BOM Stock Calculated Report Override:
+# from finbyzerp.finbyzerp.report.bom_stock_calculated import execute as bsc_execute
+# from erpnext.manufacturing.report.bom_stock_calculated import bom_stock_calculated
+# bom_stock_calculated.execute = bsc_execute
