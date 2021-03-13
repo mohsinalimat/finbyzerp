@@ -349,4 +349,4 @@ def report_validate(self):
 		frappe.throw(_("Only Administrator can save a standard report. Please rename and save."))
 
 	if self.report_type == "Report Builder":
-		Report.update_report_json()
+		self.update_report_json()
