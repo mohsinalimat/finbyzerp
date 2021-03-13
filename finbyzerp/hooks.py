@@ -86,6 +86,7 @@ doc_events = {
 		"validate":"finbyzerp.api.validate_user_mobile_no"
 	},
 	"Sales Invoice": {
+		"validate":"finbyzerp.finbyzerp.doc_events.sales_invoice.validate",
 		'on_submit': "finbyzerp.api.sales_invoice_on_submit"
 	},
 	"Stock Entry": {
