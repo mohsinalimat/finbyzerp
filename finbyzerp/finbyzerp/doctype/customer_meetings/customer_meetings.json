@@ -1,0 +1,242 @@
+{
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2017-01-23 21:55:05.121307",
+ "doctype": "DocType",
+ "document_type": "Document",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "customer",
+  "organization",
+  "scheduled_time",
+  "meeting_from",
+  "meeting_to",
+  "column_break",
+  "posting_date",
+  "contact",
+  "contact_person",
+  "mobile_no",
+  "email_id",
+  "address",
+  "address_display",
+  "participants",
+  "finbyz_representatives",
+  "customer_representatives",
+  "meeting_discussion",
+  "discussion",
+  "actionables",
+  "expenses",
+  "local_travel_expense",
+  "train_tickets",
+  "total_expense",
+  "column_break_expense",
+  "flight_ticket",
+  "food_expense",
+  "lodging_cost",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "default": "CMeet-",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "hidden": 1,
+   "label": "Naming Series",
+   "options": "CMeet-",
+   "read_only": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "label": "Customer",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "organization",
+   "fieldtype": "Data",
+   "label": "Organization",
+   "options": "customer.customer_name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "scheduled_time",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Scheduled Time"
+  },
+  {
+   "fieldname": "meeting_from",
+   "fieldtype": "Datetime",
+   "label": "Meeting From"
+  },
+  {
+   "fieldname": "meeting_to",
+   "fieldtype": "Datetime",
+   "label": "Meeting To"
+  },
+  {
+   "fieldname": "column_break",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Today",
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "hidden": 1,
+   "label": "Posting Date"
+  },
+  {
+   "fieldname": "contact",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Contact",
+   "options": "Contact",
+   "reqd": 1
+  },
+  {
+   "fieldname": "contact_person",
+   "fieldtype": "Data",
+   "label": "Contact Person"
+  },
+  {
+   "fieldname": "mobile_no",
+   "fieldtype": "Data",
+   "label": "Mobile No",
+   "options": "contact.mobile_no",
+   "read_only": 1
+  },
+  {
+   "fieldname": "email_id",
+   "fieldtype": "Data",
+   "label": "Email Id",
+   "options": "contact.email_id",
+   "read_only": 1
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Link",
+   "label": "Address",
+   "options": "Address"
+  },
+  {
+   "fieldname": "address_display",
+   "fieldtype": "Small Text",
+   "label": "Address Display",
+   "read_only": 1
+  },
+  {
+   "fieldname": "participants",
+   "fieldtype": "Section Break",
+   "label": "Participants"
+  },
+  {
+   "fieldname": "finbyz_representatives",
+   "fieldtype": "Table",
+   "label": "FinByz Representatives",
+   "options": "FinByz Representatives"
+  },
+  {
+   "fieldname": "customer_representatives",
+   "fieldtype": "Table",
+   "label": "Customer Representatives",
+   "options": "Customer Representatives"
+  },
+  {
+   "fieldname": "meeting_discussion",
+   "fieldtype": "Section Break",
+   "label": "Meeting Discussion"
+  },
+  {
+   "fieldname": "discussion",
+   "fieldtype": "Text",
+   "label": "Discussion",
+   "reqd": 1
+  },
+  {
+   "fieldname": "actionables",
+   "fieldtype": "Data",
+   "label": "Actionables"
+  },
+  {
+   "fieldname": "expenses",
+   "fieldtype": "Section Break",
+   "label": "Expenses"
+  },
+  {
+   "fieldname": "local_travel_expense",
+   "fieldtype": "Currency",
+   "label": "Local Travel Expense"
+  },
+  {
+   "fieldname": "train_tickets",
+   "fieldtype": "Currency",
+   "label": "Train Tickets"
+  },
+  {
+   "fieldname": "total_expense",
+   "fieldtype": "Currency",
+   "label": "Total Expense"
+  },
+  {
+   "fieldname": "column_break_expense",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "flight_ticket",
+   "fieldtype": "Currency",
+   "label": "Flight Ticket"
+  },
+  {
+   "fieldname": "food_expense",
+   "fieldtype": "Currency",
+   "label": "Food Expense"
+  },
+  {
+   "fieldname": "lodging_cost",
+   "fieldtype": "Currency",
+   "label": "Lodging Cost"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Customer Meetings",
+   "print_hide": 1,
+   "read_only": 1
+  }
+ ],
+ "icon": "fa fa-handshake-o",
+ "is_submittable": 1,
+ "modified": "2021-03-17 09:50:00.448180",
+ "modified_by": "mukesh@finbyz.tech",
+ "module": "Finbyzerp",
+ "name": "Customer Meetings",
+ "owner": "info@finbyz.in",
+ "permissions": [
+  {
+   "amend": 1,
+   "cancel": 1,
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "organization,contact",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "timeline_field": "customer",
+ "title_field": "organization",
+ "track_changes": 1
+}
