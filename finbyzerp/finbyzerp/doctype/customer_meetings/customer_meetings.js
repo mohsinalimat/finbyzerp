@@ -1,8 +1,8 @@
-// Copyright (c) 2021, Finbyz Tech Pvt Ltd and contributors
+// Copyright (c) 2017, FinByz Tech Pvt. Ltd. and contributors
 // For license information, please see license.txt
 
 frappe.ui.form.on('Customer Meetings', {
-	// refresh: function(frm) {
+	refresh: function(frm) {
 
-	// }
+	}
 });
