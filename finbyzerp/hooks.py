@@ -84,7 +84,7 @@ override_whitelisted_methods = {
 
 doc_events = {
 	"Item": {
-		"validate":"finbyzerp.finbyzerp.doc_events.sales_iitemnvoice.validate"
+		"validate":"finbyzerp.finbyzerp.doc_events.item.validate"
 	},
 	"User": {
 		"validate":"finbyzerp.api.validate_user_mobile_no"
