@@ -29,7 +29,9 @@ class MeetingSchedule(Document):
 
 		CRLF = "\r\n"
 		default_sender =frappe.db.get_value('Email Account',{'default_outgoing':1},'email_id')
-		organizer = "ORGANIZER;CN=organiser:mailto:"+default_sender
+		if not default_sender:
+			frappe.throw("Please Setup Default Outgoing Email Account.")
+		organizer = "ORGANIZER;CN=" +default_sender+":mailto:"+default_sender
 		dtstamp = datetime.datetime.now().strftime("%Y%m%dT%H%M%S")
 		dtstart = get_datetime(self.scheduled_from).strftime("%Y%m%dT%H%M%S")
 		dtend = get_datetime(self.scheduled_to).strftime("%Y%m%dT%H%M%S")
@@ -42,34 +44,38 @@ class MeetingSchedule(Document):
 
 		attendee = ""
 		for att in attendees:
-			attendee += "ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-    PARTICIPANT;PARTSTAT=PENDING;RSVP=TRUE"+CRLF+" ;CN="+att+";X-NUM-GUESTS=0:"+CRLF+" mailto:"+att+CRLF
-		ical = "BEGIN:VCALENDAR"+CRLF+"PRODID:pyICSParser"+CRLF+"VERSION:2.0"+CRLF+"CALSCALE:GREGORIAN"+CRLF
-		ical+="METHOD:REQUEST"+CRLF+"BEGIN:VEVENT"+CRLF+"TZID:Asia/Calcutta"+CRLF+"DTSTART:"+dtstart+CRLF+"DTEND:"+dtend+CRLF+"DTSTAMP:"+dtstamp+CRLF+organizer+CRLF
+			attendee += "ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE"+CRLF+" ;CN="+att+";X-NUM-GUESTS=0:mailto:"+att+CRLF
+		ical = "BEGIN:VCALENDAR"+CRLF+"""PRODID:-//Google Inc//Google Calendar 70.9054//EN"""+CRLF+"VERSION:2.0"+CRLF+"CALSCALE:GREGORIAN"+CRLF
+		ical+="METHOD:REQUEST"+CRLF+"BEGIN:VEVENT"+CRLF+"DTSTART:"+dtstart+CRLF+"DTEND:"+dtend+CRLF+"DTSTAMP:"+dtstamp+CRLF+organizer+CRLF
 		ical+= "UID:FIXMEUID"+dtstamp+CRLF
-		ical+= attendee+"CREATED:"+dtstamp+CRLF+ "LAST-MODIFIED:"+dtstamp+CRLF+"LOCATION:"+CRLF+"SEQUENCE:0"+CRLF+"STATUS:PENDING"+CRLF
-		ical+= "SUMMARY: "+subject+CRLF
+		ical+= attendee+"CREATED:"+dtstamp+CRLF
 		if self.meeting_agenda:
-			ical+= "DESCRIPTION: "+self.meeting_agenda +CRLF
+			ical+= "DESCRIPTION:"+self.invitation_message +CRLF
+		ical+="LAST-MODIFIED:"+dtstamp+CRLF+"LOCATION:"+CRLF+"SEQUENCE:0"+CRLF+"STATUS:CONFIRMED"+CRLF
+		ical+= "SUMMARY:"+subject+CRLF
 		ical+="TRANSP:OPAQUE"+CRLF+"END:VEVENT"+CRLF+"END:VCALENDAR"+CRLF
 
 		eml_body = ""
-		msg = MIMEMultipart('mixed')
+		msg = MIMEMultipart('alternative')
 		msg['Reply-To']=self.email_id
 		msg['Date'] = formatdate(localtime=True)
 		msg['Subject'] = subject
 		msg['From'] = self.email_id
 		msg['To'] = ",".join(attendees)
+		msg.add_header('Content-class', 'urn:content-classes:calendarmessage')
 
-		part_email = MIMEText(ical,'calendar;method=REQUEST')
+		# part_email = MIMEText(ical,'calendar;method=REQUEST')
 
 		msgAlternative = MIMEMultipart('alternative')
 
-		ical_atch = MIMEBase('text/calendar',' ;name="%s"'%"invitation.ics")
+		# ical_atch = MIMEBase('text/calendar',' ;name="%s"'%"invite.ics")
+		ical_atch = MIMEBase('text', 'calendar', **{'method' : 'REQUEST', 'name' : 'invite.ics'})
 		ical_atch.set_payload(ical)
 		encoders.encode_base64(ical_atch)
-		# ical_atch.add_header('Content-Disposition', 'attachment; filename="%s"'%("invitation.ics"))
+		ical_atch.add_header('Content-class', 'urn:content-classes:calendarmessage')
+		ical_atch.add_header('Content-Disposition', 'attachment; filename="%s"'%("invite.ics"))
 
-		msgAlternative.attach(part_email)
+		# msgAlternative.attach(part_email)
 		msgAlternative.attach(ical_atch)
 		msg.attach(msgAlternative)
 		smtpserver = SMTPServer()
