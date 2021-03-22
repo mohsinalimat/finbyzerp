@@ -83,6 +83,12 @@ override_whitelisted_methods = {
 }
 
 doc_events = {
+	"Customer": {
+		"validate":"finbyzerp.api.customer_validate"
+	},
+	"Supplier": {
+		"validate":"finbyzerp.api.supplier_validate"
+	},
 	"Item": {
 		"validate":"finbyzerp.finbyzerp.doc_events.item.validate"
 	},
@@ -90,8 +96,14 @@ doc_events = {
 		"validate":"finbyzerp.api.validate_user_mobile_no"
 	},
 	"Sales Invoice": {
-		"validate":"finbyzerp.finbyzerp.doc_events.sales_invoice.validate",
+		"validate":[
+			"finbyzerp.finbyzerp.doc_events.sales_invoice.validate",
+			"finbyzerp.api.si_validate"
+		],
 		'on_submit': "finbyzerp.api.sales_invoice_on_submit"
+	},
+	"Purchase Invoice": {
+		"validate": "finbyzerp.api.pi_validate"
 	},
 	"Stock Entry": {
 		"validate": "finbyzerp.api.stock_entry_validate"
