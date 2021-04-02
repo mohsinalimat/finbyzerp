@@ -313,7 +313,7 @@ def stock_entry_validate(self, method):
 		validate_additional_cost(self)
 
 def validate_additional_cost(self):
-	if self.purpose in ['Material Transfer','Material Transfer for Manufacture','Repack','Manufacture'] and self._action == "submit":
+	if self.purpose in ['Material Transfer for Manufacture','Repack','Manufacture'] and self._action == "submit":
 		if abs(round(flt(self.value_difference,1))) != abs(round(flt(self.total_additional_costs,1))):
 			frappe.throw("ValuationError: Value difference between incoming and outgoing amount is higher than additional cost")
 
@@ -369,22 +369,24 @@ def set_party_account_based_on_currency(self):
 		account_dict = {}
 		if self.accounts:	
 			for d in company_currency_list:
-				for row in self.accounts:	
-					if row.company == d['name']:
-						if not frappe.db.exists("Account",{'account_type':account_type,'freeze_account':'No','account_currency':self.default_currency}):
-							frappe.msgprint("Please create {0} account in {1} for company {2} then try to change currency again".format(account_type,self.default_currency,d['name']))
+				if self.default_currency != d['default_currency']:
+					for row in self.accounts:	
+						if row.company == d['name']:
+							if not frappe.db.exists("Account",{'account_type':account_type,'freeze_account':'No','account_currency':self.default_currency,'company':d['name']}):
+								frappe.msgprint("Please create {0} account in {1} for company {2} then try to change currency again".format(account_type,self.default_currency,d['name']))
+							else:
+								row.account = frappe.db.get_value("Account",{'account_type':account_type,'freeze_account':'No','account_currency':self.default_currency,'company':d['name'],'is_group':0},'name')
 						else:
-							row.account = frappe.db.get_value("Account",{'account_type':account_type,'freeze_account':'No','account_currency':self.default_currency})
-					else:
-						if not frappe.db.exists("Account",{'account_type':account_type,'freeze_account':'No','account_currency':self.default_currency,'company':d['name'],}):
-							frappe.msgprint("Please create {0} account in {1} for company {2} then try to change currency again".format(account_type,self.default_currency,d['name']))
-						else:
-							account_dict.update({
-								'company': d['name'],
-								'account': frappe.db.get_value("Account",{'account_type':account_type,'freeze_account':'No','company':d['name'],'account_currency':self.default_currency})
-							})
-			if account_dict:
-				self.extend('accounts', account_dict)
+							if not frappe.db.exists("Account",{'account_type':account_type,'freeze_account':'No','account_currency':self.default_currency,'company':d['name'],}):
+								frappe.msgprint("Please create {0} account in {1} for company {2} then try to change currency again".format(account_type,self.default_currency,d['name']))
+							else:
+								account_dict.update({
+									'company': d['name'],
+									'account': frappe.db.get_value("Account",{'account_type':account_type,'freeze_account':'No','company':d['name'],'account_currency':self.default_currency})
+								})
+				#frappe.msgprint(str(account_dict))
+				if account_dict:
+					self.extend('accounts', [account_dict])
 		else:
 			for d in company_currency_list:
 				if self.default_currency != d['default_currency']:
