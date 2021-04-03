@@ -21,18 +21,18 @@ frappe.ui.form.on('Stock Entry', {
 						frm.set_value('company_series',r.message.company_series)
 					}
 			})
-			frm.trigger('naming_series');
+			frm.trigger('change_series_value');
 			}
 		}
 	},
-	naming_series: function (frm) {
+	change_series_value: function (frm) {
 		if (frappe.meta.get_docfield("Stock Entry", "series_value", frm.doc.name)){
 			if (frm.doc.__islocal && frm.doc.company && !frm.doc.amended_from) {
 				frappe.call({
 					method: "finbyzerp.api.check_counter_series",
 					args: {
 						'name': frm.doc.naming_series,
-						'date': frm.doc.transaction_date,
+						'date': frm.doc.posting_date,
 						'company_series': frm.doc.company_series || null,
 					},
 					callback: function (e) {
@@ -44,10 +44,13 @@ frappe.ui.form.on('Stock Entry', {
 			}
 		}
 	},
+	naming_series: function (frm) {
+		frm.trigger('change_series_value');
+	},
 	company: function (frm) {
-		frm.trigger('naming_series');
+		frm.trigger('change_series_value');
 	},
 	posting_date: function (frm) {
-		frm.trigger('naming_series');
+		frm.trigger('change_series_value');
 	},
 });
