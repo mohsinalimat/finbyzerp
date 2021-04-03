@@ -45,7 +45,8 @@ app_include_js = [
 ]
 
 doctype_list_js = {
-	"Batch" : "public/js/doctype_js/batch_list.js"
+	"Batch" : "public/js/doctype_js/batch_list.js",
+	"Fiscal Year" : "public/js/doctype_js/fiscal_year.js"
 }
 
 before_install = "finbyzerp.install.before_install"
@@ -96,6 +97,7 @@ doc_events = {
 		"validate":"finbyzerp.api.validate_user_mobile_no"
 	},
 	"Sales Invoice": {
+		"before_insert": "finbyzerp.api.before_insert",
 		"validate":[
 			"finbyzerp.finbyzerp.doc_events.sales_invoice.validate",
 			"finbyzerp.api.si_validate"
@@ -103,6 +105,7 @@ doc_events = {
 		'on_submit': "finbyzerp.api.sales_invoice_on_submit"
 	},
 	"Purchase Invoice": {
+		"before_insert": "finbyzerp.api.before_insert",
 		"validate": "finbyzerp.api.pi_validate"
 	},
 	"Stock Entry": {
