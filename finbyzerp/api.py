@@ -3,10 +3,12 @@ import frappe
 from erpnext.accounts.utils import get_fiscal_year, flt
 import datetime
 from frappe.utils.background_jobs import enqueue
-from frappe.utils import cint, getdate, get_fullname, get_url_to_form
+from frappe.utils import cint, getdate, get_fullname, get_url_to_form,now_datetime
 from frappe.utils.pdf import get_pdf
 from frappe.utils.file_manager import save_file
 from frappe import _
+from frappe.model.mapper import get_mapped_doc
+
 
 import json
 import os
@@ -425,3 +427,39 @@ def set_account_in_transaction(self):
 				else:
 					frappe.msgprint("Please create {0} account in {1} for company {2} and set in accounting detail".format(account_type,self.currency,self.company))
 
+
+@frappe.whitelist()
+def make_meetings(source_name, doctype, ref_doctype, target_doc=None):
+	def set_missing_values(source, target):
+		target.party_type = doctype
+		now = now_datetime()
+		if ref_doctype == "Meeting Schedule":
+			target.scheduled_from = target.scheduled_to = now
+		else:
+			target.meeting_from = target.meeting_to = now
+			if doctype == "Lead":
+				target.organization = source.company_name
+			else:
+				target.organization = source.name
+
+	def update_contact(source, target, source_parent):
+		if doctype == 'Lead':
+			if not source.organization_lead:
+				target.contact_person = source.lead_name
+
+	doclist = get_mapped_doc(doctype, source_name, {
+			doctype: {
+				"doctype": ref_doctype,
+				"field_map":  {
+					'company_name': 'organisation',
+					'name': 'party',
+					'customer_name':'organisation'
+				},
+				"field_no_map": [
+					"naming_series"
+				],
+				"postprocess": update_contact
+			}
+		}, target_doc, set_missing_values)
+
+	return doclist
