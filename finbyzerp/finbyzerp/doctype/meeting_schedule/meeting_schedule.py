@@ -174,6 +174,8 @@ def set_organisation_details(out, party, party_type):
 		organisation = frappe.db.get_value("Lead", {"name": party}, "company_name")
 	elif party_type == 'Customer':
 		organisation = frappe.db.get_value("Customer", {"name": party}, "customer_name")
+	elif party_type == 'Opportunity':
+		organisation = frappe.db.get_value("Opportunity", {"name": party}, "customer_name")
 	elif party_type == 'Supplier':
 		organisation = frappe.db.get_value("Supplier", {"name": party}, "supplier_name")
 	elif party_type == 'Sales Partner':
@@ -199,24 +201,19 @@ def set_contact_details(out, party, party_type):
 				"contact_email": party.email_id,
 				"contact_mobile": party.mobile_no,
 				"contact_phone": party.phone,
-				"contact_designation": party.designation,
-				"contact_department": party.department
 			})
 			return
+	elif party_type == "Opportunity":
+		out.update({
+				"contact_display": party.party_name,
+				"contact_person": party.contact_person,
+				"contact_email": party.contact_email,
+				"contact_mobile": party.contact_mobile,
+		})
 			
 	out.contact_person = get_default_contact(party_type, party.name)
 	
-	if not out.contact_person:
-		out.update({
-			"contact_person": None,
-			"contact_display": None,
-			"contact_email": None,
-			"contact_mobile": None,
-			"contact_phone": None,
-			"contact_designation": None,
-			"contact_department": None
-		})
-	else:
+	if out.contact_person:
 		out.update(get_contact_details(out.contact_person))
 
 def set_other_values(out, party, party_type):
