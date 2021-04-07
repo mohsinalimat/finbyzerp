@@ -70,7 +70,7 @@ def get_gl_value():
 				sum(gl.debit_in_account_currency - gl.credit_in_account_currency) as gl_value, gl.voucher_no
 			from
 				`tabGL Entry` gl JOIN `tabAccount` ac ON gl.account = ac.name
-			where gl.docstatus < 2 and ac.account_type = "Stock"
+			where gl.docstatus < 2 and ac.account_type in ("Stock","Capital Work in Progress","Fixed Asset")
 			group by gl.voucher_no
 			order by gl.posting_date""", as_dict=1)
 
