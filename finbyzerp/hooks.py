@@ -76,7 +76,10 @@ doctype_js = {
 	"Payment Entry": "public/js/doctype_js/payment_entry.js",
 	"Stock Entry": "public/js/doctype_js/stock_entry.js",
 	"Account":"public/js/doctype_js/account.js",
-	"GST Settings":"public/js/doctype_js/gst_settings.js"
+	"GST Settings":"public/js/doctype_js/gst_settings.js",
+	"Lead":"public/js/doctype_js/lead.js",
+	"Customer":"public/js/doctype_js/customer.js",
+	"Opportunity":"public/js/doctype_js/opportunity.js"
 }
 website_context = {
 	"favicon": 	"/assets/finbyzerp/images/favicon.ico",

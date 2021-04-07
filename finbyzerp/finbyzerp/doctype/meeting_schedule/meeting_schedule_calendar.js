@@ -6,5 +6,5 @@ frappe.views.calendar["Meeting Schedule"] = {
 		"title": "organisation"
 	},
 	gantt: true,
-	get_events_method: "finbyz.finbyz.doctype.meeting_schedule.meeting_schedule.get_events"
+	get_events_method: "finbyzerp.finbyzerp.doctype.meeting_schedule.meeting_schedule.get_events"
 };
