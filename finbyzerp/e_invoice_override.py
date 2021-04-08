@@ -153,6 +153,10 @@ def update_item_taxes(invoice, item):
 
 def get_invoice_value_details(invoice):
 	invoice_value_details = frappe._dict(dict())
+	# finbyz change
+	invoice_value_details.total_other_taxes = 0
+	invoice_value_details.base_total_other_taxes = 0
+	# finbyz change end 
 
 	#finbyz changes gst_taxble_value
 
@@ -173,9 +177,12 @@ def get_invoice_value_details(invoice):
 	invoice_value_details.grand_total = abs(invoice.rounded_total) or abs(invoice.grand_total)
 	
 	invoice_value_details = update_invoice_taxes(invoice, invoice_value_details)
-	invoice_value_details.total_other_charges = abs(invoice_value_details.base_grand_total - (invoice_value_details.base_total + invoice_value_details.total_cgst_amt + invoice_value_details.total_sgst_amt + invoice_value_details.total_igst_amt + invoice_value_details.total_cess_amt + invoice_value_details.invoice_discount_amt + invoice_value_details.round_off))
+	invoice_value_details.total_other_charges = abs(invoice_value_details.base_grand_total - (invoice_value_details.base_total + invoice_value_details.total_cgst_amt + invoice_value_details.total_sgst_amt + invoice_value_details.total_igst_amt + invoice_value_details.total_cess_amt + invoice_value_details.invoice_discount_amt + invoice_value_details.round_off + invoice_value_details.base_total_other_taxes))
 
-
+	#finbyz changes 
+	invoice_value_details.base_grand_total -= invoice_value_details.base_total_other_taxes
+	invoice_value_details.grand_total -= invoice_value_details.total_other_taxes
+	#finbyz changes end
 	return invoice_value_details
 
 
