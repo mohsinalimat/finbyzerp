@@ -3,26 +3,26 @@ $(window).on("load",function() {
 },1500);
 
 });
-$(window).on("load resize scroll",function(){
-    setTimeout(function(){
+// $(window).on("load resize scroll",function(){
+//     setTimeout(function(){
 		
-        var wh = $(window).height();
-		var topPosition = wh - $('.page-form').height()
-		// console.log('Nav: '+$('.navbar').height())
-		// console.log('page head: '+$('.page-head').height())
-		// console.log('page form: '+$('.page-form').height())
-		// console.log('Dt Header: '+$('.dt-header').height())
+//         var wh = $(window).height();
+// 		var topPosition = wh - $('.page-form').height()
+// 		// console.log('Nav: '+$('.navbar').height())
+// 		// console.log('page head: '+$('.page-head').height())
+// 		// console.log('page form: '+$('.page-form').height())
+// 		// console.log('Dt Header: '+$('.dt-header').height())
 
-		// console.log('window: '+wh)
-        // console.log('window: '+wh)
-        // console.log(wh)
-        // console.log(topPosition)
-        let final = topPosition - 200
-		// console.log(final)
-		$('.dt-scrollable').height(final)
-		//$('.dt-scrollable').css('height','500px');
-	 },10);
-});
+// 		// console.log('window: '+wh)
+//         // console.log('window: '+wh)
+//         // console.log(wh)
+//         // console.log(topPosition)
+//         let final = topPosition - 200
+// 		// console.log(final)
+// 		$('.dt-scrollable').height(final)
+// 		//$('.dt-scrollable').css('height','500px');
+// 	 },10);
+// });
 $('.dt-scrollable').ready(function(){
 	
 	setTimeout(function(){
