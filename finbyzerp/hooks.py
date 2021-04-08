@@ -38,6 +38,21 @@ from frappe.core.doctype.report.report import Report
 from finbyzerp.api import report_validate
 Report.validate = report_validate
 
+
+# e_invoice overrides
+import erpnext
+from finbyzerp.e_invoice_override import validate_einvoice_fields,get_transaction_details,get_item_list,update_item_taxes,get_invoice_value_details,update_invoice_taxes,set_einvoice_data
+
+erpnext.regional.india.e_invoice.utils.validate_einvoice_fields = validate_einvoice_fields
+erpnext.regional.india.e_invoice.utils.get_invoice_value_details=get_invoice_value_details
+erpnext.regional.india.e_invoice.utils.update_invoice_taxes = update_invoice_taxes
+erpnext.regional.india.e_invoice.utils.update_item_taxes = update_item_taxes
+erpnext.regional.india.e_invoice.utils.get_item_list = get_item_list
+erpnext.regional.india.e_invoice.utils.get_transaction_details = get_transaction_details
+
+from erpnext.regional.india.e_invoice.utils import GSPConnector
+GSPConnector.set_einvoice_data = set_einvoice_data
+
 app_include_css = ["assets/css/finbyzerp.min.css", "assets/finbyzerp/css/permission.css","/assets/finbyzerp/css/finbyz-theme.css"]
 app_include_js = [
 	"assets/js/finbyzerp.min.js" 
@@ -45,7 +60,8 @@ app_include_js = [
 ]
 
 doctype_list_js = {
-	"Batch" : "public/js/doctype_js/batch_list.js"
+	"Batch" : "public/js/doctype_js/batch_list.js",
+	"Fiscal Year" : "public/js/doctype_js/fiscal_year.js"
 }
 
 before_install = "finbyzerp.install.before_install"
@@ -60,7 +76,10 @@ doctype_js = {
 	"Payment Entry": "public/js/doctype_js/payment_entry.js",
 	"Stock Entry": "public/js/doctype_js/stock_entry.js",
 	"Account":"public/js/doctype_js/account.js",
-	"GST Settings":"public/js/doctype_js/gst_settings.js"
+	"GST Settings":"public/js/doctype_js/gst_settings.js",
+	"Lead":"public/js/doctype_js/lead.js",
+	"Customer":"public/js/doctype_js/customer.js",
+	"Opportunity":"public/js/doctype_js/opportunity.js"
 }
 website_context = {
 	"favicon": 	"/assets/finbyzerp/images/favicon.ico",
@@ -96,6 +115,7 @@ doc_events = {
 		"validate":"finbyzerp.api.validate_user_mobile_no"
 	},
 	"Sales Invoice": {
+		"before_insert": "finbyzerp.api.before_insert",
 		"validate":[
 			"finbyzerp.finbyzerp.doc_events.sales_invoice.validate",
 			"finbyzerp.api.si_validate"
@@ -103,12 +123,13 @@ doc_events = {
 		'on_submit': "finbyzerp.api.sales_invoice_on_submit"
 	},
 	"Purchase Invoice": {
+		"before_insert": "finbyzerp.api.before_insert",
 		"validate": "finbyzerp.api.pi_validate"
 	},
 	"Stock Entry": {
 		"validate": "finbyzerp.api.stock_entry_validate"
 	},
-	("Pick List","Expense Claim", "Sales Invoice", "Purchase Invoice", "Payment Request", "Payment Entry", "Journal Entry", "Material Request", "Purchase Order", "Work Order", "Production Plan", "Stock Entry", "Quotation", "Sales Order", "Delivery Note", "Purchase Receipt", "Packing Slip","Jobwork Challan","Jobwork Finish"): {
+	("Pick List","Expense Claim", "Sales Invoice", "Purchase Invoice", "Payment Request", "Payment Entry", "Journal Entry", "Material Request", "Purchase Order", "Work Order", "Production Plan", "Stock Entry", "Quotation", "Sales Order", "Delivery Note", "Purchase Receipt", "Packing Slip","Jobwork Challan","Jobwork Finish","Outward Sample","Inward Sample"): {
 		"before_naming": "finbyzerp.api.before_naming",
 	},
 }
