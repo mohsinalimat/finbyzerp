@@ -3,8 +3,8 @@ import re
 import jwt
 from frappe import _
 from frappe.utils.data import cstr, cint, flt
-from erpnext.regional.india.e_invoice.utils import raise_document_name_too_long_error,read_json
-from erpnext.regional.india.utils import get_gst_accounts
+from erpnext.regional.india.e_invoice.utils import raise_document_name_too_long_error,read_json,validate_mandatory_fields,get_doc_details,get_overseas_address_details,get_return_doc_reference,get_eway_bill_details,validate_einvoice,throw_error_list
+from erpnext.regional.india.utils import get_gst_accounts,get_place_of_supply
 import json
 
 def validate_einvoice_fields(doc):
@@ -216,6 +216,100 @@ def update_invoice_taxes(invoice, invoice_value_details):
 				invoice_value_details.total_other_charges += abs(t.base_tax_amount_after_discount_amount)
 		#finbyz changes end
 	return invoice_value_details
+
+def make_einvoice(invoice):
+	validate_mandatory_fields(invoice)
+
+	schema = read_json('einv_template')
+
+	transaction_details = get_transaction_details(invoice)
+	item_list = get_item_list(invoice)
+	doc_details = get_doc_details(invoice)
+	invoice_value_details = get_invoice_value_details(invoice)
+	seller_details = get_party_details(invoice.company_address)
+
+	if invoice.gst_category == 'Overseas':
+		buyer_details = get_overseas_address_details(invoice.customer_address)
+	else:
+		buyer_details = get_party_details(invoice.customer_address)
+		place_of_supply = get_place_of_supply(invoice, invoice.doctype) or invoice.billing_address_gstin
+		place_of_supply = place_of_supply[:2]
+		buyer_details.update(dict(place_of_supply=place_of_supply))
+	
+	shipping_details = payment_details = prev_doc_details = eway_bill_details = frappe._dict({})
+	if invoice.shipping_address_name and invoice.customer_address != invoice.shipping_address_name:
+		if invoice.gst_category == 'Overseas':
+			shipping_details = get_overseas_address_details(invoice.shipping_address_name)
+		else:
+			shipping_details = get_party_details(invoice.shipping_address_name)
+			# FinByz Changes start
+			if not shipping_details.gstin:
+				if not invoice.customer_gstin:
+					frappe.throw("Please add GSTIN in address or Invoice")
+				shipping_details.gstin = invoice.customer_gstin
+			# FinByz Changes end
+
+	if invoice.is_pos and invoice.base_paid_amount:
+		payment_details = get_payment_details(invoice)
+	
+	if invoice.is_return and invoice.return_against:
+		prev_doc_details = get_return_doc_reference(invoice)
+	
+	if invoice.transporter:
+		eway_bill_details = get_eway_bill_details(invoice)
+	
+	# not yet implemented
+	dispatch_details = period_details = export_details = frappe._dict({})
+
+	einvoice = schema.format(
+		transaction_details=transaction_details, doc_details=doc_details, dispatch_details=dispatch_details,
+		seller_details=seller_details, buyer_details=buyer_details, shipping_details=shipping_details,
+		item_list=item_list, invoice_value_details=invoice_value_details, payment_details=payment_details,
+		period_details=period_details, prev_doc_details=prev_doc_details,
+		export_details=export_details, eway_bill_details=eway_bill_details
+	)
+	einvoice = json.loads(einvoice)
+	
+	validations = json.loads(read_json('einv_validation'))
+	errors = validate_einvoice(validations, einvoice)
+	if errors:
+		message = "\n".join([
+			"E Invoice: ", json.dumps(einvoice, indent=4),
+			"-" * 50,
+			"Errors: ", json.dumps(errors, indent=4)
+		])
+		frappe.log_error(title="E Invoice Validation Failed", message=message)
+		throw_error_list(errors, _('E Invoice Validation Failed'))
+
+	return einvoice
+
+def get_party_details(address_name):
+	d = frappe.get_all('Address', filters={'name': address_name}, fields=['*'])[0]
+	# finbyz change remove gstin validtion
+	if (not d.city
+		or not d.pincode
+		or not d.address_title
+		or not d.address_line1
+		or not d.gst_state_number):
+
+		frappe.throw(
+			msg=_('Address lines, city, pincode, gstin is mandatory for address {}. Please set them and try again.').format(
+				get_link_to_form('Address', address_name)
+			),
+			title=_('Missing Address Fields')
+		)
+
+	if d.gst_state_number == 97:
+		# according to einvoice standard
+		pincode = 999999
+
+	return frappe._dict(dict(
+		gstin=d.gstin, legal_name=d.address_title,
+		location=d.city, pincode=d.pincode,
+		state_code=d.gst_state_number,
+		address_line1=d.address_line1,
+		address_line2=d.address_line2
+	))
 
 def set_einvoice_data(self, res):
     enc_signed_invoice = res.get('SignedInvoice')
