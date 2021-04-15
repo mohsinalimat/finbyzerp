@@ -38,6 +38,23 @@ from frappe.core.doctype.report.report import Report
 from finbyzerp.api import report_validate
 Report.validate = report_validate
 
+
+# e_invoice overrides
+import erpnext
+from finbyzerp.e_invoice_override import validate_einvoice_fields,get_transaction_details,get_item_list,update_item_taxes,get_invoice_value_details,update_invoice_taxes,set_einvoice_data,get_party_details,make_einvoice
+
+erpnext.regional.india.e_invoice.utils.validate_einvoice_fields = validate_einvoice_fields
+erpnext.regional.india.e_invoice.utils.get_invoice_value_details=get_invoice_value_details
+erpnext.regional.india.e_invoice.utils.update_invoice_taxes = update_invoice_taxes
+erpnext.regional.india.e_invoice.utils.update_item_taxes = update_item_taxes
+erpnext.regional.india.e_invoice.utils.get_item_list = get_item_list
+erpnext.regional.india.e_invoice.utils.get_transaction_details = get_transaction_details
+erpnext.regional.india.e_invoice.utils.get_party_details = get_party_details
+erpnext.regional.india.e_invoice.utils.make_einvoice = make_einvoice
+
+from erpnext.regional.india.e_invoice.utils import GSPConnector
+GSPConnector.set_einvoice_data = set_einvoice_data
+
 app_include_css = ["assets/css/finbyzerp.min.css", "assets/finbyzerp/css/permission.css","/assets/finbyzerp/css/finbyz-theme.css"]
 app_include_js = [
 	"assets/js/finbyzerp.min.js" 
