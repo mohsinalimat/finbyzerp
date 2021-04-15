@@ -24,7 +24,10 @@
   "cc_to",
   "invitation_message",
   "send_invitation",
-  "amended_from"
+  "amended_from",
+  "lead",
+  "customer",
+  "opportunity"
  ],
  "fields": [
   {
@@ -150,9 +153,30 @@
    "options": "Meeting Schedule",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fieldname": "lead",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Lead",
+   "options": "Lead"
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Customer",
+   "options": "Customer"
+  },
+  {
+   "fieldname": "opportunity",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Opportunity",
+   "options": "Opportunity"
   }
  ],
- "modified": "2021-04-05 18:18:31.993450",
+ "modified": "2021-04-06 14:14:52.282023",
  "modified_by": "Administrator",
  "module": "Finbyzerp",
  "name": "Meeting Schedule",

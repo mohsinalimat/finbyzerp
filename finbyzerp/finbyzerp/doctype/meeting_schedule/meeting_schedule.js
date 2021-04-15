@@ -22,6 +22,9 @@ frappe.ui.form.on('Meeting Schedule', {
 			frm.trigger("get_party_details");
 		}
 	},
+	validate: function(frm){
+		frm.trigger("set_link_documents");
+	},
 
 	contact_person_name: function(frm) {
 		if(frm.doc.contact || frm.doc.contact_person_name){
@@ -51,9 +54,22 @@ frappe.ui.form.on('Meeting Schedule', {
 	party: function(frm) {
 		if(frm.doc.party){
 			frm.trigger("get_party_details");
+			frm.trigger("set_link_documents");
 		}
 	},
-
+	set_link_documents: function(frm){
+		if(frm.doc.party){
+			if(frm.doc.party_type=="Lead"){
+				frm.set_value("lead",frm.doc.party)
+			}
+			else if(frm.doc.party_type=="Customer"){
+				frm.set_value("customer",frm.doc.party)
+			}
+			else if(frm.doc.party_type=="Opportunity"){
+				frm.set_value("opportunity",frm.doc.party)
+			}
+		}		
+	},
 	get_party_details: function(frm){
 		frappe.call({
 			method:"finbyzerp.finbyzerp.doctype.meeting_schedule.meeting_schedule.get_party_details",

@@ -439,21 +439,21 @@ def make_meetings(source_name, doctype, ref_doctype, target_doc=None):
 			target.meeting_from = target.meeting_to = now
 			if doctype == "Lead":
 				target.organization = source.company_name
-			else:
-				target.organization = source.name
 
 	def update_contact(source, target, source_parent):
 		if doctype == 'Lead':
 			if not source.organization_lead:
-				target.contact_person = source.lead_name
+				target.contact = source.lead_name
 
 	doclist = get_mapped_doc(doctype, source_name, {
 			doctype: {
 				"doctype": ref_doctype,
 				"field_map":  {
-					'company_name': 'organisation',
+					'company_name': 'organization',
 					'name': 'party',
-					'customer_name':'organisation'
+					'customer_name':'organization',
+					'contact_email':'email_id',
+					'contact_mobile':'mobile_no'
 				},
 				"field_no_map": [
 					"naming_series"
@@ -463,3 +463,4 @@ def make_meetings(source_name, doctype, ref_doctype, target_doc=None):
 		}, target_doc, set_missing_values)
 
 	return doclist
+	

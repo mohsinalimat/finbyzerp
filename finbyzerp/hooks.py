@@ -86,6 +86,12 @@ override_whitelisted_methods = {
 	"frappe.utils.print_format.download_pdf": "finbyzerp.print_format.download_pdf",
 }
 
+override_doctype_dashboards = {
+	"Lead": "finbyzerp.finbyzerp.dashboard.lead.get_data",
+	"Customer":"finbyzerp.finbyzerp.dashboard.customer.get_data",
+	"Opportunity":"finbyzerp.finbyzerp.dashboard.opportunity.get_data"
+}
+
 doc_events = {
 	"Customer": {
 		"validate":"finbyzerp.api.customer_validate"
