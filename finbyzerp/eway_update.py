@@ -9,9 +9,19 @@ def get_itemised_tax_breakup_data(doc, account_wise=False, eway=False):
 	
 	itemised_taxable_amount = get_itemised_taxable_amount(doc.items)
 
+	account_list = []
+	gst_setting = frappe.get_single("GST Settings")
+	for row in gst_setting.gst_accounts:
+		if row.company == doc.company:
+			account_list.append(row.cgst_account)
+			account_list.append(row.sgst_account)
+			account_list.append(row.igst_account)
+			account_list.append(row.cess_account)
+			account_list.append(row.tcs_account)
+
 	for key, value in itemised_taxable_amount.items():
 		for taxes in frappe.get_list("Sales Taxes and Charges", {'parent': doc.name}, '*'):
-			if taxes.account_head.find('GST') == -1 and taxes.account_head.find('TCS') == -1:
+			if taxes.account_head not in account_list:
 				iwtd = json.loads(taxes.item_wise_tax_detail)
 				itemised_taxable_amount[key] += iwtd[key][1]
 
@@ -95,13 +105,16 @@ def get_item_list(data, doc):
 					item_data[attrs[0]] = tax_detail.get('tax_rate')
 					data[attrs[1]] += tax_detail.get('tax_amount')
 					break
+			else:
+				data.OthValue += tax_detail.get('tax_amount')
+
 
 		data.itemList.append(item_data)
 
 		# Tax amounts rounded to 2 decimals to avoid exceeding max character limit
 		for attr in ['sgstValue', 'cgstValue', 'igstValue', 'cessValue']:
 			data[attr] = flt(data[attr], 2)
-		data['totalValue'] += item_data.taxableAmount
+		#data['totalValue'] += item_data.taxableAmount
 	return data
 
 # No change in this function
