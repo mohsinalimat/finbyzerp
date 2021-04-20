@@ -159,8 +159,10 @@ def get_ewb_data(dt, dn):
 		data = get_item_list(data, doc)
 		disable_rounded = frappe.db.get_single_value('Global Defaults', 'disable_rounded_total')
 		data.totInvValue = doc.grand_total if disable_rounded else doc.rounded_total
-		data.OthValue = round(data.totInvValue - (data.totalValue + data.cgstValue + data.sgstValue + data.igstValue + data.cessValue),2)
-
+		#finbyz Changes
+		data.totalValue = doc.gst_taxable_value
+		data.OthValue = round(data.totInvValue - data.totalValue - (data.cgstValue + data.igstValue + data.sgstValue + data.cessValue),2)
+		#finbyz changes end
 		data = get_transport_details(data, doc)
 
 		fields = {
