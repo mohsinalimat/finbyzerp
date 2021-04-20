@@ -8,6 +8,10 @@ from erpnext.accounts.utils import get_fiscal_year
 
 def validate(self, method):
     tcs_deduction(self)
+    calculate_gst_taxable_value(self)
+
+def calculate_gst_taxable_value(self):
+	self.gst_taxable_value = abs(sum([i.taxable_value for i in self.get('items')]))
 
 def tcs_deduction(self):
     fiscal_year, fiscal_start_date, fiscal_end_date = get_fiscal(self.posting_date)
