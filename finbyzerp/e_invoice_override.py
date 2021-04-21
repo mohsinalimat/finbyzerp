@@ -140,71 +140,75 @@ def get_item_list(invoice):
 
 # 	return item
 
-# def get_invoice_value_details(invoice):
-# 	invoice_value_details = frappe._dict(dict())
-# 	# finbyz change
-# 	invoice_value_details.total_other_taxes = 0
-# 	invoice_value_details.base_total_other_taxes = 0
-# 	# finbyz change end 
+def get_invoice_value_details(invoice):
+	invoice_value_details = frappe._dict(dict())
+	# finbyz change
+	invoice_value_details.total_other_taxes = 0
+	invoice_value_details.base_total_other_taxes = 0
+	# finbyz change end 
 
-# 	#finbyz changes gst_taxble_value
+	if invoice.apply_discount_on == 'Net Total' and invoice.discount_amount:
+		# Discount already applied on net total which means on items
+		invoice_value_details.base_total = abs(sum([i.taxable_value for i in invoice.get('items')]))
+		invoice_value_details.invoice_discount_amt = 0
+	elif invoice.apply_discount_on == 'Grand Total' and invoice.discount_amount:
+		invoice_value_details.invoice_discount_amt = invoice.base_discount_amount
+		invoice_value_details.base_total = abs(sum([i.taxable_value for i in invoice.get('items')]))
+	else:
+		invoice_value_details.base_total = abs(sum([i.taxable_value for i in invoice.get('items')]))
+		# since tax already considers discount amount
+		invoice_value_details.invoice_discount_amt = 0
 
-# 	if invoice.apply_discount_on == 'Net Total' and invoice.discount_amount:
-# 		if abs(invoice.gst_taxable_value) == 0:
-# 			invoice.gst_taxable_value = invoice.base_total
-# 		invoice_value_details.base_total = abs(invoice.gst_taxable_value) or abs(invoice.base_total)
-# 		invoice_value_details.invoice_discount_amt = abs(invoice.base_discount_amount)
-# 	else:
-# 		if abs(invoice.gst_taxable_value) == 0:
-# 			invoice.gst_taxable_value = invoice.base_net_total		
-# 		invoice_value_details.base_total = abs(invoice.gst_taxable_value) or abs(invoice.base_net_total)
-# 		# since tax already considers discount amount
-# 		invoice_value_details.invoice_discount_amt = 0
-
-# 	invoice_value_details.round_off = invoice.base_rounding_adjustment
-# 	invoice_value_details.base_grand_total = abs(invoice.base_rounded_total) or abs(invoice.base_grand_total)
-# 	invoice_value_details.grand_total = abs(invoice.rounded_total) or abs(invoice.grand_total)
+	invoice_value_details.round_off = invoice.base_rounding_adjustment
+	invoice_value_details.base_grand_total = abs(invoice.base_rounded_total) or abs(invoice.base_grand_total)
+	invoice_value_details.grand_total = abs(invoice.rounded_total) or abs(invoice.grand_total)
 	
-# 	invoice_value_details = update_invoice_taxes(invoice, invoice_value_details)
-# 	invoice_value_details.total_other_charges = abs(invoice_value_details.base_grand_total - (invoice_value_details.base_total + invoice_value_details.total_cgst_amt + invoice_value_details.total_sgst_amt + invoice_value_details.total_igst_amt + invoice_value_details.total_cess_amt + invoice_value_details.invoice_discount_amt + invoice_value_details.round_off + invoice_value_details.base_total_other_taxes))
+	invoice_value_details = update_invoice_taxes(invoice, invoice_value_details)
+	
+	#finbyz changes 
+	invoice_value_details.total_other_charges = abs(invoice_value_details.base_grand_total - (invoice_value_details.base_total + invoice_value_details.total_cgst_amt + invoice_value_details.total_sgst_amt + invoice_value_details.total_igst_amt + invoice_value_details.total_cess_amt + invoice_value_details.invoice_discount_amt + invoice_value_details.round_off + invoice_value_details.base_total_other_taxes))
 
-# 	#finbyz changes 
-# 	invoice_value_details.base_grand_total -= invoice_value_details.base_total_other_taxes
-# 	invoice_value_details.grand_total -= invoice_value_details.total_other_taxes
-# 	#finbyz changes end
-# 	return invoice_value_details
+	invoice_value_details.base_grand_total -= invoice_value_details.base_total_other_taxes
+	invoice_value_details.grand_total -= invoice_value_details.total_other_taxes
+	#finbyz changes end
+	return invoice_value_details
 
 
-# def update_invoice_taxes(invoice, invoice_value_details):
-# 	gst_accounts = get_gst_accounts(invoice.company)
-# 	gst_accounts_list = [d for accounts in gst_accounts.values() for d in accounts if d]
+def update_invoice_taxes(invoice, invoice_value_details):
+	gst_accounts = get_gst_accounts(invoice.company)
+	gst_accounts_list = [d for accounts in gst_accounts.values() for d in accounts if d]
 
-# 	invoice_value_details.total_cgst_amt = 0
-# 	invoice_value_details.total_sgst_amt = 0
-# 	invoice_value_details.total_igst_amt = 0
-# 	invoice_value_details.total_cess_amt = 0
-# 	invoice_value_details.total_other_charges = 0
-# 	for t in invoice.taxes:
-# 		if t.account_head in gst_accounts_list:
-# 			if t.account_head in gst_accounts.cess_account:
-# 				# using after discount amt since item also uses after discount amt for cess calc
-# 				invoice_value_details.total_cess_amt += abs(t.base_tax_amount_after_discount_amount)
+	invoice_value_details.total_cgst_amt = 0
+	invoice_value_details.total_sgst_amt = 0
+	invoice_value_details.total_igst_amt = 0
+	invoice_value_details.total_cess_amt = 0
+	invoice_value_details.total_other_charges = 0
+	considered_rows = []
+
+	for t in invoice.taxes:
+		tax_amount = t.base_tax_amount if (invoice.apply_discount_on == 'Grand Total' and invoice.discount_amount) \
+						else t.base_tax_amount_after_discount_amount
+		if t.account_head in gst_accounts_list:
+			if t.account_head in gst_accounts.cess_account:
+				# using after discount amt since item also uses after discount amt for cess calc
+				invoice_value_details.total_cess_amt += abs(t.base_tax_amount_after_discount_amount)
 			
-# 			for tax_type in ['igst', 'cgst', 'sgst']:
-# 				if t.account_head in gst_accounts['{}_account'.format(tax_type)]:
-# 					invoice_value_details['total_{}_amt'.format(tax_type)] += abs(t.base_tax_amount_after_discount_amount)
-					
-# 		#finbyz changes 
-# 		else:
-# 			export_reverse_charge_account = frappe.db.get_value("GST Account",{'company':invoice.company,"parent": "GST Settings"},'export_reverse_charge_account')
-# 			if t.account_head == export_reverse_charge_account:
-# 				invoice_value_details.base_total_other_taxes = t.base_tax_amount
-# 				invoice_value_details.total_other_taxes = t.tax_amount
+			for tax_type in ['igst', 'cgst', 'sgst']:
+				if t.account_head in gst_accounts['{}_account'.format(tax_type)]:
 
-# 			else:
-# 				invoice_value_details.total_other_charges += abs(t.base_tax_amount_after_discount_amount)
-# 		#finbyz changes end
-# 	return invoice_value_details
+					invoice_value_details['total_{}_amt'.format(tax_type)] += abs(tax_amount)
+				update_other_charges(t, invoice_value_details, gst_accounts_list, invoice, considered_rows)
+		#finbyz changes 
+		else:
+			export_reverse_charge_account = frappe.db.get_value("GST Account",{'company':invoice.company,"parent": "GST Settings"},'export_reverse_charge_account')
+			if t.account_head == export_reverse_charge_account:
+				invoice_value_details.base_total_other_taxes = t.base_tax_amount
+				invoice_value_details.total_other_taxes = t.tax_amount
+
+			else:
+				invoice_value_details.total_other_charges += abs(t.base_tax_amount_after_discount_amount)
+		#finbyz changes end
+	return invoice_value_details
 
 def make_einvoice(invoice):
 	validate_mandatory_fields(invoice)
