@@ -59,7 +59,7 @@ def get_fiscal(date):
 
 def before_naming(self, method):
 	if not self.get('amended_from') and not self.get('name'):
-		date = self.get("transaction_date") or self.get("posting_date") or  self.get("manufacturing_date") or getdate()
+		date = self.get("transaction_date") or self.get("posting_date") or  self.get("manufacturing_date") or self.get('date') or getdate()
 		fiscal = get_fiscal(date)
 		self.fiscal = fiscal
 		if not self.get('company_series'):
