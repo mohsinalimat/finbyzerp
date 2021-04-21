@@ -6,7 +6,7 @@ from frappe.utils.data import cstr, cint, flt
 from erpnext.regional.india.e_invoice.utils import (raise_document_name_too_long_error,read_json,\
 	validate_mandatory_fields,get_doc_details,get_overseas_address_details,get_return_doc_reference,\
 	get_eway_bill_details,validate_totals,show_link_to_error_log,santize_einvoice_fields,safe_json_load,get_payment_details,\
-	validate_eligibility,update_item_taxes,get_invoice_value_details,get_party_details)
+	validate_eligibility,update_item_taxes,get_invoice_value_details,get_party_details,update_other_charges)
 
 from erpnext.regional.india.utils import get_gst_accounts,get_place_of_supply
 import json
