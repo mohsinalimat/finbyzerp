@@ -40,7 +40,7 @@ Report.validate = report_validate
 
 
 # e_invoice overrides
-import erpnext
+# import erpnext
 # from finbyzerp.e_invoice_override import validate_einvoice_fields,get_transaction_details,get_item_list,make_einvoice,get_invoice_value_details,update_invoice_taxes
 
 # erpnext.regional.india.e_invoice.utils.validate_einvoice_fields = validate_einvoice_fields

@@ -1,5 +1,6 @@
 {
 	"js/finbyzerp.min.js": [
+		"public/js/finbyzerp/ui/toolbar/navbar.html",
 		"public/js/finbyzerp/ui/page.html"
     ]
 }
