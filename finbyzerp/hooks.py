@@ -16,12 +16,12 @@ app_version = app_version
 
 after_install = "finbyzerp.install.after_install"
 
-from erpnext.regional.doctype.gstr_3b_report.gstr_3b_report import GSTR3BReport
-from finbyzerp.finbyzerp.override.gstr_3b_report import prepare_data, get_itc_details, get_inter_state_supplies, get_tax_amounts
-GSTR3BReport.prepare_data = prepare_data
-GSTR3BReport.get_itc_details = get_itc_details
-GSTR3BReport.get_inter_state_supplies = get_inter_state_supplies
-GSTR3BReport.get_tax_amounts = get_tax_amounts
+# from erpnext.regional.doctype.gstr_3b_report.gstr_3b_report import GSTR3BReport
+# from finbyzerp.finbyzerp.override.gstr_3b_report import prepare_data, get_itc_details, get_inter_state_supplies, get_tax_amounts
+# GSTR3BReport.prepare_data = prepare_data
+# GSTR3BReport.get_itc_details = get_itc_details
+# GSTR3BReport.get_inter_state_supplies = get_inter_state_supplies
+# GSTR3BReport.get_tax_amounts = get_tax_amounts
 
 from erpnext.setup.doctype.naming_series.naming_series import NamingSeries
 from finbyzerp.finbyzerp.override.naming_series import get_transactions
