@@ -40,7 +40,7 @@ Report.validate = report_validate
 
 
 # e_invoice overrides
-import erpnext
+# import erpnext
 # from finbyzerp.e_invoice_override import validate_einvoice_fields,get_transaction_details,get_item_list,make_einvoice,get_invoice_value_details,update_invoice_taxes
 
 # erpnext.regional.india.e_invoice.utils.validate_einvoice_fields = validate_einvoice_fields
@@ -60,9 +60,9 @@ from finbyzerp.finbyzerp.doc_events.email_campaign import send_email_to_leads_or
 from erpnext.crm.doctype.email_campaign import email_campaign
 email_campaign.send_email_to_leads_or_contacts = send_email_to_leads_or_contacts
 
-app_include_css = ["assets/css/finbyzerp.min.css", "assets/finbyzerp/css/permission.css","/assets/finbyzerp/css/finbyz-theme.css"]
+app_include_css = ["/assets/finbyzerp/css/permission.css","/assets/finbyzerp/css/finbyz-theme.css"]
 app_include_js = [
-	"assets/js/finbyzerp.min.js" 
+	"/assets/js/finbyzerp.min.js",
 	#"assets/finbyzerp/js/frappe/ui/page.js"
 ]
 
