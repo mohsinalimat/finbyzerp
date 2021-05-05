@@ -1,4 +1,10 @@
 /* -------- version 13 css---------- */
+/*---- variable declaration -------- */
+[data-theme="light"],[data-theme="dark"]{
+	--icon-stroke-navbar : #fff !important;
+}
+/* --------end declaration ------ */
+
 /* -------common css---------- */
 .navbar-brand{
 	padding: 10px 15px;
@@ -86,8 +92,8 @@
 	height: 30px;
 	padding-left: 30px;
 }
-
 /*-------- end common theme------------ */
+
 /*---------- light theme----- */
 [data-theme="light"] .navbar .navbar-nav > li > a:hover{
 	text-decoration: none !important;
@@ -100,18 +106,7 @@
 [data-theme="light"] .grid-heading-row{
 	color: #000;
 }
-[data-theme="light"] .notifications-seen .icon{
-	display: inline-block !important;
-    font-size: 0 !important;
-    width: 20px !important;
-    height: 20px !important;
-    margin: 0 auto !important;
-    background-size: cover !important;
-    background-repeat: no-repeat !important;
-    background-position: 50% 50%;
-    fill: #00000000 !important;
-    stroke: #c9d0d6 !important;
-}
+
 /* -----------end light theme---------- */
 
 /*----------- dark theme----------- */
@@ -119,11 +114,9 @@
 [data-theme="dark"] .control-input textarea.input-with-feedback.form-control,
 [data-theme="dark"] .frappe-control[data-fieldtype=Select] .control-input select,
 [data-theme="dark"] .frappe-control[data-fieldtype=Select] .control-input select, 
-[data-theme="dark"] .frappe-control[data-fieldtype=Select].form-group select
-{
-	/* background-color:#7b7f82; */
-	background-color: #919497 !important;
-	/* background-color: #080808 !important; */
+[data-theme="dark"] .frappe-control[data-fieldtype=Select].form-group select{
+	/* background-color: #4f5459!important; */
+	background-color: var(--gray-600) !important;
 }
 /* [data-theme="dark"] #navbar-search */
 
@@ -132,13 +125,16 @@
 [data-theme="dark"] .list-row-head .level-right .list-count span,
 [data-theme="dark"] .datatable .dt-header .dt-cell--header .dt-cell__content,
 [data-theme="dark"] .control-value.like-disabled-input,
-[data-theme="dark"] .grid-heading-row{
+[data-theme="dark"] .grid-heading-row,
+[data-theme="dark"]  input.input-with-feedback.form-control,
+[data-theme="dark"] .control-input textarea.input-with-feedback.form-control{
 	color: #fff;
 }
-[data-theme="dark"] input.input-with-feedback.form-control,
-[data-theme="dark"] .control-input textarea.input-with-feedback.form-control{
-	color: #000;
+[data-theme="dark"] .input-with-feedback::placeholder,
+[data-theme="dark"] .text-extra-muted{
+	color: rgb(211, 211, 211) !important;
 }
+
 /*---------- end dark theme ------------- */
 /* hover effect */
 /* [data-theme="light"] .list-row-head:hover:not(.list-row-head),
