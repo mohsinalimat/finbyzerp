@@ -314,15 +314,18 @@ function toggle_sidebar(){
 	// localStorage.sidebar = sidebar;
 	// set_sidebar()
  }
+
 frappe.ui.keys.add_shortcut({
 	description: "Focus on search field",
 	shortcut: 'alt+f',
-	action: () => {
-		let d = document.querySelector("div.page-form.flex > div:nth-child(1)> input")
-		if(d){
-			d.focus()
+	action: function(e) {
+		var d = document.querySelector("div.page-form.flex > div:nth-child(1)> input");
+		if (d){
+			d.focus();
 		}
-	}
+		e.preventDefault();
+	},
+	ignore_inputs : true
 })
 // frappe.ui.keys.add_shortcut({
 // 	description: "Toggle Sidebar",
