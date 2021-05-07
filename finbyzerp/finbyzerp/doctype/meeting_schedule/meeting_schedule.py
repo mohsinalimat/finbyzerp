@@ -19,7 +19,8 @@ from email.utils import COMMASPACE, formatdate
 from email import encoders
 from frappe.email.smtp import SMTPServer
 import smtplib
-
+from frappe.utils.user import get_user_fullname
+import re
 
 class MeetingSchedule(Document):
 	def send_invitation(self):	
@@ -28,7 +29,7 @@ class MeetingSchedule(Document):
 			return
 
 		CRLF = "\r\n"
-		default_sender =frappe.db.get_value('Email Account',{'default_outgoing':1},'email_id')
+		default_sender_name, default_sender =frappe.db.get_value('Email Account',{'default_outgoing':1},['name','email_id'])
 		if not default_sender:
 			frappe.throw("Please Setup Default Outgoing Email Account.")
 		organizer = "ORGANIZER;CN=" +default_sender+":mailto:"+default_sender
@@ -41,7 +42,7 @@ class MeetingSchedule(Document):
 			attendees = cc.split(',')
 		attendees.append(self.email_id)
 		subject = "Scheduled Meeting on %s " % get_datetime(self.scheduled_from).strftime("%A %d-%b-%Y")
-
+		cleanr = re.compile('<.*?>')
 		attendee = ""
 		for att in attendees:
 			attendee += "ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE"+CRLF+" ;CN="+att+";X-NUM-GUESTS=0:mailto:"+att+CRLF
@@ -50,7 +51,7 @@ class MeetingSchedule(Document):
 		ical+= "UID:FIXMEUID"+dtstamp+CRLF
 		ical+= attendee+"CREATED:"+dtstamp+CRLF
 		if self.meeting_agenda:
-			ical+= "DESCRIPTION:"+self.invitation_message +CRLF
+			ical+= "DESCRIPTION:"+re.sub(cleanr, '', self.invitation_message) +CRLF
 		ical+="LAST-MODIFIED:"+dtstamp+CRLF+"LOCATION:"+CRLF+"SEQUENCE:0"+CRLF+"STATUS:CONFIRMED"+CRLF
 		ical+= "SUMMARY:"+subject+CRLF
 		ical+="TRANSP:OPAQUE"+CRLF+"END:VEVENT"+CRLF+"END:VCALENDAR"+CRLF
@@ -94,11 +95,29 @@ class MeetingSchedule(Document):
 		
 		msgprint(_("Mail sent successfully"))
 
+		doc = frappe.new_doc("Communication")
+		doc.subject = subject
+		doc.communication_medium = "Email"
+		doc.sender = default_sender
+		doc.recipients = self.email_id
+		doc.cc = self.cc_to
+		doc.content = self.invitation_message
+		doc.communication_type = "Communication"
+		doc.status="Linked"
+		doc.sent_or_received = "Sent"
+		doc.sender_full_name = get_user_fullname(frappe.session.user)
+		doc.reference_doctype = self.doctype
+		doc.reference_name = self.name
+		doc.reference_owner = frappe.session.user
+		doc.user = frappe.session.user
+		doc.email_account = default_sender_name
+		doc.save(ignore_permissions=True)
+
 @frappe.whitelist()
 def make_meeting(source_name, target_doc=None):	
 	doclist = get_mapped_doc("Meeting Schedule", source_name, {
 			"Meeting Schedule":{
-				"doctype": "Lead Meetings",
+				"doctype": "Meeting",
 				"field_map": {
 					"name": "schedule_ref",
 					"scheduled_from": "meeting_from",
@@ -174,6 +193,8 @@ def set_organisation_details(out, party, party_type):
 		organisation = frappe.db.get_value("Lead", {"name": party}, "company_name")
 	elif party_type == 'Customer':
 		organisation = frappe.db.get_value("Customer", {"name": party}, "customer_name")
+	elif party_type == 'Opportunity':
+		organisation = frappe.db.get_value("Opportunity", {"name": party}, "customer_name")
 	elif party_type == 'Supplier':
 		organisation = frappe.db.get_value("Supplier", {"name": party}, "supplier_name")
 	elif party_type == 'Sales Partner':
@@ -199,24 +220,19 @@ def set_contact_details(out, party, party_type):
 				"contact_email": party.email_id,
 				"contact_mobile": party.mobile_no,
 				"contact_phone": party.phone,
-				"contact_designation": party.designation,
-				"contact_department": party.department
 			})
 			return
+	elif party_type == "Opportunity":
+		out.update({
+				"contact_display": party.party_name,
+				"contact_person": party.contact_person,
+				"contact_email": party.contact_email,
+				"contact_mobile": party.contact_mobile,
+		})
 			
 	out.contact_person = get_default_contact(party_type, party.name)
 	
-	if not out.contact_person:
-		out.update({
-			"contact_person": None,
-			"contact_display": None,
-			"contact_email": None,
-			"contact_mobile": None,
-			"contact_phone": None,
-			"contact_designation": None,
-			"contact_department": None
-		})
-	else:
+	if out.contact_person:
 		out.update(get_contact_details(out.contact_person))
 
 def set_other_values(out, party, party_type):

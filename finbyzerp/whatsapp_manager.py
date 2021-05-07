@@ -284,6 +284,12 @@ def send_media_whatsapp(driver,qr_hash,mobile_number,description,selected_attach
 					frappe.log_error(frappe.get_traceback(),"Unable to send the whatsapp message")
 					driver.quit()
 					return False
+				try:
+					WebDriverWait(driver,30).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'span[data-icon="clip"]')))
+				except:
+					frappe.log_error(frappe.get_traceback(),"Unable to send the whatsapp message")
+					driver.quit()
+					return False						
 				driver.find_element_by_css_selector('span[data-icon="clip"]').click()
 				attach=driver.find_element_by_css_selector('input[type="file"]')
 				attach.send_keys(path_url)

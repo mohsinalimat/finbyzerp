@@ -15,12 +15,11 @@ frappe.ui.form.on('Purchase Invoice', {
 	naming_series: function (frm) {
 		if (frappe.meta.get_docfield("Purchase Invoice", "series_value", frm.doc.name)){
 			if (frm.doc.__islocal && frm.doc.company && !frm.doc.amended_from) {
-				console.log('test')
 				frappe.call({
 					method: "finbyzerp.api.check_counter_series",
 					args: {
 						'name': frm.doc.naming_series,
-						'date': frm.doc.transaction_date,
+						'date': frm.doc.posting_date,
 						'company_series': frm.doc.company_series || null,
 					},
 					callback: function (e) {
