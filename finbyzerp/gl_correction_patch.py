@@ -9,7 +9,8 @@ from frappe.utils import flt
 from erpnext.accounts.general_ledger import make_gl_entries, delete_gl_entries
 # import frappe
 
-	
+# Before executing patch comment this: sle = self.update_stock_ledger_entries(sle) and write pass there in line_no = 91 in
+		#erpnext/erpnext/controllers/stock_controller.py 
 def patch():
 	data = get_data()
 	for row in data:
@@ -33,7 +34,6 @@ def patch():
 			print(pr_doc.name)
 			delete_gl_entries(voucher_type=row['voucher_type'],voucher_no=row['voucher_no'])
 			pr_doc.make_gl_entries()
-
 			
 def get_data():
 	sle_data = get_sle_value()

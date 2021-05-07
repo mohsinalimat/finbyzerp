@@ -314,6 +314,8 @@ function toggle_sidebar(){
 	// localStorage.sidebar = sidebar;
 	// set_sidebar()
  }
+ 
+frappe.provide('frappe.ui.keys.handlers');
 frappe.ui.keys.add_shortcut({
 	description: "Focus on search field",
 	shortcut: 'alt+f',
