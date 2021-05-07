@@ -24,7 +24,7 @@ frappe.ui.form.on('Customer', {
 					args: {
 						"source_name": frm.doc.name,
 						"doctype": 'Customer',
-						"ref_doctype": 'Lead Meetings'
+						"ref_doctype": 'Meeting'
 					},
 					callback: function(r) {
 						if(!r.exc) {
