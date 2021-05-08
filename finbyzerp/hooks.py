@@ -86,7 +86,8 @@ doctype_js = {
 	"GST Settings":"public/js/doctype_js/gst_settings.js",
 	"Lead":"public/js/doctype_js/lead.js",
 	"Customer":"public/js/doctype_js/customer.js",
-	"Opportunity":"public/js/doctype_js/opportunity.js"
+	"Opportunity":"public/js/doctype_js/opportunity.js",
+	"Opening Invoice Creation Tool":"public/js/doctype_js/opening_invoice_creation_tool.js",
 }
 website_context = {
 	"favicon": 	"/assets/finbyzerp/images/favicon.ico",
