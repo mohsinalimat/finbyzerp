@@ -49,35 +49,39 @@ def make_invoices(self):
 			doc.posting_date = row.posting_date
 			doc.company = self.company
 			doc.is_opening = 'Yes'
+			if row.exchange_rate:
+				doc.multi_currency = 1
 			if self.invoice_type == 'Sales':
 				doc.append('accounts', {
-					'account': frappe.get_value("Company", doc.company, 'default_receivable_account'),
+					'account': row.account or frappe.get_value("Company", doc.company, 'default_receivable_account'),
 					'party_type': 'Customer',
 					'party': row.party,
 					'debit_in_account_currency': 0,
 					'credit_in_account_currency': abs(row.outstanding_amount),
 					'is_advance': 'Yes',
-					"cost_center":row.cost_center
+					"cost_center":row.cost_center,
+					"exchange_rate":row.exchange_rate or 1
 				})
 
 				doc.append('accounts', {
 					'account': row.temporary_opening_account,
 					'party_type': None,
 					'party': None,
-					'debit_in_account_currency': abs(row.outstanding_amount),
+					'debit_in_account_currency': abs(row.outstanding_amount) * (row.exchange_rate or 1),
 					'credit_in_account_currency': 0,
 					"cost_center":row.cost_center
 				})
 			
 			elif self.invoice_type == 'Purchase':
 				doc.append('accounts', {
-					'account': frappe.get_value("Company", doc.company, 'default_payable_account'),
+					'account': row.account or frappe.get_value("Company", doc.company, 'default_payable_account'),
 					'party_type': 'Supplier',
 					'party': row.party,
 					'debit_in_account_currency': abs(row.outstanding_amount),
 					'credit_in_account_currency': 0,
 					'is_advance': 'Yes',
-					"cost_center":row.cost_center
+					"cost_center":row.cost_center,
+					"exchange_rate":row.exchange_rate or 1
 				})
 
 				doc.append('accounts', {
@@ -85,10 +89,10 @@ def make_invoices(self):
 					'party_type': None,
 					'party': None,
 					'debit_in_account_currency': 0,
-					'credit_in_account_currency': abs(row.outstanding_amount),
+					'credit_in_account_currency': abs(row.outstanding_amount) * (row.exchange_rate or 1),
 					"cost_center":row.cost_center
 				})
-			
+
 			doc.save()
 			doc.submit()
 			names.append(doc.name)
@@ -192,3 +196,12 @@ def get_temporary_opening_account(company=None):
 		frappe.throw(_("Please add a Temporary Opening account in Chart of Accounts"))
 
 	return accounts[0].name
+
+@frappe.whitelist()
+def get_account_currency(party,company,invoice_type):
+	account = frappe.db.get_value("Party Account",{"parent":party,"company":company},"account")
+	if not account:
+		act_type = "default_receivable_account" if invoice_type == "Sales" else "default_payable_account"
+		account = frappe.db.get_value("Company",company,act_type)
+	currency = frappe.db.get_value("Account",account,"account_currency")
+	return {"account":account,"currency":currency}
