@@ -3,6 +3,7 @@
 		"public/js/finbyzerp/ui/toolbar/navbar.html",
 		"public/js/finbyzerp/ui/page.html",
 		"public/js/whatsapp_manager.js",
-		"public/js/finbyzerp/ui/toolbar/about.js"
+		"public/js/finbyzerp/ui/toolbar/about.js",
+		"public/js/finbyzerp/finbyz-theme.js"
     ]
 }

@@ -11,7 +11,7 @@ app_color = "blue"
 app_email = "info@finbyz.com"
 app_license = "GPL 3.0"
 app_version = app_version
-# app_logo_url = '/assets/erpnext/images/erp-icon.svg'
+app_logo_url = "/assets/finbyzerp/images/FinbyzLogo.svg"
 
 
 after_install = "finbyzerp.install.after_install"
@@ -37,7 +37,6 @@ OpeningInvoiceCreationTool.make_invoices = make_invoices
 from frappe.core.doctype.report.report import Report
 from finbyzerp.api import report_validate
 Report.validate = report_validate
-
 
 # e_invoice overrides
 # import erpnext
