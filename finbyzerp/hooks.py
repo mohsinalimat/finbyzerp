@@ -16,12 +16,12 @@ app_version = app_version
 
 after_install = "finbyzerp.install.after_install"
 
-from erpnext.regional.doctype.gstr_3b_report.gstr_3b_report import GSTR3BReport
-from finbyzerp.finbyzerp.override.gstr_3b_report import prepare_data, get_itc_details, get_inter_state_supplies, get_tax_amounts
-GSTR3BReport.prepare_data = prepare_data
-GSTR3BReport.get_itc_details = get_itc_details
-GSTR3BReport.get_inter_state_supplies = get_inter_state_supplies
-GSTR3BReport.get_tax_amounts = get_tax_amounts
+# from erpnext.regional.doctype.gstr_3b_report.gstr_3b_report import GSTR3BReport
+# from finbyzerp.finbyzerp.override.gstr_3b_report import prepare_data, get_itc_details, get_inter_state_supplies, get_tax_amounts
+# GSTR3BReport.prepare_data = prepare_data
+# GSTR3BReport.get_itc_details = get_itc_details
+# GSTR3BReport.get_inter_state_supplies = get_inter_state_supplies
+# GSTR3BReport.get_tax_amounts = get_tax_amounts
 
 from erpnext.setup.doctype.naming_series.naming_series import NamingSeries
 from finbyzerp.finbyzerp.override.naming_series import get_transactions
@@ -40,7 +40,7 @@ Report.validate = report_validate
 
 
 # e_invoice overrides
-import erpnext
+# import erpnext
 # from finbyzerp.e_invoice_override import validate_einvoice_fields,get_transaction_details,get_item_list,make_einvoice,get_invoice_value_details,update_invoice_taxes
 
 # erpnext.regional.india.e_invoice.utils.validate_einvoice_fields = validate_einvoice_fields
