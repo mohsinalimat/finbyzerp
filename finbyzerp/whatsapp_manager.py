@@ -112,11 +112,45 @@ def whatsapp_login_check(doctype,name):
 		msg = "<img src='/files/{}.png' alt='No Image' data-pagespeed-no-transform>".format(frappe.session.user + qr_hash)
 		event = str(frappe.session.user + doctype + name)
 		frappe.publish_realtime(event=event, message=msg,user=frappe.session.user,doctype=doctype,docname=name)
+
 		try:
 			WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '.two')))
+		except:
+			frappe.log_error(frappe.get_traceback(),"Unable to Save Profile.")
+			driver.quit()
+			remove_qr_code(qr_hash)
+			return False
+
+		for item in os.listdir(profile.path):
+			if item in ["parent.lock", "lock", ".parentlock"]:
+				continue
+
+			s = os.path.join(profile.path, item)
+			if item.endswith('.json'):
+				profiles_json_list = [pos_json for pos_json in os.listdir(profiledir) if pos_json.endswith('.json')]
+				if profiles_json_list:
+					mobile_number_dict = {}
+					for f_item in profiles_json_list:
+						with open(os.path.join(profiledir,f_item), "r") as existsf:
+							file_r = json.loads(existsf.read())
+							mobile_number_dict.setdefault(f_item,str(file_r.get('last-wid')))
+						
+				if mobile_number_dict:
+					with open(s,"r") as tempf: 
+						read = json.loads(tempf.read())
+						for key,value in mobile_number_dict.items():
+							if value == str(read.get('last-wid')) and key.find(frappe.session.user) == -1:
+								frappe.log_error("Whatsapp Error","Profile Already Exists for '{}' with user  = '{}'".format(frappe.bold(value.split('@')[0]),frappe.bold(key.split('.json')[0])))
+								driver.quit()
+								remove_qr_code(qr_hash)
+								frappe.throw("Profile Already Exists for '{}' with user  = '{}'".format(frappe.bold(value.split('@')[0]),frappe.bold(key.split('.json')[0])))
+								return False
+
+		try:
 			for item in os.listdir(profile.path):
 				if item in ["parent.lock", "lock", ".parentlock"]:
 					continue
+
 				s = os.path.join(profile.path, item)
 				d = os.path.join(profiledir, item)
 				if os.path.isdir(s):
@@ -279,7 +313,7 @@ def send_media_whatsapp(driver,qr_hash,mobile_number,description,selected_attach
 			for path in attach_list:
 				path_url = frappe.utils.get_bench_path() + "/sites" + path[1:]
 				try:
-					WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'span[data-icon="clip"]')))
+					WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'span[data-icon="clip"]')))
 				except:
 					frappe.log_error(frappe.get_traceback(),"Unable to send the whatsapp message")
 					driver.quit()
@@ -289,12 +323,12 @@ def send_media_whatsapp(driver,qr_hash,mobile_number,description,selected_attach
 				except:
 					frappe.log_error(frappe.get_traceback(),"Unable to send the whatsapp message")
 					driver.quit()
-					return False						
+					return False					
 				driver.find_element_by_css_selector('span[data-icon="clip"]').click()
 				attach=driver.find_element_by_css_selector('input[type="file"]')
 				attach.send_keys(path_url)
 				try:
-					WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="app"]/div/div/div[2]/div[2]/span/div/span/div/div/div[2]/span/div/div')))
+					WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="app"]/div/div/div[2]/div[2]/span/div/span/div/div/div[2]/span/div/div')))
 				except:
 					frappe.log_error(frappe.get_traceback(),"Unable to send the whatsapp message")
 					driver.quit()
@@ -306,7 +340,7 @@ def send_media_whatsapp(driver,qr_hash,mobile_number,description,selected_attach
 		except:
 			frappe.log_error(frappe.get_traceback(),"Error while trying to send the whatsapp message.")
 			return False
-	time.sleep(10)
+	time.sleep(20)
 	driver.quit()
 
 def remove_file_from_os(path):
