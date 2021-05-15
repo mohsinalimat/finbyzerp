@@ -7,6 +7,9 @@
 /* --------end declaration ------ */
 
 /* -------common css---------- */
+body{
+	font-family: Helvetica Neue,Helvetica,Arial,Open Sans,sans-serif !important;
+}
 .navbar-brand{
 	padding: 10px 15px;
 }
