@@ -2,6 +2,7 @@
 /*---- variable declaration -------- */
 [data-theme="light"],[data-theme="dark"]{
 	--icon-stroke-navbar : #fff !important;
+	--dt-light-yellow: black !important;
 }
 /* --------end declaration ------ */
 
@@ -92,6 +93,16 @@
 	height: 30px;
 	padding-left: 30px;
 }
+.page-form .frappe-control [data-fieldtype="Select"]{
+	padding: 0px .75rem;
+}
+.list-row-head .level-left, 
+.list-row .level-left{
+    min-width: 90%;
+}
+.datatable .dt-scrollable .dt-cell__content{
+	font-weight: 450;
+}
 /*-------- end common theme------------ */
 
 /*---------- light theme----- */
@@ -106,7 +117,9 @@
 [data-theme="light"] .grid-heading-row{
 	color: #000;
 }
-
+[data-theme="light"] .list-row-container:focus{
+	background-color: #f2f6fa;
+}
 /* -----------end light theme---------- */
 
 /*----------- dark theme----------- */
@@ -134,7 +147,9 @@
 [data-theme="dark"] .text-extra-muted{
 	color: rgb(211, 211, 211) !important;
 }
-
+[data-theme="dark"] .list-row-container:focus{
+	background-color: var(--gray-600) !important;
+}
 /*---------- end dark theme ------------- */
 /* hover effect */
 /* [data-theme="light"] .list-row-head:hover:not(.list-row-head),
