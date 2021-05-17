@@ -23,6 +23,7 @@ from frappe.utils.user import get_user_fullname
 import re
 
 class MeetingSchedule(Document):
+	@frappe.whitelist()
 	def send_invitation(self):	
 		if not self.email_id:
 			msgprint(_("Please enter email id"))

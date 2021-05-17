@@ -38,6 +38,9 @@ from frappe.core.doctype.report.report import Report
 from finbyzerp.api import report_validate
 Report.validate = report_validate
 
+from frappe.utils import dashboard
+from finbyzerp.finbyzerp.override.dashboard_override import make_records
+dashboard.make_records = make_records
 # e_invoice overrides
 # import erpnext
 # from finbyzerp.e_invoice_override import validate_einvoice_fields,get_transaction_details,get_item_list,make_einvoice,get_invoice_value_details,update_invoice_taxes
