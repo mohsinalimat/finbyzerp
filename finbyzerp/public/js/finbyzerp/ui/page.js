@@ -161,11 +161,6 @@ frappe.ui.Page = Class.extend({
 		let sidebar_toggle = $('.page-head').find('.sidebar-toggle-btn');
         let icon_wrapper = this.wrapper.find('.icon-side-section');
 		let sidebar_wrapper = this.wrapper.find('.layout-side-section');
-		// if (this.disable_sidebar_toggle || !sidebar_wrapper.length) {
-		// 	console.log(`disable toggle = ${this.disable_sidebar_toggle}`)
-		// 	console.log(`length = ${sidebar_wrapper.length}`)
-		// 	sidebar_toggle.remove();
-		// } else {
 			sidebar_toggle.attr("title", __("Toggle Sidebar")).tooltip({
 				delay: { "show": 600, "hide": 100 },
 				trigger: "hover",
@@ -181,7 +176,6 @@ frappe.ui.Page = Class.extend({
 				$(document.body).trigger('toggleSidebar');
 				this.update_sidebar_icon();
 			});
-		// }
 	},
 
 	setup_overlay_sidebar() {

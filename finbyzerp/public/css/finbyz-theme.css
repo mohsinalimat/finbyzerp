@@ -202,7 +202,7 @@ body{
 	background-color: var(--gray-600) !important;
 }
 /*---------- end dark theme ------------- */
-/* hover effect */
+
 /* [data-theme="light"] .list-row-head:hover:not(.list-row-head),
 [data-theme="light"] .list-row:hover:not(.list-row-head){
 	transform: scale(1,1.002);
