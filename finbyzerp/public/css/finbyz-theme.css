@@ -10,6 +10,9 @@
 body{
 	font-family: Helvetica Neue,Helvetica,Arial,Open Sans,sans-serif !important;
 }
+.standard-icon-sidebar-section a:hover{
+	text-decoration: none;
+}
 .d__none{
 	display: none ;
 }
@@ -104,7 +107,7 @@ body{
 }
 .list-row-head .level-left, 
 .list-row .level-left{
-    min-width: 90%;
+    min-width: 92%;
 }
 .datatable .dt-scrollable .dt-cell__content{
 	font-weight: 450;
@@ -125,12 +128,10 @@ body{
 }
 .icon-side-section{
 	width: 55px;
-	margin: 40px 10px 0px 10px;
-	/* height: 100vh; */
+	margin: 10px 10px 0px 10px;
 	height: calc(100vh - var(--navbar-height) - var(--page-head-height) - 5px);
 	transition: all 2s linear;
 	overflow-y:scroll;
-	/* background-color: gray; */
 }
 .icon-side-section:hover{
 	width: auto;
@@ -151,13 +152,15 @@ body{
 		display: none !important;
 	}
 }
+.Administration_section {
+	border-top:1px solid rgba(0,0,0,.1);
+}
 /*-------- end common theme------------ */
 
 /*---------- light theme----- */
 [data-theme="light"] .navbar .navbar-nav > li > a:hover{
 	text-decoration: none !important;
 }
-
 [data-theme="light"] .list-row-head .list-subject,
 [data-theme="light"] .list-row-head .list-row-col span,
 [data-theme="light"] .list-row-head .level-right .list-count span,
@@ -272,5 +275,11 @@ body{
 .desk-sidebar-item span{
 	background-repeat: no-repeat;
 }
-
 /*----------- endicons---------- */
+/*-------- media queries ------- */
+@media (max-width: 787px) {
+    .layout-side-section {
+        display: block !important;
+    }
+}
+/*------- end media queries -----*/

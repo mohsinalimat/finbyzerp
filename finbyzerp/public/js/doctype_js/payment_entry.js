@@ -14,8 +14,30 @@ frappe.ui.form.on('Payment Entry', {
 				filters: { link_doctype: "Customer", link_name: doc.party }
 			};
 		})
+		frm.trigger('set_address');
 	},
-
+	before_save: function(frm){
+		frm.trigger('set_address');
+	},
+	party: function(frm){
+		if(frm.doc.party_type=="Customer" && frm.doc.party){
+		frappe.call({
+			method:"erpnext.accounts.party.get_party_details",
+			args:{
+				party: frm.doc.party,
+				party_type: frm.doc.party_type
+			},
+			callback: function(r){
+				if(r.message){
+					if(frm.doc.address != r.message.customer_address){
+						frm.set_value('address', r.message.customer_address)
+					}
+				}
+				frm.refresh();
+			}
+		})
+	}
+	},
 	naming_series: function (frm) {
 		if (frappe.meta.get_docfield("Payment Entry", "series_value", frm.doc.name)){
 			if (frm.doc.__islocal && frm.doc.company && !frm.doc.amended_from) {

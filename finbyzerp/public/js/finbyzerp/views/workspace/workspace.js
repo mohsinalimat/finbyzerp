@@ -93,7 +93,7 @@ frappe.views.Workspace = class Workspace {
 
 	build_sidebar_section(title, items) {
 		let sidebar_section = $(`<div class="standard-sidebar-section"></div>`);
-        let sidebar_icon_section = $(`<div class="standard-icon-sidebar-section"></div>`);
+        let sidebar_icon_section = $(`<div class="standard-icon-sidebar-section ${title == "Administration"? title+"_section" : ""} "></div>`);
 
 		// DO NOT REMOVE: Comment to load translation
 		// __("Modules") __("Domains") __("Places") __("Administration")
@@ -116,7 +116,7 @@ frappe.views.Workspace = class Workspace {
 			return $(`
 				<a
                     href="/app/${frappe.router.slug(item.name)}"
-					class="desk-sidebar-item standard-sidebar-item ${item.selected ? "selected" : ""}"
+					class="desk-sidebar-item standard-sidebar-item ${item.selected ? "selected" : ""}" 
                 >
 					<span class="${item.label || item.name}-sidebar-icon">${frappe.utils.icon(item.icon || "folder-normal", "md")}</span>
                     <span class="sidebar-icon-item-label px-4">${item.label || item.name}<span>
