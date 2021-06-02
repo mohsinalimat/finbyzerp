@@ -18,14 +18,13 @@ def send_mail(entry, email_campaign):
 
 	email_template = frappe.get_doc("Email Template", entry.get("email_template"))
 	sender = frappe.db.get_value("User", email_campaign.get("sender"), 'email')
-	context = {"doc": frappe.get_doc(email_campaign.email_campaign_for, email_campaign.recipient)}
-	# finbyz change
-	content = frappe.render_template(email_template.get("response"), context) + frappe.db.get_value("User",email_campaign.sender,'email_signature') or "<br><p>FinByz Tech Pvt Ltd</p>"
+	context = frappe.get_doc(email_campaign.email_campaign_for, email_campaign.recipient)
+	content = frappe.render_template(email_template.get("response"), vars(context)) + frappe.db.get_value("User",email_campaign.sender,'email_signature') or "<br><p>FinByz Tech Pvt Ltd</p>"
 	# send mail and link communication to document
 	comm = make(
 		doctype = email_campaign.email_campaign_for, #finbyz change
 		name = email_campaign.recipient,#finbyz change
-		subject = frappe.render_template(email_template.get("subject"), context),
+		subject = frappe.render_template(email_template.get("subject"), vars(context)),
 		content = content,
 		sender = sender,
 		recipients = recipient,
