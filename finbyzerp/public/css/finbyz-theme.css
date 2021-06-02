@@ -108,6 +108,7 @@ body{
 .list-row-head .level-left, 
 .list-row .level-left{
     min-width: 92%;
+	
 }
 .datatable .dt-scrollable .dt-cell__content{
 	font-weight: 450;
@@ -154,6 +155,9 @@ body{
 }
 .Administration_section {
 	border-top:1px solid rgba(0,0,0,.1);
+}
+.widget-group .grid-col-1{
+	grid-template-columns: repeat(auto-fill,minmax(49%,1fr));
 }
 /*-------- end common theme------------ */
 
@@ -283,3 +287,17 @@ body{
     }
 }
 /*------- end media queries -----*/
+/* .list-row-col { */
+	/* flex: auto;  */
+	 /* flex: none; */
+/* } */
+/* .level-left{
+	justify-content: space-between;
+} */
+/* .list-subject{
+	width: calc(100% - 90%);
+} */
+/* .list-row-col{
+	min-width: calc(2% - 90px);
+	min-width:100px;
+} */
