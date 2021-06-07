@@ -103,7 +103,7 @@ frappe.ui.Page = Class.extend({
 				`);
 			}else{
 				this.add_view("main", `
-					<div class="row layout-main">
+					<div class="row layout-main ">
 						<div class="icon-side-section d__none" ></div>
 						<div class="col-lg-2 layout-side-section"$ style="display:block ;"></div>
 						<div class="col layout-main-section-wrapper testing">
