@@ -107,7 +107,7 @@ body{
 }
 .list-row-head .level-left, 
 .list-row .level-left{
-    min-width: 92%;
+    min-width: 90%;
 	
 }
 .datatable .dt-scrollable .dt-cell__content{
@@ -275,6 +275,15 @@ body{
 }
 .Home-sidebar-icon{
 	background: url(/assets/finbyzerp/images/home.svg);
+}
+.Management-sidebar-icon{
+	background: url(/assets/finbyzerp/images/Loan_Management.svg);
+}
+.Utilities-sidebar-icon{
+	background: url(/assets/finbyzerp/images/utilities.svg);	
+}
+.Payroll-sidebar-icon{
+	background: url(/assets/finbyzerp/images/payroll.svg);	
 }
 .desk-sidebar-item span{
 	background-repeat: no-repeat;

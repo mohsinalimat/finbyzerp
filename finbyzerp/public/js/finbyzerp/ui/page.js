@@ -80,6 +80,7 @@ frappe.ui.Page = Class.extend({
 	add_main_section: function() {
 		$(frappe.render_template("page", {})).appendTo(this.wrapper);
 		if (this.single_column) {
+
 			// nesting under col-sm-12 for consistency
 			this.add_view("main", '<div class="row layout-main">\
 					<div class="col-md-12 layout-main-section-wrapper">\
@@ -88,16 +89,30 @@ frappe.ui.Page = Class.extend({
 					</div>\
 				</div>');
 		} else {
-			this.add_view("main", `
-				<div class="row layout-main">
-                    <div class="icon-side-section " ></div>
-					<div class="col-lg-2 layout-side-section" style="display:none ;"></div>
-					<div class="col layout-main-section-wrapper">
-						<div class="layout-main-section"></div>
-						<div class="layout-footer hide"></div>
+			var id_name = this.wrapper[0].id;
+			if(id_name == 'page-Workspaces'){
+				this.add_view("main", `
+					<div class="row layout-main">
+						<div class="icon-side-section" ></div>
+						<div class="col-lg-2 layout-side-section"$ style="display:none ;"></div>
+						<div class="col layout-main-section-wrapper test">
+							<div class="layout-main-section"></div>
+							<div class="layout-footer hide"></div>
+						</div>
 					</div>
-				</div>
-			`);
+				`);
+			}else{
+				this.add_view("main", `
+					<div class="row layout-main">
+						<div class="icon-side-section d__none" ></div>
+						<div class="col-lg-2 layout-side-section"$ style="display:block ;"></div>
+						<div class="col layout-main-section-wrapper testing">
+							<div class="layout-main-section"></div>
+							<div class="layout-footer hide"></div>
+						</div>
+					</div>
+				`);
+			}
 		}
 
 		this.setup_page();
