@@ -751,7 +751,7 @@ frappe.ui.Page = Class.extend({
 		frappe.ui.toolbar.add_dropdown_button(parent, label, click, icon);
 	},
 
-	// page::form
+	//  page::form
 	add_label: function(label) {
 		this.show_form();
 		return $("<label class='col-md-1 page-only-label'>"+label+" </label>")
