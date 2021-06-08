@@ -108,7 +108,7 @@ override_whitelisted_methods = {
 	"erpnext.setup.doctype.company.delete_company_transactions.delete_company_transactions": "finbyzerp.finbyzerp.override.delete_company_transactions.delete_company_transactions",
 	"frappe.desk.moduleview.get_desktop_settings": "finbyzerp.api.get_desktop_settings",
 	"frappe.desk.moduleview.get_options_for_global_modules": "finbyzerp.api.get_options_for_global_modules",
-	"frappe.utils.print_format.download_pdf": "finbyzerp.print_format.download_pdf",
+	#"frappe.utils.print_format.download_pdf": "finbyzerp.print_format.download_pdf",
 }
 
 override_doctype_dashboards = {
@@ -161,3 +161,7 @@ scheduler_events = {
 # from finbyzerp.finbyzerp.report.bom_stock_calculated import execute as bsc_execute
 # from erpnext.manufacturing.report.bom_stock_calculated import bom_stock_calculated
 # bom_stock_calculated.execute = bsc_execute
+
+from frappe.utils import pdf
+from finbyzerp.print_format import get_pdf
+pdf.get_pdf = get_pdf
