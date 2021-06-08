@@ -142,6 +142,7 @@ body{
 }
 .hide_icon_bar .icon-side-section{
 	display: none;
+	
 }
 .icon-base, .icon-md{
 	height: 25px;
@@ -294,7 +295,7 @@ body{
     .layout-side-section {
         display: block !important;
     }
-	
+
 }
 /*------- end media queries -------*/
 /* .list-row-col { */

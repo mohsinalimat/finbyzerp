@@ -27,7 +27,7 @@ frappe.views.Container = class Container {
 	}
 	add_page(label) {
         if(label!= 'Workspaces'){
-            var page = $('<div class="content page-container hide_icon_bar "></div>')
+            var page = $('<div class="content page-container hide_icon_bar"></div>')
 			.attr('id', "page-" + label)
 			.attr("data-page-route", label)
 			.hide()
