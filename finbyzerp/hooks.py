@@ -145,7 +145,11 @@ doc_events = {
 		"validate": [
 			"finbyzerp.api.stock_entry_validate",
 			"finbyzerp.finbyzerp.doc_events.stock_entry.validate",
-		]
+		],
+		"before_insert": "finbyzerp.api.before_insert",
+	},
+	"Journal Entry":{
+		"before_insert": "finbyzerp.api.before_insert",
 	},
 	("Pick List","Expense Claim", "Sales Invoice", "Purchase Invoice", "Payment Request", "Payment Entry", "Journal Entry", "Material Request", "Purchase Order", "Work Order", "Production Plan", "Stock Entry", "Quotation", "Sales Order", "Delivery Note", "Purchase Receipt", "Packing Slip","Jobwork Challan","Jobwork Finish","Outward Sample","Inward Sample"): {
 		"before_naming": "finbyzerp.api.before_naming",
