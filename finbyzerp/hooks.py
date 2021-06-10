@@ -40,11 +40,11 @@ Report.validate = report_validate
 
 
 # e_invoice overrides
-# import erpnext
+import erpnext
 # from finbyzerp.e_invoice_override import validate_einvoice_fields,get_transaction_details,get_item_list,make_einvoice,get_invoice_value_details,update_invoice_taxes
-
-# erpnext.regional.india.e_invoice.utils.validate_einvoice_fields = validate_einvoice_fields
-# erpnext.regional.india.e_invoice.utils.get_item_list = get_item_list
+from finbyzerp.e_invoice_override import get_item_list,validate_einvoice_fields
+erpnext.regional.india.e_invoice.utils.validate_einvoice_fields = validate_einvoice_fields
+erpnext.regional.india.e_invoice.utils.get_item_list = get_item_list
 # erpnext.regional.india.e_invoice.utils.get_transaction_details = get_transaction_details
 # erpnext.regional.india.e_invoice.utils.make_einvoice = make_einvoice
 # erpnext.regional.india.e_invoice.utils.get_invoice_value_details=get_invoice_value_details
@@ -107,6 +107,7 @@ override_whitelisted_methods = {
 	"frappe.desk.moduleview.get_desktop_settings": "finbyzerp.api.get_desktop_settings",
 	"frappe.desk.moduleview.get_options_for_global_modules": "finbyzerp.api.get_options_for_global_modules",
 	"frappe.utils.print_format.download_pdf": "finbyzerp.print_format.download_pdf",
+	"erpnext.regional.india.e_invoice.utils.cancel_eway_bill": "finbyzerp.e_invoice_override.cancel_eway_bill" # cancel eway bill override for enable cancel_eway_bill api
 }
 
 override_doctype_dashboards = {
@@ -141,7 +142,14 @@ doc_events = {
 		"validate": "finbyzerp.api.pi_validate"
 	},
 	"Stock Entry": {
-		"validate": "finbyzerp.api.stock_entry_validate"
+		"validate": [
+			"finbyzerp.api.stock_entry_validate",
+			"finbyzerp.finbyzerp.doc_events.stock_entry.validate",
+		],
+		"before_insert": "finbyzerp.api.before_insert",
+	},
+	"Journal Entry":{
+		"before_insert": "finbyzerp.api.before_insert",
 	},
 	("Pick List","Expense Claim", "Sales Invoice", "Purchase Invoice", "Payment Request", "Payment Entry", "Journal Entry", "Material Request", "Purchase Order", "Work Order", "Production Plan", "Stock Entry", "Quotation", "Sales Order", "Delivery Note", "Purchase Receipt", "Packing Slip","Jobwork Challan","Jobwork Finish","Outward Sample","Inward Sample"): {
 		"before_naming": "finbyzerp.api.before_naming",

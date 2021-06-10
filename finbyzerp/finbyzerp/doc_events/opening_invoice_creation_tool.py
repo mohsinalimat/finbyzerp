@@ -44,7 +44,6 @@ def make_invoices(self):
 
 		if row.outstanding_amount < 0:
 			doc = frappe.new_doc("Journal Entry")
-			doc.naming_series = 'O' + doc.naming_series
 			doc.voucher_type = "Credit Note" if self.invoice_type == 'Sales' else "Debit Note"
 			doc.posting_date = row.posting_date
 			doc.company = self.company
