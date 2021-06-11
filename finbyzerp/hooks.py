@@ -57,6 +57,12 @@ dashboard.make_records = make_records
 #from erpnext.regional.india.e_invoice.utils import GSPConnector
 #GSPConnector.set_einvoice_data = set_einvoice_data
 
+
+import erpnext
+from finbyzerp.e_invoice_override import get_item_list,validate_einvoice_fields
+erpnext.regional.india.e_invoice.utils.validate_einvoice_fields = validate_einvoice_fields
+erpnext.regional.india.e_invoice.utils.get_item_list = get_item_list
+
 # email Campaign override
 from finbyzerp.finbyzerp.doc_events.email_campaign import send_email_to_leads_or_contacts
 from erpnext.crm.doctype.email_campaign import email_campaign
@@ -108,6 +114,7 @@ override_whitelisted_methods = {
 	"erpnext.setup.doctype.company.delete_company_transactions.delete_company_transactions": "finbyzerp.finbyzerp.override.delete_company_transactions.delete_company_transactions",
 	"frappe.desk.moduleview.get_desktop_settings": "finbyzerp.api.get_desktop_settings",
 	"frappe.desk.moduleview.get_options_for_global_modules": "finbyzerp.api.get_options_for_global_modules",
+	"erpnext.regional.india.e_invoice.utils.cancel_eway_bill": "finbyzerp.e_invoice_override.cancel_eway_bill" # cancel eway bill override for enable cancel_eway_bill api
 	#"frappe.utils.print_format.download_pdf": "finbyzerp.print_format.download_pdf",
 }
 
