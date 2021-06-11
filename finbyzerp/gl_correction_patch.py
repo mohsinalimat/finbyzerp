@@ -6,19 +6,39 @@ from __future__ import unicode_literals
 import frappe
 from frappe import _
 from frappe.utils import flt
-from erpnext.accounts.general_ledger import make_gl_entries, delete_gl_entries
+from erpnext.accounts.general_ledger import make_gl_entries, make_reverse_gl_entries
 # import frappe
 
 # Before executing patch comment this: sle = self.update_stock_ledger_entries(sle) and write pass there in line_no = 91 in
 		#erpnext/erpnext/controllers/stock_controller.py 
+
+#Patch Start: run for all the item with all warehouse
+item_list = frappe.db.get_all("Item",fields=["name as item_code"])
+warehouse = frappe.db.get_all("Warehouse",fields=["name as warehouse"])
+
+from erpnext.stock.stock_ledger import update_entries_after
+
+for w in warehouse:
+    for item in item_list:
+        print(item.item_code)
+        args = {
+            "item_code": item.item_code,
+            "warehouse": w.warehouse,
+            "posting_date": "2018-01-01",
+            "posting_time": "01:01:00"
+        }
+        update_entries_after(args)
+
+# Patch End
 def patch():
 	data = get_data()
 	for row in data:
 		if row['voucher_type'] in ["Stock Entry","Stock Reconciliation"]:
 			se_doc = frappe.get_doc(row['voucher_type'],row['voucher_no'])
 			print(se_doc.name)
-			delete_gl_entries(voucher_type=row['voucher_type'],voucher_no=row['voucher_no'])
-			se_doc.make_gl_entries(repost_future_gle=False, from_repost=False)
+			# delete_gl_entries(voucher_type=row['voucher_type'],voucher_no=row['voucher_no'])
+			make_reverse_gl_entries(voucher_type=row['voucher_type'],voucher_no=row['voucher_no'])
+			se_doc.make_gl_entries(from_repost=False)
 		if row['voucher_type'] == "Payment Entry":
 			pe_doc = frappe.get_doc("Payment Entry",row['voucher_no'])
 			print(pe_doc.name)
@@ -27,14 +47,22 @@ def patch():
 		if row['voucher_type'] == "Delivery Note":
 			dn_doc = frappe.get_doc("Delivery Note",row['voucher_no'])
 			print(dn_doc.name)
-			delete_gl_entries(voucher_type=row['voucher_type'],voucher_no=row['voucher_no'])
-			dn_doc.make_gl_entries(repost_future_gle=False, from_repost=False)
+			# delete_gl_entries(voucher_type=row['voucher_type'],voucher_no=row['voucher_no'])
+			make_reverse_gl_entries(voucher_type=row['voucher_type'],voucher_no=row['voucher_no'])
+			dn_doc.make_gl_entries(from_repost=False)
 		if row['voucher_type'] in ["Purchase Receipt","Purchase Invoice"]:
 			pr_doc = frappe.get_doc(row['voucher_type'],row['voucher_no'])
 			print(pr_doc.name)
-			delete_gl_entries(voucher_type=row['voucher_type'],voucher_no=row['voucher_no'])
+			# delete_gl_entries(voucher_type=row['voucher_type'],voucher_no=row['voucher_no'])
+			make_reverse_gl_entries(voucher_type=row['voucher_type'],voucher_no=row['voucher_no'])
 			pr_doc.make_gl_entries()
-			
+		if row['voucher_type'] in ["Sales Invoice"]:
+			si_doc = frappe.get_doc(row['voucher_type'],row['voucher_no'])
+			print(si_doc.name)
+			# delete_gl_entries(voucher_type=row['voucher_type'],voucher_no=row['voucher_no'])
+			make_reverse_gl_entries(voucher_type=row['voucher_type'],voucher_no=row['voucher_no'])
+			si_doc.make_gl_entries()
+
 def get_data():
 	sle_data = get_sle_value()
 	gl_data = get_gl_value()
@@ -59,7 +87,7 @@ def get_sle_value():
 				sum(sle.stock_value_difference) as sle_value, sle.posting_date, sle.voucher_type, sle.voucher_no, sle.company
 			from
 				`tabStock Ledger Entry` sle
-			where sle.docstatus < 2 and sle.stock_value_difference<>0
+			where sle.docstatus < 2 and sle.is_cancelled = 0 and sle.stock_value_difference<>0
 			group by sle.voucher_no
 			order by sle.posting_date""" , as_dict=1)
 
@@ -70,7 +98,7 @@ def get_gl_value():
 				sum(gl.debit_in_account_currency - gl.credit_in_account_currency) as gl_value, gl.voucher_no
 			from
 				`tabGL Entry` gl JOIN `tabAccount` ac ON gl.account = ac.name
-			where gl.docstatus < 2 and ac.account_type in ("Stock","Capital Work in Progress","Fixed Asset")
+			where gl.docstatus < 2 and gl.is_cancelled = 0 and ac.account_type in ("Stock","Capital Work in Progress","Fixed Asset")
 			group by gl.voucher_no
 			order by gl.posting_date""", as_dict=1)
 
