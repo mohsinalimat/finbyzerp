@@ -6,4 +6,5 @@ def execute():
     if hasattr(doc,'app_name'):
         if doc.app_name != "Finbyz ERP":
             doc.db_set("app_name","Finbyz ERP")
+            doc.db_set("time_format","HH:mm:ss")
             frappe.db.commit()
