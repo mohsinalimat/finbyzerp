@@ -68,6 +68,12 @@ from finbyzerp.finbyzerp.doc_events.email_campaign import send_email_to_leads_or
 from erpnext.crm.doctype.email_campaign import email_campaign
 email_campaign.send_email_to_leads_or_contacts = send_email_to_leads_or_contacts
 
+# override for workspace migration issue
+from frappe.model import sync 
+from finbyzerp.api import get_doc_files
+sync.get_doc_files = get_doc_files
+
+
 app_include_css = ["/assets/finbyzerp/css/permission.css","/assets/finbyzerp/css/finbyz-theme.css"]
 app_include_js = [
 	"/assets/js/finbyzerp.min.js",
