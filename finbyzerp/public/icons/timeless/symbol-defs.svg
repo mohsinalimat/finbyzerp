@@ -363,20 +363,7 @@
 		<path d="M16.668 13.59V17h-5.454v-3.41l2.727-2.044 2.727 2.045z" stroke="var(--icon-stroke)" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"></path>
 		<path d="M13.94 15.636V17" stroke="var(--icon-stroke)" stroke-miterlimit="10" stroke-linecap="round"></path>
 	</symbol>
-	<symbol viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" id="icon-organization">
-		<path d="M6.27273 21.0004H3V14.6367C3 14.0844 3.44772 13.6367 4 13.6367H6.27273" stroke="var(--icon-stroke)" stroke-miterlimit="10" stroke-linecap="square"/>
-		<path d="M17.7273 21.0004H21V14.6367C21 14.0844 20.5523 13.6367 20 13.6367H17.7273" stroke="var(--icon-stroke)" stroke-miterlimit="10" stroke-linecap="square"/>
-		<path d="M15.7273 3H8.27272C7.16815 3 6.27272 3.89543 6.27272 5V21H17.7273V5C17.7273 3.89543 16.8318 3 15.7273 3Z" stroke="var(--icon-stroke)" stroke-miterlimit="10" stroke-linecap="square"/>
-		<path d="M9.54546 6.27246H10.5455" stroke="var(--icon-stroke)" stroke-miterlimit="10" stroke-linecap="round"/>
-		<path d="M13.6364 6.27246H14.6364" stroke="var(--icon-stroke)" stroke-miterlimit="10" stroke-linecap="round"/>
-		<path d="M9.54546 9.5459H10.5455" stroke="var(--icon-stroke)" stroke-miterlimit="10" stroke-linecap="round"/>
-		<path d="M13.6364 9.5459H14.6364" stroke="var(--icon-stroke)" stroke-miterlimit="10" stroke-linecap="round"/>
-		<path d="M9.54546 12.8184H10.5455" stroke="var(--icon-stroke)" stroke-miterlimit="10" stroke-linecap="round"/>
-		<path d="M13.6364 12.8184H14.6364" stroke="var(--icon-stroke)" stroke-miterlimit="10" stroke-linecap="round"/>
-		<path d="M9.54546 16.0908H10.5455" stroke="var(--icon-stroke)" stroke-miterlimit="10" stroke-linecap="round"/>
-		<path d="M13.6364 16.0908H14.6364" stroke="var(--icon-stroke)" stroke-miterlimit="10" stroke-linecap="round"/>
-		<path d="M12 20.9996V19.3633" stroke="var(--icon-stroke)" stroke-miterlimit="10" stroke-linecap="round"/>
-	</symbol>
+	
 	<symbol viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" id="icon-heart">
 		<path d="M7.606 3.799L8 4.302l.394-.503.106-.14c.048-.065.08-.108.129-.159a3.284 3.284 0 0 1 4.72 0c.424.434.655 1.245.65 2.278-.006 1.578-.685 2.931-1.728 4.159-1.05 1.234-2.439 2.308-3.814 3.328a.763.763 0 0 1-.914 0c-1.375-1.02-2.764-2.094-3.814-3.328C2.686 8.709 2.007 7.357 2 5.778c-.004-1.033.227-1.844.651-2.278a3.284 3.284 0 0 1 4.72 0c.05.05.081.094.129.158.028.038.061.083.106.14z">
 		</path>

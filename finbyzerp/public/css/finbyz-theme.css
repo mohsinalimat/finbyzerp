@@ -286,6 +286,9 @@ body{
 .Payroll-sidebar-icon{
 	background: url(/assets/finbyzerp/images/payroll.svg);	
 }
+.Manufacturing-sidebar-icon{
+	background: url(/assets/finbyzerp/images/manufacturing.svg);	
+}
 .desk-sidebar-item span{
 	background-repeat: no-repeat;
 }
@@ -295,20 +298,5 @@ body{
     .layout-side-section {
         display: block !important;
     }
-
 }
 /*------- end media queries -------*/
-/* .list-row-col { */
-	/* flex: auto;  */
-	 /* flex: none; */
-/* } */
-/* .level-left{
-	justify-content: space-between;
-} */
-/* .list-subject{
-	width: calc(100% - 90%);
-} */
-/* .list-row-col{
-	min-width: calc(2% - 90px);
-	min-width:100px;
-} */
