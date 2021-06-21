@@ -277,7 +277,8 @@ body{
 .Home-sidebar-icon{
 	background: url(/assets/finbyzerp/images/home.svg);
 }
-.Management-sidebar-icon{
+.Management-sidebar-icon,
+.Loans-sidebar-icon{
 	background: url(/assets/finbyzerp/images/Loan_Management.svg);
 }
 .Utilities-sidebar-icon{
