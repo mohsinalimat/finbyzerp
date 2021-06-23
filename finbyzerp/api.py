@@ -403,11 +403,19 @@ def set_party_account_based_on_currency(self):
 						else:
 							frappe.msgprint("Please create {0} account in {1} for company {2} then try to change currency again".format(account_type,self.default_currency,d['name']))
 
+def validate_item_rate(self):
+	for row in self.items:
+		if row.rate==0 and row.allow_zero_valuation_rate!=1:
+			frappe.throw("Rate is mandatory for {} in Row: {}".format(row.item_code,frappe.bold(row.idx)))
+
 def si_validate(self,method):
 	set_account_in_transaction(self)
 
 def pi_validate(self,method):
 	set_account_in_transaction(self)
+
+def pr_validate(self,method):
+	validate_item_rate(self)
 
 def set_account_in_transaction(self):
 	if self.doctype == "Sales Invoice":
