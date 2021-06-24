@@ -290,6 +290,16 @@ body{
 .Manufacturing-sidebar-icon{
 	background: url(/assets/finbyzerp/images/manufacturing.svg);	
 }
+/*-------- custom icon ----------*/
+.Rohandyes-sidebar-icon{
+	background: url(/assets/finbyzerp/images/Rohandyes_icon.png);
+}
+.Elkins-sidebar-icon{	
+	background: url(/assets/finbyzerp/images/background/Elkins_icon.png);
+}
+.Chemical-sidebar-icon{
+	background: url(/assets/finbyzerp/images/chemical.svg);
+}
 .desk-sidebar-item span{
 	background-repeat: no-repeat;
 }
