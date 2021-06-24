@@ -13,21 +13,32 @@ from erpnext.accounts.general_ledger import make_gl_entries, make_reverse_gl_ent
 		#erpnext/erpnext/controllers/stock_controller.py 
 
 #Patch Start: run for all the item with all warehouse
-item_list = frappe.db.get_all("Item",fields=["name as item_code"])
-warehouse = frappe.db.get_all("Warehouse",fields=["name as warehouse"])
+def execute_update_entries_after():
+	item_list = frappe.db.get_all("Item",fields=["name as item_code"])
+	warehouse = frappe.db.get_all("Warehouse",fields=["name as warehouse"])
 
-from erpnext.stock.stock_ledger import update_entries_after
+	from erpnext.stock.stock_ledger import update_entries_after
 
-for w in warehouse:
-    for item in item_list:
-        print(item.item_code)
-        args = {
-            "item_code": item.item_code,
-            "warehouse": w.warehouse,
-            "posting_date": "2018-01-01",
-            "posting_time": "01:01:00"
-        }
-        update_entries_after(args)
+	for w in warehouse:
+		for item in item_list:
+			print(item.item_code)
+			args = {
+				"item_code": item.item_code,
+				"warehouse": w.warehouse,
+				"posting_date": "2015-01-01",
+				"posting_time": "01:01:00"
+			}
+			update_entries_after(args)
+
+def check_bin_multiple_items_with_warehouse():
+	bin_list = frappe.db.get_list("Bin",{},['*'])
+	bin_dict = {}
+	duplicate = []
+	for b in bin_list:
+		if (b.item_code,b.warehouse) not in bin_dict:
+			bin_dict[(b.item_code,b.warehouse)] = b
+		else:
+			duplicate.append(frappe._dict({"item_code":b.item_code,"warehouse":b.warehouse}))
 
 # Patch End
 def patch():
