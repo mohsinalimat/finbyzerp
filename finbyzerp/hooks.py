@@ -155,6 +155,9 @@ doc_events = {
 		"before_insert": "finbyzerp.api.before_insert",
 		"validate": "finbyzerp.api.pi_validate"
 	},
+		"Purchase Receipt": {
+		"validate": "finbyzerp.api.pr_validate"
+	},
 	"Stock Entry": {
 		"validate": "finbyzerp.api.stock_entry_validate"
 	},
