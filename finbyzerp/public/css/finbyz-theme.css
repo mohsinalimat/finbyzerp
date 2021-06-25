@@ -291,15 +291,13 @@ body{
 	background: url(/assets/finbyzerp/images/manufacturing.svg);	
 }
 /*-------- custom icon ----------*/
-.Rohandyes-sidebar-icon{
-	background: url(/assets/finbyzerp/images/Rohandyes_icon.png);
-}
-.Elkins-sidebar-icon{	
-	background: url(/assets/finbyzerp/images/background/Elkins_icon.png);
-}
-.Chemical-sidebar-icon{
+.Chemical-sidebar-icon,.Rohandyes-sidebar-icon{
 	background: url(/assets/finbyzerp/images/chemical.svg);
 }
+.Elkins-sidebar-icon{	
+	background: url(/assets/finbyzerp/images/yarn.svg);
+}
+
 .desk-sidebar-item span{
 	background-repeat: no-repeat;
 }
