@@ -11,7 +11,7 @@ frappe.ui.form.on('Payment Entry', {
 		cur_frm.set_query("address", function (doc) {
 			return {
 				query: "frappe.contacts.doctype.address.address.address_query",
-				filters: { link_doctype: "Customer", link_name: doc.party }
+				filters: { link_doctype: doc.party_type, link_name: doc.party }
 			};
 		})
 		frm.trigger('set_address');
@@ -20,7 +20,7 @@ frappe.ui.form.on('Payment Entry', {
 		frm.trigger('set_address');
 	},
 	party: function(frm){
-		if(frm.doc.party_type=="Customer" && frm.doc.party){
+		if(frm.doc.party_type && frm.doc.party){
 		frappe.call({
 			method:"erpnext.accounts.party.get_party_details",
 			args:{
