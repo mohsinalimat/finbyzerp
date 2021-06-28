@@ -60,7 +60,7 @@ def _execute(filters=None, additional_table_columns=None, additional_query_colum
 			'invoice': d.parent,
 			'posting_date': d.posting_date,
 			'supplier': d.supplier,
-			'supplier_name': d.supplier_name
+			'supplier_name': d.supplier_name,
 		}
 
 		if additional_query_columns:
