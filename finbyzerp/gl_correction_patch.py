@@ -34,11 +34,23 @@ def check_bin_multiple_items_with_warehouse():
 	bin_list = frappe.db.get_list("Bin",{},['*'])
 	bin_dict = {}
 	duplicate = []
+	total_stock_value = 0
 	for b in bin_list:
+		if frappe.db.sql("select sum(stock_value_difference) from `tabStock Ledger Entry` where item_code = '{}' and warehouse = '{}' and is_cancelled = 0 group by item_code".format(b.item_code,b.warehouse)):
+			stock_value = frappe.db.sql("select sum(stock_value_difference) from `tabStock Ledger Entry` where item_code = '{}' and warehouse = '{}' and is_cancelled = 0 group by item_code".format(b.item_code,b.warehouse))[0][0]
+		else:
+			stock_value = 0.0
+		
+		total_stock_value += stock_value
+		if stock_value != b.stock_value:
+			print(b.name, b.item_code)
+			#frappe.db.set_value("Bin",b.name,"stock_value",stock_value)
+		
 		if (b.item_code,b.warehouse) not in bin_dict:
 			bin_dict[(b.item_code,b.warehouse)] = b
 		else:
 			duplicate.append(frappe._dict({"item_code":b.item_code,"warehouse":b.warehouse}))
+	print(total_stock_value)
 
 # Patch End
 def patch():
