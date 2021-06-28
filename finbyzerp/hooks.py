@@ -181,3 +181,20 @@ scheduler_events = {
 from frappe.utils import pdf
 from finbyzerp.print_format import get_pdf
 pdf.get_pdf = get_pdf
+
+# Item wise sales register and purchase register reports changes for selecting account_head instead of description from tax table
+from finbyzerp.finbyzerp.report.item_wise_sales_register import execute as item_wise_sales_register_execute
+from erpnext.accounts.report.item_wise_sales_register import item_wise_sales_register
+item_wise_sales_register.execute = item_wise_sales_register_execute
+
+from finbyzerp.finbyzerp.report.item_wise_purchase_register import execute as item_wise_purchase_register_execute
+from erpnext.accounts.report.item_wise_purchase_register import item_wise_purchase_register
+item_wise_purchase_register.execute = item_wise_purchase_register_execute
+
+from finbyzerp.finbyzerp.report.gst_itemised_sales_register import execute as gst_itemised_sales_register_execute
+from erpnext.regional.report.gst_itemised_sales_register import gst_itemised_sales_register
+gst_itemised_sales_register.execute = gst_itemised_sales_register_execute
+
+from finbyzerp.finbyzerp.report.gst_itemised_purchase_register import execute as gst_itemised_purchase_register_execute
+from erpnext.regional.report.gst_itemised_purchase_register import gst_itemised_purchase_register
+gst_itemised_purchase_register.execute = gst_itemised_purchase_register_execute
