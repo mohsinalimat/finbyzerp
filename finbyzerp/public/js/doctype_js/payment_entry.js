@@ -29,11 +29,11 @@ frappe.ui.form.on('Payment Entry', {
 			},
 			callback: function(r){
 				if(r.message){
-					if(frm.doc.address != r.message.customer_address){
-						frm.set_value('address', r.message.customer_address)
+					var adrr = frappe.scrub(frm.doc.party_type) + "_address"
+					if(frm.doc.address != r.message[adrr]){
+						frm.set_value('address', r.message[adrr])
 					}
 				}
-				frm.refresh();
 			}
 		})
 		}
@@ -41,7 +41,7 @@ frappe.ui.form.on('Payment Entry', {
 	validate: function(frm) {
 		
 		if(!frm.doc.address){
-			if(frm.doc.party_type=="Customer" && frm.doc.party){
+			if( frm.doc.party){
 				frappe.call({
 					method:"erpnext.accounts.party.get_party_details",
 					args:{
@@ -50,8 +50,9 @@ frappe.ui.form.on('Payment Entry', {
 					},
 					callback: function(r){
 						if(r.message){
-							if(frm.doc.address != r.message.customer_address){
-								frm.set_value('address', r.message.customer_address)
+							var adrr = frappe.scrub(frm.doc.party_type) + "_address"
+							if(frm.doc.address != r.message[adrr]){
+								frm.set_value('address', r.message[adrr])
 							}
 						}
 						frm.refresh();

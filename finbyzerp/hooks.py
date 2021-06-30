@@ -198,3 +198,8 @@ gst_itemised_sales_register.execute = gst_itemised_sales_register_execute
 from finbyzerp.finbyzerp.report.gst_itemised_purchase_register import execute as gst_itemised_purchase_register_execute
 from erpnext.regional.report.gst_itemised_purchase_register import gst_itemised_purchase_register
 gst_itemised_purchase_register.execute = gst_itemised_purchase_register_execute
+
+# Override Stock and Accounts diff validation for throw when amount is > 5
+from erpnext.accounts import utils
+from finbyzerp.api import check_if_stock_and_account_balance_synced
+utils.check_if_stock_and_account_balance_synced = check_if_stock_and_account_balance_synced
