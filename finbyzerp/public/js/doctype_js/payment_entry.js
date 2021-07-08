@@ -20,7 +20,7 @@ frappe.ui.form.on('Payment Entry', {
 		frm.trigger('set_address');
 	},
 	party: function(frm){
-		if(frm.doc.party_type && frm.doc.party){
+		if(frm.doc.party_type in ["Customer","Supplier"] && frm.doc.party){
 		frappe.call({
 			method:"erpnext.accounts.party.get_party_details",
 			args:{
@@ -41,7 +41,7 @@ frappe.ui.form.on('Payment Entry', {
 	validate: function(frm) {
 		
 		if(!frm.doc.address){
-			if( frm.doc.party){
+			if(frm.doc.party_type in ["Customer","Supplier"] && frm.doc.party){
 				frappe.call({
 					method:"erpnext.accounts.party.get_party_details",
 					args:{
