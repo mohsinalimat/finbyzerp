@@ -50,7 +50,7 @@ class MeetingSchedule(Document):
 		ical+="METHOD:REQUEST"+CRLF+"BEGIN:VEVENT"+CRLF+"DTSTART:"+dtstart+CRLF+"DTEND:"+dtend+CRLF+"DTSTAMP:"+dtstamp+CRLF+organizer+CRLF
 		ical+= "UID:FIXMEUID"+dtstamp+CRLF
 		ical+= attendee+"CREATED:"+dtstamp+CRLF
-		if self.meeting_agenda:
+		if self.invitation_message:
 			ical+= "DESCRIPTION:"+re.sub(cleanr, '', self.invitation_message) +CRLF
 		ical+="LAST-MODIFIED:"+dtstamp+CRLF+"LOCATION:"+CRLF+"SEQUENCE:0"+CRLF+"STATUS:CONFIRMED"+CRLF
 		ical+= "SUMMARY:"+subject+CRLF
@@ -122,10 +122,12 @@ def make_meeting(source_name, target_doc=None):
 					"name": "schedule_ref",
 					"scheduled_from": "meeting_from",
 					"scheduled_to": "meeting_to",
-					"party": "lead"
 				},
 				"field_no_map": [
-					"naming_series"
+					"naming_series",
+					"lead",
+					"customer",
+					"opportunity"
 				]
 			}
 	}, target_doc)	
