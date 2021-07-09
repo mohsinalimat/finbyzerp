@@ -462,13 +462,15 @@ def make_meetings(source_name, doctype, ref_doctype, target_doc=None):
 				"doctype": ref_doctype,
 				"field_map":  {
 					'company_name': 'organization',
-					'name': 'party',
 					'customer_name':'organization',
 					'contact_email':'email_id',
 					'contact_mobile':'mobile_no'
 				},
 				"field_no_map": [
-					"naming_series"
+					"naming_series",
+					"lead",
+					"customer",
+					"opportunity"
 				],
 				"postprocess": update_contact
 			}
