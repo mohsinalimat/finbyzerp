@@ -203,3 +203,11 @@ gst_itemised_purchase_register.execute = gst_itemised_purchase_register_execute
 from erpnext.accounts import utils
 from finbyzerp.api import check_if_stock_and_account_balance_synced
 utils.check_if_stock_and_account_balance_synced = check_if_stock_and_account_balance_synced
+
+from frappe import utils
+from finbyzerp.api import get_timespan_date_range
+utils.get_timespan_date_range = get_timespan_date_range
+
+from frappe.model import db_query
+from finbyzerp.api import get_date_range
+db_query.get_date_range = get_date_range
