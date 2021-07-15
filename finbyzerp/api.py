@@ -8,7 +8,11 @@ from frappe.utils.pdf import get_pdf
 from frappe.utils.file_manager import save_file
 from frappe import _
 from frappe.model.mapper import get_mapped_doc
+from frappe.model.meta import get_field_precision
+from erpnext.accounts.utils import get_stock_accounts,get_stock_and_account_balance
 
+from frappe.utils.data import (nowdate,add_to_date,get_first_day_of_week,get_last_day_of_week,get_first_day,get_last_day,
+		get_quarter_start,get_quarter_ending,get_year_start,get_year_ending)
 
 import json
 import os
@@ -317,8 +321,9 @@ def stock_entry_validate(self, method):
 		validate_additional_cost(self)
 
 def validate_additional_cost(self):
-	if self.purpose in ['Repack','Manufacture'] and self._action == "submit":
-		if abs(round(flt(self.value_difference,1))) != abs(round(flt(self.total_additional_costs,1))):
+	if self.purpose in ['Material Transfer','Material Transfer for Manufacture','Repack','Manufacture'] and self._action == "submit":
+		diff = abs(round(flt(self.value_difference,1)) - (round(flt(self.total_additional_costs,1))))
+		if diff > 3:
 			frappe.throw("ValuationError: Value difference between incoming and outgoing amount is higher than additional cost")
 
 def validate_user_mobile_no(self,method):
@@ -403,11 +408,19 @@ def set_party_account_based_on_currency(self):
 						else:
 							frappe.msgprint("Please create {0} account in {1} for company {2} then try to change currency again".format(account_type,self.default_currency,d['name']))
 
+def validate_item_rate(self):
+	for row in self.items:
+		if row.rate==0 and row.allow_zero_valuation_rate!=1:
+			frappe.throw("Rate is mandatory for {} in Row: {}".format(row.item_code,frappe.bold(row.idx)))
+
 def si_validate(self,method):
 	set_account_in_transaction(self)
 
 def pi_validate(self,method):
 	set_account_in_transaction(self)
+
+def pr_validate(self,method):
+	validate_item_rate(self)
 
 def set_account_in_transaction(self):
 	if self.doctype == "Sales Invoice":
@@ -452,13 +465,15 @@ def make_meetings(source_name, doctype, ref_doctype, target_doc=None):
 				"doctype": ref_doctype,
 				"field_map":  {
 					'company_name': 'organization',
-					'name': 'party',
 					'customer_name':'organization',
 					'contact_email':'email_id',
 					'contact_mobile':'mobile_no'
 				},
 				"field_no_map": [
-					"naming_series"
+					"naming_series",
+					"lead",
+					"customer",
+					"opportunity"
 				],
 				"postprocess": update_contact
 			}
@@ -466,3 +481,104 @@ def make_meetings(source_name, doctype, ref_doctype, target_doc=None):
 
 	return doclist
 	
+
+import os
+
+def get_doc_files(files, start_path):
+	"""walk and sync all doctypes and pages"""
+
+	# load in sequence - warning for devs
+	document_types = ['doctype', 'page', 'report', 'dashboard_chart_source', 'print_format',
+		'website_theme', 'web_form', 'web_template', 'notification', 'print_style',
+		'data_migration_mapping', 'data_migration_plan',
+		'onboarding_step', 'module_onboarding']
+
+	for doctype in document_types:
+		doctype_path = os.path.join(start_path, doctype)
+		if os.path.exists(doctype_path):
+			for docname in os.listdir(doctype_path):
+				if os.path.isdir(os.path.join(doctype_path, docname)):
+					doc_path = os.path.join(doctype_path, docname, docname) + ".json"
+					if os.path.exists(doc_path):
+						if not doc_path in files:
+							files.append(doc_path)
+
+def check_if_stock_and_account_balance_synced(posting_date, company, voucher_type=None, voucher_no=None):
+	if not cint(erpnext.is_perpetual_inventory_enabled(company)):
+		return
+
+	accounts = get_stock_accounts(company, voucher_type, voucher_no)
+	stock_adjustment_account = frappe.db.get_value("Company", company, "stock_adjustment_account")
+
+	for account in accounts:
+		account_bal, stock_bal, warehouse_list = get_stock_and_account_balance(account,
+			posting_date, company)
+
+		if abs(account_bal - stock_bal) > 5:
+			precision = get_field_precision(frappe.get_meta("GL Entry").get_field("debit"),
+				currency=frappe.get_cached_value('Company',  company,  "default_currency"))
+
+			diff = flt(stock_bal - account_bal, precision)
+
+			error_reason = _("Stock Value ({0}) and Account Balance ({1}) are out of sync for account {2} and it's linked warehouses as on {3}.").format(
+				stock_bal, account_bal, frappe.bold(account), posting_date)
+			error_resolution = _("Please create an adjustment Journal Entry for amount {0} on {1}")\
+				.format(frappe.bold(diff), frappe.bold(posting_date))
+
+			frappe.msgprint(
+				msg="""{0}<br></br>{1}<br></br>""".format(error_reason, error_resolution),
+				raise_exception=StockValueAndAccountBalanceOutOfSync,
+				title=_('Values Out Of Sync'),
+				primary_action={
+					'label': _('Make Journal Entry'),
+					'client_action': 'erpnext.route_to_adjustment_jv',
+					'args': get_journal_entry(account, stock_adjustment_account, diff)
+				})
+
+
+def get_timespan_date_range(timespan):
+	today = nowdate()
+	date_range_map = {
+		"last week": lambda: (get_first_day_of_week(add_to_date(today, days=-7)), get_last_day_of_week(add_to_date(today, days=-7))),
+		"last month": lambda: (get_first_day(add_to_date(today, months=-1)), get_last_day(add_to_date(today, months=-1))),
+		"last quarter": lambda: (get_quarter_start(add_to_date(today, months=-3)), get_quarter_ending(add_to_date(today, months=-3))),
+		"last 6 months": lambda: (get_quarter_start(add_to_date(today, months=-6)), get_quarter_ending(add_to_date(today, months=-3))),
+		"last year": lambda: (get_year_start(add_to_date(today, years=-1)), get_year_ending(add_to_date(today, years=-1))),
+		"yesterday": lambda: (add_to_date(today, days=-1),) * 2,
+		"today": lambda: (today, today),
+		"tomorrow": lambda: (add_to_date(today, days=1),) * 2,
+		# "this week": lambda: (get_first_day_of_week(today), today),
+		"this week": lambda: (get_first_day_of_week(today), get_last_day_of_week(get_first_day_of_week(today))),
+		# "this month": lambda: (get_first_day(today), today),
+		"this month": lambda: (get_first_day(today), get_last_day(get_first_day(today))),
+		# "this quarter": lambda: (get_quarter_start(today), today),
+		"this quarter": lambda: (get_quarter_start(today), get_quarter_ending(get_quarter_start(today))),
+		# "this year": lambda: (get_year_start(today), today),
+		"this year": lambda: (get_year_start(today), get_year_ending(get_year_start(today))),
+		"next week": lambda: (get_first_day_of_week(add_to_date(today, days=7)), get_last_day_of_week(add_to_date(today, days=7))),
+		"next month": lambda: (get_first_day(add_to_date(today, months=1)), get_last_day(add_to_date(today, months=1))),
+		"next quarter": lambda: (get_quarter_start(add_to_date(today, months=3)), get_quarter_ending(add_to_date(today, months=3))),
+		"next 6 months": lambda: (get_quarter_start(add_to_date(today, months=3)), get_quarter_ending(add_to_date(today, months=6))),
+		"next year": lambda: (get_year_start(add_to_date(today, years=1)), get_year_ending(add_to_date(today, years=1))),
+	}
+
+	if timespan in date_range_map:
+		return date_range_map[timespan]()
+
+
+def get_date_range(operator, value):
+	timespan_map = {
+		'1 week': 'week',
+		'1 month': 'month',
+		'3 months': 'quarter',
+		'6 months': '6 months',
+		'1 year': 'year',
+	}
+	period_map = {
+		'previous': 'last',
+		'next': 'next',
+	}
+
+	timespan = period_map[operator] + ' ' + timespan_map[value] if operator != 'timespan' else value
+
+	return get_timespan_date_range(timespan)
