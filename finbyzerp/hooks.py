@@ -159,7 +159,14 @@ doc_events = {
 		"validate": "finbyzerp.api.pr_validate"
 	},
 	"Stock Entry": {
-		"validate": "finbyzerp.api.stock_entry_validate"
+		"validate": [
+			"finbyzerp.api.stock_entry_validate",
+			"finbyzerp.finbyzerp.doc_events.stock_entry.validate",
+		],
+		"before_insert": "finbyzerp.api.before_insert",
+	},
+	"Journal Entry":{
+		"before_insert": "finbyzerp.api.before_insert",
 	},
 	("Pick List","Expense Claim", "Sales Invoice", "Purchase Invoice", "Payment Request", "Payment Entry", "Journal Entry", "Material Request", "Purchase Order", "Work Order", "Production Plan", "Stock Entry", "Quotation", "Sales Order", "Delivery Note", "Purchase Receipt", "Packing Slip","Jobwork Challan","Jobwork Finish","Outward Sample","Inward Sample"): {
 		"before_naming": "finbyzerp.api.before_naming",
@@ -198,3 +205,16 @@ gst_itemised_sales_register.execute = gst_itemised_sales_register_execute
 from finbyzerp.finbyzerp.report.gst_itemised_purchase_register import execute as gst_itemised_purchase_register_execute
 from erpnext.regional.report.gst_itemised_purchase_register import gst_itemised_purchase_register
 gst_itemised_purchase_register.execute = gst_itemised_purchase_register_execute
+
+# Override Stock and Accounts diff validation for throw when amount is > 5
+from erpnext.accounts import utils
+from finbyzerp.api import check_if_stock_and_account_balance_synced
+utils.check_if_stock_and_account_balance_synced = check_if_stock_and_account_balance_synced
+
+from frappe import utils
+from finbyzerp.api import get_timespan_date_range
+utils.get_timespan_date_range = get_timespan_date_range
+
+from frappe.model import db_query
+from finbyzerp.api import get_date_range
+db_query.get_date_range = get_date_range
