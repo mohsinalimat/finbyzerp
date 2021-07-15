@@ -309,5 +309,9 @@ body{
     .layout-side-section {
         display: block !important;
     }
+
+	.layout-main {
+		margin-top: 60px !important;
+	}
 }
 /*------- end media queries -------*/
