@@ -88,15 +88,30 @@ frappe.ui.Page = Class.extend({
 					</div>\
 				</div>');
 		} else {
-			this.add_view("main", `
-				<div class="row layout-main">
-					<div class="col-lg-2 layout-side-section"></div>
-					<div class="col layout-main-section-wrapper col-12">
-						<div class="layout-main-section"></div>
-						<div class="layout-footer hide"></div>
+			var id_name = this.wrapper[0].id;
+			if(id_name == 'page-Workspaces'){
+				this.add_view("main", `
+					<div class="row layout-main">
+						<div class="icon-side-section" ></div>
+						<div class="col-lg-2 layout-side-section"$ style="display:none ;"></div>
+						<div class="col layout-main-section-wrapper test">
+							<div class="layout-main-section"></div>
+							<div class="layout-footer hide"></div>
+						</div>
 					</div>
-				</div>
-			`);
+				`);
+			}else{
+				this.add_view("main", `
+					<div class="row layout-main ">
+						<div class="icon-side-section d__none" ></div>
+						<div class="col-lg-2 layout-side-section"$ style="display:block ;"></div>
+						<div class="col layout-main-section-wrapper testing">
+							<div class="layout-main-section"></div>
+							<div class="layout-footer hide"></div>
+						</div>
+					</div>
+				`);
+			}
 		}
 
 		this.setup_page();
@@ -158,10 +173,8 @@ frappe.ui.Page = Class.extend({
 
 	setup_sidebar_toggle() {
 		let sidebar_toggle = $('.page-head').find('.sidebar-toggle-btn');
+        let icon_wrapper = this.wrapper.find('.icon-side-section');
 		let sidebar_wrapper = this.wrapper.find('.layout-side-section');
-		if (this.disable_sidebar_toggle || !sidebar_wrapper.length) {
-			sidebar_toggle.remove();
-		} else {
 			sidebar_toggle.attr("title", __("Toggle Sidebar")).tooltip({
 				delay: { "show": 600, "hide": 100 },
 				trigger: "hover",
@@ -171,11 +184,12 @@ frappe.ui.Page = Class.extend({
 					this.setup_overlay_sidebar();
 				} else {
 					sidebar_wrapper.toggle();
+                    icon_wrapper.toggleClass('d__none');
+                    console.log(window.page_name)
 				}
 				$(document.body).trigger('toggleSidebar');
 				this.update_sidebar_icon();
 			});
-		}
 	},
 
 	setup_overlay_sidebar() {

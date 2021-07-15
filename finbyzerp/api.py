@@ -318,7 +318,8 @@ def stock_entry_validate(self, method):
 
 def validate_additional_cost(self):
 	if self.purpose in ['Repack','Manufacture'] and self._action == "submit":
-		if abs(round(flt(self.value_difference,1))) != abs(round(flt(self.total_additional_costs,1))):
+		diff = abs(round(flt(self.value_difference,1)) - (round(flt(self.total_additional_costs,1))))
+		if diff > 3:
 			frappe.throw("ValuationError: Value difference between incoming and outgoing amount is higher than additional cost")
 
 def validate_user_mobile_no(self,method):
@@ -403,11 +404,19 @@ def set_party_account_based_on_currency(self):
 						else:
 							frappe.msgprint("Please create {0} account in {1} for company {2} then try to change currency again".format(account_type,self.default_currency,d['name']))
 
+def validate_item_rate(self):
+	for row in self.items:
+		if row.rate==0 and row.allow_zero_valuation_rate!=1:
+			frappe.throw("Rate is mandatory for {} in Row: {}".format(row.item_code,frappe.bold(row.idx)))
+
 def si_validate(self,method):
 	set_account_in_transaction(self)
 
 def pi_validate(self,method):
 	set_account_in_transaction(self)
+
+def pr_validate(self,method):
+	validate_item_rate(self)
 
 def set_account_in_transaction(self):
 	if self.doctype == "Sales Invoice":
@@ -466,3 +475,39 @@ def make_meetings(source_name, doctype, ref_doctype, target_doc=None):
 
 	return doclist
 	
+
+import os
+
+def get_doc_files(files, start_path):
+	"""walk and sync all doctypes and pages"""
+
+	# load in sequence - warning for devs
+	document_types = ['doctype', 'page', 'report', 'dashboard_chart_source', 'print_format',
+		'website_theme', 'web_form', 'web_template', 'notification', 'print_style',
+		'data_migration_mapping', 'data_migration_plan',
+		'onboarding_step', 'module_onboarding']
+
+	for doctype in document_types:
+		doctype_path = os.path.join(start_path, doctype)
+		if os.path.exists(doctype_path):
+			for docname in os.listdir(doctype_path):
+				if os.path.isdir(os.path.join(doctype_path, docname)):
+					doc_path = os.path.join(doctype_path, docname, docname) + ".json"
+					if os.path.exists(doc_path):
+						if not doc_path in files:
+							files.append(doc_path)
+
+
+
+def finbyz_future_sle_exists(args):
+	return frappe.db.sql("""
+		select name
+		from `tabStock Ledger Entry`
+		where
+			warehouse = '{}' and item_code = '{}'
+			and timestamp(posting_date, posting_time)
+				>= timestamp('{}','{}')
+			and voucher_no != '{}'
+			and is_cancelled = 0
+		limit 1
+		""".format(args.warehouse,args.item_code,args.posting_date,args.posting_time,args.voucher_no))
