@@ -23,6 +23,7 @@ from frappe.utils.user import get_user_fullname
 import re
 
 class MeetingSchedule(Document):
+	@frappe.whitelist()
 	def send_invitation(self):	
 		if not self.email_id:
 			msgprint(_("Please enter email id"))
@@ -50,7 +51,7 @@ class MeetingSchedule(Document):
 		ical+="METHOD:REQUEST"+CRLF+"BEGIN:VEVENT"+CRLF+"DTSTART:"+dtstart+CRLF+"DTEND:"+dtend+CRLF+"DTSTAMP:"+dtstamp+CRLF+organizer+CRLF
 		ical+= "UID:FIXMEUID"+dtstamp+CRLF
 		ical+= attendee+"CREATED:"+dtstamp+CRLF
-		if self.meeting_agenda:
+		if self.invitation_message:
 			ical+= "DESCRIPTION:"+re.sub(cleanr, '', self.invitation_message) +CRLF
 		ical+="LAST-MODIFIED:"+dtstamp+CRLF+"LOCATION:"+CRLF+"SEQUENCE:0"+CRLF+"STATUS:CONFIRMED"+CRLF
 		ical+= "SUMMARY:"+subject+CRLF
