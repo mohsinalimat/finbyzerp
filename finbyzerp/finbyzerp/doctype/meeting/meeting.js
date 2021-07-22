@@ -20,6 +20,7 @@ frappe.ui.form.on("Meeting", "food_expense", function(frm) {
 frappe.ui.form.on("Meeting", "lodging_cost", function(frm) {
     calculate_total_expense(frm);
 });
+
 frappe.ui.form.on('Meeting', {
 	refresh: function(frm) {
 		frm.fields_dict.contact_person.get_query = function(doc) {
@@ -54,7 +55,8 @@ frappe.ui.form.on('Meeting', {
 		if (frm.doc.party && frm.doc.party_type){
 			frm.trigger('party')
 		}
-		frm.trigger('set_link_documents')
+		frm.trigger('set_link_documents');
+		// frm.trigger('calculate_km_wise_expense');
 	},
 	party: function(frm){
 		if(frm.doc.party_type == "Customer" && frm.doc.party)
@@ -89,4 +91,14 @@ frappe.ui.form.on('Meeting', {
 			}
 		}		
 	},
+	total_kms:function(frm){
+		if ((frappe.meta.get_docfield("Meeting", "total_kms")) && (frappe.meta.get_docfield("Meeting", "rate_per_km"))){
+			frm.set_value('local_travel_expense',flt(frm.doc.total_kms) * flt(frm.doc.rate_per_km))
+		}		
+	},
+	rate_per_km: function(frm){
+		if ((frappe.meta.get_docfield("Meeting", "total_kms")) && (frappe.meta.get_docfield("Meeting", "rate_per_km"))){
+			frm.set_value('local_travel_expense',flt(frm.doc.total_kms) * flt(frm.doc.rate_per_km))
+		}			
+	}
 });
