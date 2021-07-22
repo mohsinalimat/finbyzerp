@@ -15,7 +15,7 @@ def execute(filters=None):
 
 def _execute(filters=None, additional_table_columns=None, additional_query_columns=None):
 	if not filters: filters = {}
-	filters.update({"from_date": filters.get("date_range") and filters.get("date_range")[0], "to_date": filters.get("date_range") and filters.get("date_range")[1]})
+	filters.update({"from_date": filters.get("from_date") or filters.get("date_range")[0], "to_date": filters.get("to_date") or filters.get("date_range")[1]})
 	columns = get_columns(additional_table_columns, filters)
 
 	company_currency = frappe.get_cached_value('Company',  filters.get('company'),  'default_currency')
@@ -339,6 +339,7 @@ def get_conditions(filters):
 		("customer", " and `tabSales Invoice`.customer = %(customer)s"),
 		("item_code", " and `tabSales Invoice Item`.item_code = %(item_code)s"),
 		("from_date", " and `tabSales Invoice`.posting_date>=%(from_date)s"),
+		("cost_center", " and `tabSales Invoice`.cost_center=%(cost_center)s"),
 		("to_date", " and `tabSales Invoice`.posting_date<=%(to_date)s")):
 			if filters.get(opts[0]):
 				conditions += opts[1]
