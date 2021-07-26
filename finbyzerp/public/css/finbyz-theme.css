@@ -208,6 +208,14 @@ body{
 [data-theme="dark"] .list-row-container:focus{
 	background-color: var(--gray-600) !important;
 }
+.awesomplete>ul>li{
+	overflow: visible !important;
+}
+.awesomplete>ul>li{
+    white-space: normal;
+    overflow: visible;
+
+}
 /*---------- end dark theme ------------- */
 
 /* [data-theme="light"] .list-row-head:hover:not(.list-row-head),
@@ -296,10 +304,12 @@ body{
 .Chemical-sidebar-icon,.Rohandyes-sidebar-icon{
 	background: url(/assets/finbyzerp/images/chemical.svg);
 }
-.Elkins-sidebar-icon{	
+.Elkins-sidebar-icon,.Spinning-sidebar-icon{	
 	background: url(/assets/finbyzerp/images/yarn.svg);
 }
-
+.EIE-sidebar-icon{
+	background: url(/assets/finbyzerp/images/engineering.svg);
+}
 .desk-sidebar-item span{
 	background-repeat: no-repeat;
 }
@@ -309,5 +319,9 @@ body{
     .layout-side-section {
         display: block !important;
     }
+
+	.layout-main {
+		margin-top: 60px !important;
+	}
 }
 /*------- end media queries -------*/

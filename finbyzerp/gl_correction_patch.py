@@ -36,20 +36,39 @@ def check_bin_multiple_items_with_warehouse():
 	duplicate = []
 	total_stock_value = 0
 	for b in bin_list:
-		if frappe.db.sql("select sum(stock_value_difference) from `tabStock Ledger Entry` where item_code = '{}' and warehouse = '{}' and is_cancelled = 0 group by item_code".format(b.item_code,b.warehouse)):
-			stock_value = frappe.db.sql("select sum(stock_value_difference) from `tabStock Ledger Entry` where item_code = '{}' and warehouse = '{}' and is_cancelled = 0 group by item_code".format(b.item_code,b.warehouse))[0][0]
-		else:
-			stock_value = 0.0
-		
-		total_stock_value += stock_value
-		if stock_value != b.stock_value:
-			print(b.name, b.item_code)
-			#frappe.db.set_value("Bin",b.name,"stock_value",stock_value)
-		
 		if (b.item_code,b.warehouse) not in bin_dict:
 			bin_dict[(b.item_code,b.warehouse)] = b
 		else:
 			duplicate.append(frappe._dict({"item_code":b.item_code,"warehouse":b.warehouse}))
+
+		stock_value_diff_query = frappe.db.sql("""select sum(stock_value_difference)
+			from `tabStock Ledger Entry`
+			where item_code = '{}' and warehouse = '{}' and is_cancelled = 0
+			group by item_code""".format(b.item_code,b.warehouse))
+			
+		if stock_value_diff_query:
+			stock_value_diff = stock_value_diff_query[0][0]
+		else:
+			stock_value_diff = 0.0
+
+		# stock_value_query = frappe.db.sql("""select stock_value,name
+		# from `tabStock Ledger Entry`
+		# where item_code = '{}' and warehouse = '{}' and is_cancelled = 0
+		# order by timestamp(posting_date, posting_time) DESC, creation DESC limit 1""".format(b.item_code,b.warehouse))
+
+		# if stock_value_query:
+		# 	stock_value = stock_value_query[0][0]
+		# else:
+		# 	stock_value = 0
+
+		# if stock_value != stock_value_diff:
+		# 	print(b.name,b.item_code,b.warehouse,stock_value_query[0][1])
+
+		total_stock_value += stock_value_diff
+		if stock_value_diff != b.stock_value:
+			print(b.name, b.item_code)
+			# frappe.db.set_value("Bin",b.name,"stock_value",stock_value_diff)
+		
 	print(total_stock_value)
 
 # Patch End
@@ -110,7 +129,7 @@ def get_sle_value():
 				sum(sle.stock_value_difference) as sle_value, sle.posting_date, sle.voucher_type, sle.voucher_no, sle.company
 			from
 				`tabStock Ledger Entry` sle
-			where sle.docstatus < 2 and sle.is_cancelled = 0 and sle.stock_value_difference<>0
+			where sle.docstatus < 2 and sle.is_cancelled = 0 and sle.stock_value_difference<>0 and sle.company = 'Vindish Instruments Pvt. Ltd.' and sle.posting_date >= '2020-04-01'
 			group by sle.voucher_no
 			order by sle.posting_date""" , as_dict=1)
 
@@ -121,7 +140,7 @@ def get_gl_value():
 				sum(gl.debit_in_account_currency - gl.credit_in_account_currency) as gl_value, gl.voucher_no
 			from
 				`tabGL Entry` gl JOIN `tabAccount` ac ON gl.account = ac.name
-			where gl.docstatus < 2 and gl.is_cancelled = 0 and ac.account_type in ("Stock","Capital Work in Progress","Fixed Asset")
+			where gl.docstatus < 2 and gl.is_cancelled = 0 and ac.account_type in ("Stock","Capital Work in Progress","Fixed Asset") and gl.company = 'Vindish Instruments Pvt. Ltd.' and gl.posting_date >= '2020-04-01'
 			group by gl.voucher_no
 			order by gl.posting_date""", as_dict=1)
 

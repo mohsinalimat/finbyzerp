@@ -16,8 +16,8 @@ frappe.ui.form.on('Sales Invoice', {
 					method: "finbyzerp.api.check_counter_series",
 					args: {
 						'name': frm.doc.naming_series,
-						'date': frm.doc.transaction_date,
 						'company_series': frm.doc.company_series || null,
+						'date': frm.doc.posting_date,
 					},
 					callback: function (e) {
 						// frm.doc.series_value = e.message;
