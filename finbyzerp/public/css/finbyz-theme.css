@@ -301,7 +301,7 @@ body{
 	background: url(/assets/finbyzerp/images/manufacturing.svg);	
 }
 /*-------- custom icon ----------*/
-.Chemical-sidebar-icon,.Rohandyes-sidebar-icon{
+.Chemical-sidebar-icon,.Rohandyes-sidebar-icon,.RoopDyes-sidebar-icon{
 	background: url(/assets/finbyzerp/images/chemical.svg);
 }
 .Elkins-sidebar-icon,.Spinning-sidebar-icon{	
