@@ -11,7 +11,7 @@ app_color = "blue"
 app_email = "info@finbyz.com"
 app_license = "GPL 3.0"
 app_version = app_version
-# app_logo_url = '/assets/erpnext/images/erp-icon.svg'
+app_logo_url = "/assets/finbyzerp/images/FinbyzLogo.svg"
 
 
 after_install = "finbyzerp.install.after_install"
@@ -38,11 +38,13 @@ from frappe.core.doctype.report.report import Report
 from finbyzerp.api import report_validate
 Report.validate = report_validate
 
-
+from frappe.utils import dashboard
+from finbyzerp.finbyzerp.override.dashboard_override import make_records
+dashboard.make_records = make_records
 # e_invoice overrides
 import erpnext
 # from finbyzerp.e_invoice_override import validate_einvoice_fields,get_transaction_details,get_item_list,make_einvoice,get_invoice_value_details,update_invoice_taxes
-from finbyzerp.e_invoice_override import get_item_list,validate_einvoice_fields
+from finbyzerp.e_invoice_override import get_item_list, validate_einvoice_fields, validate_document_name
 erpnext.regional.india.e_invoice.utils.validate_einvoice_fields = validate_einvoice_fields
 erpnext.regional.india.e_invoice.utils.get_item_list = get_item_list
 # erpnext.regional.india.e_invoice.utils.get_transaction_details = get_transaction_details
@@ -52,17 +54,32 @@ erpnext.regional.india.e_invoice.utils.get_item_list = get_item_list
 #erpnext.regional.india.e_invoice.utils.update_item_taxes = update_item_taxes
 #erpnext.regional.india.e_invoice.utils.get_party_details = get_party_details
 
+from erpnext.regional.india import utils
+utils.validate_document_name = validate_document_name
+
 #from erpnext.regional.india.e_invoice.utils import GSPConnector
 #GSPConnector.set_einvoice_data = set_einvoice_data
+
+
+import erpnext
+from finbyzerp.e_invoice_override import get_item_list,validate_einvoice_fields
+erpnext.regional.india.e_invoice.utils.validate_einvoice_fields = validate_einvoice_fields
+erpnext.regional.india.e_invoice.utils.get_item_list = get_item_list
 
 # email Campaign override
 from finbyzerp.finbyzerp.doc_events.email_campaign import send_email_to_leads_or_contacts
 from erpnext.crm.doctype.email_campaign import email_campaign
 email_campaign.send_email_to_leads_or_contacts = send_email_to_leads_or_contacts
 
-app_include_css = ["assets/css/finbyzerp.min.css", "assets/finbyzerp/css/permission.css","/assets/finbyzerp/css/finbyz-theme.css"]
+# override for workspace migration issue
+from frappe.model import sync 
+from finbyzerp.api import get_doc_files
+sync.get_doc_files = get_doc_files
+
+
+app_include_css = ["/assets/finbyzerp/css/permission.css","/assets/finbyzerp/css/finbyz-theme.css"]
 app_include_js = [
-	"assets/js/finbyzerp.min.js" 
+	"/assets/js/finbyzerp.min.js",
 	#"assets/finbyzerp/js/frappe/ui/page.js"
 ]
 
@@ -106,8 +123,8 @@ override_whitelisted_methods = {
 	"erpnext.setup.doctype.company.delete_company_transactions.delete_company_transactions": "finbyzerp.finbyzerp.override.delete_company_transactions.delete_company_transactions",
 	"frappe.desk.moduleview.get_desktop_settings": "finbyzerp.api.get_desktop_settings",
 	"frappe.desk.moduleview.get_options_for_global_modules": "finbyzerp.api.get_options_for_global_modules",
-	"frappe.utils.print_format.download_pdf": "finbyzerp.print_format.download_pdf",
 	"erpnext.regional.india.e_invoice.utils.cancel_eway_bill": "finbyzerp.e_invoice_override.cancel_eway_bill" # cancel eway bill override for enable cancel_eway_bill api
+	#"frappe.utils.print_format.download_pdf": "finbyzerp.print_format.download_pdf",
 }
 
 override_doctype_dashboards = {
@@ -141,6 +158,9 @@ doc_events = {
 		"before_insert": "finbyzerp.api.before_insert",
 		"validate": "finbyzerp.api.pi_validate"
 	},
+		"Purchase Receipt": {
+		"validate": "finbyzerp.api.pr_validate"
+	},
 	"Stock Entry": {
 		"validate": [
 			"finbyzerp.api.stock_entry_validate",
@@ -151,7 +171,10 @@ doc_events = {
 	"Journal Entry":{
 		"before_insert": "finbyzerp.api.before_insert",
 	},
-	("Pick List","Expense Claim", "Sales Invoice", "Purchase Invoice", "Payment Request", "Payment Entry", "Journal Entry", "Material Request", "Purchase Order", "Work Order", "Production Plan", "Stock Entry", "Quotation", "Sales Order", "Delivery Note", "Purchase Receipt", "Packing Slip","Jobwork Challan","Jobwork Finish","Outward Sample","Inward Sample"): {
+	"Payment Entry":{
+		"validate":"finbyzerp.finbyzerp.doc_events.payment_entry.validate"
+	},
+	("Pick List","Expense Claim", "Sales Invoice", "Purchase Invoice", "Payment Request", "Payment Entry", "Journal Entry", "Material Request", "Purchase Order", "Work Order", "Production Plan", "Stock Entry", "Quotation", "Sales Order", "Delivery Note", "Purchase Receipt", "Packing Slip","Jobwork Challan","Jobwork Finish","Outward Sample","Inward Sample","Manufacturing Consumption"): {
 		"before_naming": "finbyzerp.api.before_naming",
 	},
 }
@@ -167,6 +190,10 @@ scheduler_events = {
 # from finbyzerp.finbyzerp.report.bom_stock_calculated import execute as bsc_execute
 # from erpnext.manufacturing.report.bom_stock_calculated import bom_stock_calculated
 # bom_stock_calculated.execute = bsc_execute
+
+from frappe.utils import pdf
+from finbyzerp.print_format import get_pdf
+pdf.get_pdf = get_pdf
 
 # Item wise sales register and purchase register reports changes for selecting account_head instead of description from tax table
 from finbyzerp.finbyzerp.report.item_wise_sales_register import execute as item_wise_sales_register_execute
@@ -184,3 +211,16 @@ gst_itemised_sales_register.execute = gst_itemised_sales_register_execute
 from finbyzerp.finbyzerp.report.gst_itemised_purchase_register import execute as gst_itemised_purchase_register_execute
 from erpnext.regional.report.gst_itemised_purchase_register import gst_itemised_purchase_register
 gst_itemised_purchase_register.execute = gst_itemised_purchase_register_execute
+
+# Override Stock and Accounts diff validation for throw when amount is > 5
+from erpnext.accounts import utils
+from finbyzerp.api import check_if_stock_and_account_balance_synced
+utils.check_if_stock_and_account_balance_synced = check_if_stock_and_account_balance_synced
+
+from frappe import utils
+from finbyzerp.api import get_timespan_date_range
+utils.get_timespan_date_range = get_timespan_date_range
+
+from frappe.model import db_query
+from finbyzerp.api import get_date_range
+db_query.get_date_range = get_date_range
