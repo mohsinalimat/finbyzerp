@@ -127,6 +127,11 @@ override_whitelisted_methods = {
 	#"frappe.utils.print_format.download_pdf": "finbyzerp.print_format.download_pdf",
 }
 
+# override for download backup
+from frappe.utils import response
+from finbyzerp.permission import download_backup
+response.download_backup = download_backup
+
 override_doctype_dashboards = {
 	"Lead": "finbyzerp.finbyzerp.dashboard.lead.get_data",
 	"Customer":"finbyzerp.finbyzerp.dashboard.customer.get_data",
