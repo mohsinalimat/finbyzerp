@@ -149,7 +149,7 @@ doc_events = {
 		"validate":"finbyzerp.finbyzerp.doc_events.item.validate"
 	},
 	"User": {
-		"validate":"finbyzerp.api.validate_user_mobile_no"
+		"validate":"finbyzerp.api.validate_user"
 	},
 	"Sales Invoice": {
 		"before_insert": "finbyzerp.api.before_insert",
