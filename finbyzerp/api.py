@@ -325,7 +325,7 @@ def stock_entry_on_submit(self,method):
 def validate_additional_cost(self):
 	if self.purpose in ['Repack','Manufacture']:
 		diff = abs(round(flt(self.value_difference,1)) - (round(flt(self.total_additional_costs,1))))
-		if diff > 3:
+		if diff > 5:
 			frappe.throw("ValuationError: Value difference between incoming and outgoing amount is higher than additional cost")
 
 def validate_user(self,method):
