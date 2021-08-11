@@ -171,6 +171,7 @@ doc_events = {
 			"finbyzerp.api.stock_entry_validate",
 			"finbyzerp.finbyzerp.doc_events.stock_entry.validate",
 		],
+		"on_submit": "finbyzerp.api.stock_entry_on_submit",
 		"before_insert": "finbyzerp.api.before_insert",
 	},
 	"Journal Entry":{
