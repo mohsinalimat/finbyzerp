@@ -317,22 +317,36 @@ def daily_transaction_summary_mail():
 
 
 def stock_entry_validate(self, method):
-	if self._action == "submit":
+	pass
 		
-		validate_additional_cost(self)
+def stock_entry_on_submit(self,method):
+	validate_additional_cost(self)
 
 def validate_additional_cost(self):
-	if self.purpose in ['Material Transfer','Material Transfer for Manufacture','Repack','Manufacture'] and self._action == "submit":
+	if self.purpose in ['Repack','Manufacture']:
 		diff = abs(round(flt(self.value_difference,1)) - (round(flt(self.total_additional_costs,1))))
-		if diff > 3:
+		if diff > 5:
 			frappe.throw("ValuationError: Value difference between incoming and outgoing amount is higher than additional cost")
 
-def validate_user_mobile_no(self,method):
+def validate_user(self,method):
+	validate_user_mobile_no(self)
+	check_system_manager_role(self)
+
+def validate_user_mobile_no(self):
 	if self.mobile_no:
 		if not self.mobile_no.isdigit():
 			frappe.throw("Please Enter Digits Only in Mobile Number.")
 		elif len(self.mobile_no) != 10:
 			frappe.throw("Please Enter 10 digit Mobile Number.")
+
+def check_system_manager_role(self):
+	if self.name not in ["info@finbyz.com", "Administrator"]:
+		remove_roles = []
+		for role in self.roles:
+			if role.role == "System Manager":
+				remove_roles.append(role)
+		
+		[self.roles.remove(d) for d in remove_roles]
 
 from frappe.core.doctype.report.report import Report
 

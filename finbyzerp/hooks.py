@@ -127,6 +127,11 @@ override_whitelisted_methods = {
 	#"frappe.utils.print_format.download_pdf": "finbyzerp.print_format.download_pdf",
 }
 
+# override for download backup
+from frappe.utils import response
+from finbyzerp.permission import download_backup
+response.download_backup = download_backup
+
 override_doctype_dashboards = {
 	"Lead": "finbyzerp.finbyzerp.dashboard.lead.get_data",
 	"Customer":"finbyzerp.finbyzerp.dashboard.customer.get_data",
@@ -144,7 +149,7 @@ doc_events = {
 		"validate":"finbyzerp.finbyzerp.doc_events.item.validate"
 	},
 	"User": {
-		"validate":"finbyzerp.api.validate_user_mobile_no"
+		"validate":"finbyzerp.api.validate_user"
 	},
 	"Sales Invoice": {
 		"before_insert": "finbyzerp.api.before_insert",
@@ -166,6 +171,7 @@ doc_events = {
 			"finbyzerp.api.stock_entry_validate",
 			"finbyzerp.finbyzerp.doc_events.stock_entry.validate",
 		],
+		"on_submit": "finbyzerp.api.stock_entry_on_submit",
 		"before_insert": "finbyzerp.api.before_insert",
 	},
 	"Journal Entry":{
