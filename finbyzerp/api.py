@@ -499,7 +499,7 @@ def make_meetings(source_name, doctype, ref_doctype, target_doc=None):
 
 import os
 
-def get_doc_files(files, start_path):
+def get_doc_files(files, start_path, force=0, sync_everything = False, verbose=False):
 	"""walk and sync all doctypes and pages"""
 
 	# load in sequence - warning for devs
