@@ -4,7 +4,7 @@ from frappe.utils import flt
 from frappe import _, scrub
 from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions
 
-
+@frappe.whitelist()
 def make_invoices(self):
 	names = []
 	mandatory_error_msg = _("Row {0}: {1} is required to create the Opening {2} Invoices")
@@ -111,6 +111,7 @@ def make_invoices(self):
 
 	return names
 
+@frappe.whitelist()
 def get_invoice_dict(self, row=None):
 	def get_item_dict():
 		default_uom = frappe.db.get_single_value("Stock Settings", "stock_uom") or _("Nos")
