@@ -28,7 +28,6 @@
    "fieldtype": "Date",
    "in_list_view": 1,
    "label": "Transaction Date",
-   "read_only": 1,
    "reqd": 1
   },
   {
@@ -37,7 +36,6 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Description",
-   "read_only": 1,
    "reqd": 1
   },
   {
@@ -45,8 +43,7 @@
    "fieldname": "amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Amount",
-   "read_only": 1
+   "label": "Amount"
   },
   {
    "fieldname": "column_break_3",
@@ -120,7 +117,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2021-08-25 18:01:00.170569",
+ "modified": "2021-08-26 11:02:57.644786",
  "modified_by": "Administrator",
  "module": "Finbyzerp",
  "name": "Bank Statement Transaction Payment Item",
