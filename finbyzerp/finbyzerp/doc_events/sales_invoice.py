@@ -10,6 +10,15 @@ def validate(self, method):
     tcs_deduction(self)
     calculate_gst_taxable_value(self)
 
+def before_save(self, method):
+    set_shipping_address(self)
+
+def set_shipping_address(self):
+    if self.customer_address and not self.shipping_address_name:
+        self.shipping_address_name=self.customer_address
+        self.customer_gstin=self.billing_address_gstin
+        self.shipping_address=self.address_display
+
 def before_submit(self, method):
     unlink_credit_note_entries(self)
 
