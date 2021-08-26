@@ -153,6 +153,7 @@ doc_events = {
 	},
 	"Sales Invoice": {
 		"before_insert": "finbyzerp.api.before_insert",
+		"before_save":"finbyzerp.finbyzerp.doc_events.sales_invoice.before_save",
 		"validate":[
 			"finbyzerp.finbyzerp.doc_events.sales_invoice.validate",
 			"finbyzerp.api.si_validate"
