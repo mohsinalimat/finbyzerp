@@ -127,6 +127,11 @@ override_whitelisted_methods = {
 	#"frappe.utils.print_format.download_pdf": "finbyzerp.print_format.download_pdf",
 }
 
+# override for download backup
+from frappe.utils import response
+from finbyzerp.permission import download_backup
+response.download_backup = download_backup
+
 override_doctype_dashboards = {
 	"Lead": "finbyzerp.finbyzerp.dashboard.lead.get_data",
 	"Customer":"finbyzerp.finbyzerp.dashboard.customer.get_data",
@@ -148,15 +153,18 @@ doc_events = {
 	},
 	"Sales Invoice": {
 		"before_insert": "finbyzerp.api.before_insert",
+		"before_save":"finbyzerp.finbyzerp.doc_events.sales_invoice.before_save",
 		"validate":[
 			"finbyzerp.finbyzerp.doc_events.sales_invoice.validate",
 			"finbyzerp.api.si_validate"
 		],
-		'on_submit': "finbyzerp.api.sales_invoice_on_submit"
+		"before_submit":"finbyzerp.finbyzerp.doc_events.sales_invoice.before_submit",
+		'on_submit': "finbyzerp.api.sales_invoice_on_submit",
 	},
 	"Purchase Invoice": {
 		"before_insert": "finbyzerp.api.before_insert",
-		"validate": "finbyzerp.api.pi_validate"
+		"validate": "finbyzerp.api.pi_validate",
+		"before_submit":"finbyzerp.finbyzerp.doc_events.purchase_invoice.before_submit"
 	},
 		"Purchase Receipt": {
 		"validate": "finbyzerp.api.pr_validate"
@@ -166,6 +174,7 @@ doc_events = {
 			"finbyzerp.api.stock_entry_validate",
 			"finbyzerp.finbyzerp.doc_events.stock_entry.validate",
 		],
+		"on_submit": "finbyzerp.api.stock_entry_on_submit",
 		"before_insert": "finbyzerp.api.before_insert",
 	},
 	"Journal Entry":{
@@ -174,7 +183,7 @@ doc_events = {
 	"Payment Entry":{
 		"validate":"finbyzerp.finbyzerp.doc_events.payment_entry.validate"
 	},
-	("Pick List","Expense Claim", "Sales Invoice", "Purchase Invoice", "Payment Request", "Payment Entry", "Journal Entry", "Material Request", "Purchase Order", "Work Order", "Production Plan", "Stock Entry", "Quotation", "Sales Order", "Delivery Note", "Purchase Receipt", "Packing Slip","Jobwork Challan","Jobwork Finish","Outward Sample","Inward Sample","Manufacturing Consumption"): {
+	("Pick List","Expense Claim", "Sales Invoice", "Purchase Invoice", "Payment Request", "Payment Entry", "Journal Entry", "Material Request", "Purchase Order", "Work Order", "Production Plan", "Stock Entry", "Quotation", "Sales Order", "Delivery Note", "Purchase Receipt", "Packing Slip","Jobwork Challan","Jobwork Finish","Outward Sample","Inward Sample","Manufacturing Consumption","Credit and Debit Note"): {
 		"before_naming": "finbyzerp.api.before_naming",
 	},
 }

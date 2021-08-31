@@ -310,6 +310,9 @@ body{
 .EIE-sidebar-icon{
 	background: url(/assets/finbyzerp/images/engineering.svg);
 }
+.Ceramic-sidebar-icon{
+	background: url(/assets/finbyzerp/images/ceramic.svg);
+}
 .desk-sidebar-item span{
 	background-repeat: no-repeat;
 }
