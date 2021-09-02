@@ -307,7 +307,7 @@ body{
 .Elkins-sidebar-icon,.Spinning-sidebar-icon{	
 	background: url(/assets/finbyzerp/images/yarn.svg);
 }
-.EIE-sidebar-icon{
+.EIE-sidebar-icon,.Engineering-sidebar-icon{
 	background: url(/assets/finbyzerp/images/engineering.svg);
 }
 .desk-sidebar-item span{

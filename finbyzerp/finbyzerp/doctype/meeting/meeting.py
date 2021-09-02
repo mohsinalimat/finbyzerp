@@ -62,13 +62,13 @@ def get_events(start, end, filters=None):
 	:param end: End date-time.
 	:param filters: Filters (JSON).
 	"""
-	filters = json.loads(filters)
+	#filters = json.loads(filters)
 	from frappe.desk.calendar import get_event_conditions
 	conditions = get_event_conditions("Meeting", filters)
 
 	return frappe.db.sql("""
 			select 
-				name, meeting_from, meeting_to, organization
+				name, meeting_from, meeting_to, organization, party
 			from 
 				`tabMeeting`
 			where
