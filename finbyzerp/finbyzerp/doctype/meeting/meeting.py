@@ -8,10 +8,12 @@ from frappe.model.document import Document
 from frappe import msgprint, db, _
 import json
 from frappe.utils import cint, getdate, get_fullname, get_url_to_form,now_datetime
-from erpnext.accounts.party import get_party_details
+# from erpnext.accounts.party import get_party_details
+from finbyzerp.finbyzerp.doctype.meeting_schedule.meeting_schedule import get_party_details
+
 class Meeting(Document):
 	def validate(self):
-		if self.party_type == "Customer" and self.party:
+		if self.party_type and self.party:
 			data = get_party_details(party_type=self.party_type,party=self.party)
 			if data:
 				self.contact_person = data.contact_person
@@ -20,6 +22,7 @@ class Meeting(Document):
 				self.contact = data.contact_dispaly
 				self.address = data.customer_address
 				self.address_display = data.address_display
+				self.organization = data.organisation
 
 	def on_submit(self):
 		user_name = frappe.db.get_value("Employee",{"user_id":frappe.session.user},"employee_name")
